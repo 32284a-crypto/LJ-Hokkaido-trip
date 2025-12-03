@@ -227,6 +227,17 @@
       cursor: pointer;
       opacity: 0.7;
     }
+    .timeline-map-link {
+      display: inline-block;
+      font-size: 11px;
+      margin-top: 2px;
+      color: #0b67ff;
+      text-decoration: none;
+    }
+    .timeline-map-link::after {
+      content: " ↗";
+      font-size: 10px;
+    }
 
     /* 匯率 */
     .rate-row {
@@ -251,6 +262,14 @@
     }
 
     /* 購物清單 */
+    .shopping-owner-block {
+      margin-top: 6px;
+    }
+    .shopping-owner-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 4px 0;
+    }
     .shopping-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -505,7 +524,7 @@
         </section>
       </section>
 
-      <!-- 購物 view -->
+      <!-- 購物 view：Luna / Jen 分開 -->
       <section id="view-shopping" class="view-section">
         <section class="card">
           <div class="card-header">
@@ -513,9 +532,18 @@
               <span class="icon">🧺</span>
               購物清單
             </div>
-            <div class="card-subtitle">伴手禮 & 必買清單</div>
+            <div class="card-subtitle">Luna & Jen 的必買清單</div>
           </div>
-          <div class="shopping-grid" id="shoppingGrid"></div>
+
+          <div class="shopping-owner-block">
+            <div class="shopping-owner-title">Luna</div>
+            <div class="shopping-grid" id="shoppingGridLuna"></div>
+          </div>
+
+          <div class="shopping-owner-block">
+            <div class="shopping-owner-title">Jen</div>
+            <div class="shopping-grid" id="shoppingGridJen"></div>
+          </div>
         </section>
       </section>
 
@@ -527,7 +555,7 @@
               <span class="icon">💳</span>
               費用紀錄
             </div>
-            <div class="card-subtitle">住宿 / 交通 / 門票 / 餐飲</div>
+            <div class="card-subtitle">可註記付款人：Luna / Jen / 公基金</div>
           </div>
           <div class="total-card-main" id="totalJPY">¥0</div>
           <div class="total-card-sub" id="totalTWD">約 NT$0</div>
@@ -566,6 +594,13 @@
       <div class="form-group">
         <label>備註 / 哪裡買</label>
         <textarea id="shoppingNote" rows="2" placeholder="例：新千歲機場 / 札幌本店"></textarea>
+      </div>
+      <div class="form-group">
+        <label>誰要買？</label>
+        <select id="shoppingOwner">
+          <option value="Luna">Luna</option>
+          <option value="Jen">Jen</option>
+        </select>
       </div>
       <div class="form-group">
         <label>上傳照片（選填）</label>
@@ -608,6 +643,14 @@
         <input type="text" id="expenseMethod" placeholder="例：信用卡 / 現金" />
       </div>
       <div class="form-group">
+        <label>付款人</label>
+        <select id="expensePayer">
+          <option value="Luna">Luna</option>
+          <option value="Jen">Jen</option>
+          <option value="公基金">公基金</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label>金額 + 幣別</label>
         <div style="display:flex;gap:8px;">
           <input type="number" id="expenseAmount" placeholder="金額" />
@@ -624,7 +667,7 @@
     </div>
   </div>
 
-  <!-- 編輯行程 Modal -->
+  <!-- 編輯行程 Modal（含 Google Map 連結） -->
   <div class="modal-overlay" id="scheduleModal">
     <div class="modal">
       <div class="modal-title">編輯行程</div>
@@ -647,6 +690,10 @@
       <div class="form-group">
         <label>備註（note，可留白）</label>
         <textarea id="scheduleNote" rows="2" placeholder="例：本行程包含門票"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Google 地圖連結（選填）</label>
+        <input type="text" id="scheduleMap" placeholder="https://maps.app.goo.gl/..." />
       </div>
       <div class="modal-actions">
         <button class="btn btn-secondary" id="scheduleCancel">取消</button>
@@ -675,35 +722,40 @@
               tag: "去程",
               title: "桃園機場報到",
               sub: "TPE · 酷航 TR892",
-              note: "建議起飛前 3 小時到機場"
+              note: "建議起飛前 3 小時到機場",
+              map: ""
             },
             {
               time: "12:30",
               tag: "去程",
               title: "TR892 TPE → CTS",
               sub: "酷航 TR892 12:30 起飛，預計 17:20 抵達",
-              note: ""
+              note: "",
+              map: ""
             },
             {
               time: "17:20",
               tag: "抵達",
               title: "新千歲機場 (CTS)",
               sub: "入境、領行李、前往札幌",
-              note: "可在機場先買交通卡 / 上廁所 / 小補給"
+              note: "可在機場先買交通卡 / 上廁所 / 小補給",
+              map: "https://maps.app.goo.gl/"
             },
             {
               time: "19:30",
               tag: "入住",
               title: "VESSEL HOTEL 中島公園",
               sub: "12/24–12/26 · 14:00 入住 / 11:00 退房",
-              note: "放好行李，可去附近逛逛 / 超市 / 便利商店"
+              note: "放好行李，可去附近逛逛 / 超市 / 便利商店",
+              map: ""
             },
             {
               time: "21:00",
               tag: "TBD",
               title: "札幌夜散步（待決定）",
               sub: "大通公園 / 狸小路 or 其他",
-              note: ""
+              note: "",
+              map: ""
             }
           ]
         },
@@ -723,42 +775,48 @@
               tag: "去程",
               title: "集合出發",
               sub: "札幌 → 旭川方向（依憑證集合點）",
-              note: ""
+              note: "",
+              map: ""
             },
             {
               time: "10:30",
               tag: "景點",
               title: "旭山動物園",
               sub: "約 1 小時 40 分 · 自由活動",
-              note: "本行程包含旭山動物園門票"
+              note: "本行程包含旭山動物園門票",
+              map: ""
             },
             {
               time: "13:10",
               tag: "景點",
               title: "白金青池",
               sub: "約 15 分鐘 · 自由活動",
-              note: ""
+              note: "",
+              map: ""
             },
             {
               time: "13:30",
               tag: "景點",
               title: "白鬚瀑布",
               sub: "約 25 分鐘 · 自由活動",
-              note: ""
+              note: "",
+              map: ""
             },
             {
               time: "15:00",
               tag: "景點",
               title: "森林精靈露臺",
               sub: "約 1 小時 20 分 · 自由活動",
-              note: "拍照、散步、喝東西"
+              note: "拍照、散步、喝東西",
+              map: ""
             },
             {
               time: "18:30",
               tag: "回程",
               title: "返回札幌",
               sub: "回到集合地點附近解散",
-              note: "晚餐 / 夜晚行程 TBD"
+              note: "晚餐 / 夜晚行程 TBD",
+              map: ""
             }
           ]
         },
@@ -778,21 +836,24 @@
               tag: "退房",
               title: "退房 · VESSEL HOTEL 中島公園",
               sub: "最晚 11:00 退房，可寄放行李",
-              note: ""
+              note: "",
+              map: ""
             },
             {
               time: "12:00",
               tag: "TBD",
               title: "札幌市區行程（待決定）",
               sub: "大通公園 / 狸小路 / 札幌車站周邊",
-              note: ""
+              note: "",
+              map: ""
             },
             {
               time: "15:00",
               tag: "入住",
               title: "相鐵 FRESA INN 薄野",
               sub: "12/26–12/29 · 15:00 入住 / 11:00 退房",
-              note: "放行李後可去薄野吃晚餐、逛街"
+              note: "放行李後可去薄野吃晚餐、逛街",
+              map: ""
             }
           ]
         },
@@ -812,28 +873,32 @@
               tag: "出發",
               title: "札幌 → 手稻滑雪場",
               sub: "搭 JR / 巴士（依實際安排）",
-              note: "前一天先確認車班時間"
+              note: "前一天先確認車班時間",
+              map: ""
             },
             {
               time: "09:00",
               tag: "滑雪",
               title: "集合 & 租裝備",
               sub: "手稻滑雪場 · 與雪長姐會合",
-              note: ""
+              note: "",
+              map: ""
             },
             {
               time: "10:00",
               tag: "滑雪",
               title: "滑雪教學 & 自由滑",
               sub: "中午可在雪場用餐",
-              note: ""
+              note: "",
+              map: ""
             },
             {
               time: "16:00",
               tag: "回程",
               title: "離開手稻滑雪場",
               sub: "搭車返回札幌",
-              note: "回到薄野附近吃晚餐 / 泡湯 TBD"
+              note: "回到薄野附近吃晚餐 / 泡湯 TBD",
+              map: ""
             }
           ]
         },
@@ -853,7 +918,8 @@
               tag: "TBD",
               title: "自由滑雪 or 市區行程",
               sub: "之後再自己決定細節",
-              note: ""
+              note: "",
+              map: ""
             }
           ]
         },
@@ -873,30 +939,33 @@
               tag: "退房",
               title: "退房 · 相鐵 FRESA INN 薄野",
               sub: "最晚 11:00 退房，可先帶行李去札幌站寄物",
-              note: ""
+              note: "",
+              map: ""
             },
             {
               time: "12:00",
               tag: "前往機場",
               title: "札幌 → 新千歲機場",
               sub: "搭 JR / 巴士前往 CTS",
-              note: "預留時間逛機場 & 買伴手禮"
+              note: "預留時間逛機場 & 買伴手禮",
+              map: ""
             },
             {
               time: "13:55",
               tag: "回程",
               title: "FD243 CTS → TPE",
               sub: "Airasia FD243 13:55 起飛，預計 17:55 抵達",
-              note: ""
+              note: "",
+              map: ""
             }
           ]
         }
       ],
       fx: { rate: 0.215 },
       defaultShopping: [
-        { id: "s1", name: "六花亭 奶油葡萄夾心餅", note: "札幌本店 & 新千歲機場" },
-        { id: "s2", name: "LeTAO 雙層起司蛋糕", note: "小樽本店 / 機場分店" },
-        { id: "s3", name: "薯條三兄弟", note: "Calbee+ / 新千歲機場限定" }
+        { id: "s1", owner: "Luna", name: "六花亭 奶油葡萄夾心餅", note: "札幌本店 & 新千歲機場" },
+        { id: "s2", owner: "Luna", name: "LeTAO 雙層起司蛋糕", note: "小樽本店 / 機場分店" },
+        { id: "s3", owner: "Jen",  name: "薯條三兄弟", note: "Calbee+ / 新千歲機場限定" }
       ],
       defaultExpenses: [
         {
@@ -906,7 +975,8 @@
           date: "2025-12-24",
           method: "信用卡",
           amount: 22000,
-          currency: "JPY"
+          currency: "JPY",
+          payer: "公基金"
         },
         {
           id: "e2",
@@ -915,15 +985,16 @@
           date: "2025-12-26",
           method: "信用卡",
           amount: 26000,
-          currency: "JPY"
+          currency: "JPY",
+          payer: "公基金"
         }
       ]
     };
 
-    // ========= 2. localStorage =========
-    const TRIP_KEY = "hk_trip_data_v2";
-    const SHOP_KEY = "hk_shopping_v2";
-    const EXP_KEY = "hk_expenses_v2";
+    // ========= 2. localStorage（這版用 v3，避免舊資料型別衝突） =========
+    const TRIP_KEY = "hk_trip_data_v3";
+    const SHOP_KEY = "hk_shopping_v3";
+    const EXP_KEY = "hk_expenses_v3";
     const HERO_BG_KEY = "hk_hero_bg_v2";
 
     const safeParse = str => {
@@ -1024,6 +1095,7 @@
                 <div class="timeline-title">${item.title}</div>
                 <div class="timeline-sub">${item.sub || ""}</div>
                 ${item.note ? `<div class="timeline-note">${item.note}</div>` : ""}
+                ${item.map ? `<a href="${item.map}" target="_blank" class="timeline-map-link">🗺️ Google 地圖</a>` : ""}
               </div>
             </div>
           `).join("")}
@@ -1066,20 +1138,28 @@
       updateFromJPY();
     }
 
-    // ========= 5. 購物清單 =========
-    const shoppingGridEl = document.getElementById("shoppingGrid");
+    // ========= 5. 購物清單（Luna / Jen 分開） =========
+    const shoppingGridLunaEl = document.getElementById("shoppingGridLuna");
+    const shoppingGridJenEl = document.getElementById("shoppingGridJen");
+
     function renderShopping() {
-      if (!shoppingGridEl) return;
-      shoppingGridEl.innerHTML = shoppingList.map(item => `
+      if (!shoppingGridLunaEl || !shoppingGridJenEl) return;
+      const lunaItems = shoppingList.filter(i => i.owner === "Luna" || !i.owner);
+      const jenItems  = shoppingList.filter(i => i.owner === "Jen");
+
+      const renderCards = items => items.map(item => `
         <div class="shopping-card">
           <div class="shopping-name">${item.name}</div>
           ${item.note ? `<div class="shopping-note">${item.note}</div>` : ""}
           ${item.imageData ? `<img class="shopping-img" src="${item.imageData}" alt="">` : ""}
         </div>
       `).join("");
+
+      shoppingGridLunaEl.innerHTML = renderCards(lunaItems);
+      shoppingGridJenEl.innerHTML  = renderCards(jenItems);
     }
 
-    // ========= 6. 費用紀錄 =========
+    // ========= 6. 費用紀錄（含付款人） =========
     const expenseListEl = document.getElementById("expenseList");
     const totalJPYEl = document.getElementById("totalJPY");
     const totalTWDEl = document.getElementById("totalTWD");
@@ -1119,7 +1199,7 @@
             <div>
               <div class="expense-text-main">${item.title}</div>
               <div class="expense-text-sub">
-                ${item.date || ""} ${item.method ? " · " + item.method : ""}
+                ${item.date || ""}${item.method ? " · " + item.method : ""}${item.payer ? " · " + item.payer : ""}
               </div>
             </div>
           </div>
@@ -1214,6 +1294,7 @@
     const shoppingSave = document.getElementById("shoppingSave");
     const shoppingName = document.getElementById("shoppingName");
     const shoppingNote = document.getElementById("shoppingNote");
+    const shoppingOwner = document.getElementById("shoppingOwner");
     const shoppingImageInput = document.getElementById("shoppingImageInput");
 
     const expenseModal = document.getElementById("expenseModal");
@@ -1223,6 +1304,7 @@
     const expenseCategory = document.getElementById("expenseCategory");
     const expenseDate = document.getElementById("expenseDate");
     const expenseMethod = document.getElementById("expenseMethod");
+    const expensePayer = document.getElementById("expensePayer");
     const expenseAmount = document.getElementById("expenseAmount");
     const expenseCurrency = document.getElementById("expenseCurrency");
 
@@ -1234,6 +1316,7 @@
     const scheduleTitle = document.getElementById("scheduleTitle");
     const scheduleSub = document.getElementById("scheduleSub");
     const scheduleNote = document.getElementById("scheduleNote");
+    const scheduleMap = document.getElementById("scheduleMap");
     const editTodayBtn = document.getElementById("editTodayBtn");
 
     const openModal = m => m.classList.add("show");
@@ -1250,6 +1333,7 @@
         closeModal(typeModal);
         shoppingName.value = "";
         shoppingNote.value = "";
+        shoppingOwner.value = "Luna";
         shoppingImageInput.value = "";
         openModal(shoppingModal);
       });
@@ -1261,6 +1345,7 @@
         expenseMethod.value = "";
         expenseAmount.value = "";
         expenseCurrency.value = "JPY";
+        expensePayer.value = "Luna";
         openModal(expenseModal);
       });
     }
@@ -1275,10 +1360,11 @@
         const name = shoppingName.value.trim();
         if (!name) { alert("請輸入商品名稱"); return; }
         const note = shoppingNote.value.trim();
+        const owner = shoppingOwner.value || "Luna";
         const file = shoppingImageInput.files[0];
 
         const addItem = imageData => {
-          shoppingList.push({ id: "s" + Date.now(), name, note, imageData });
+          shoppingList.push({ id: "s" + Date.now(), owner, name, note, imageData });
           saveShopping();
           renderShopping();
         };
@@ -1309,7 +1395,8 @@
           date: expenseDate.value,
           method: expenseMethod.value.trim(),
           amount,
-          currency: expenseCurrency.value
+          currency: expenseCurrency.value,
+          payer: expensePayer.value
         };
         expenseList.push(data);
         saveExpenses();
@@ -1318,7 +1405,7 @@
       });
     }
 
-    // ========= 10. 行程編輯 =========
+    // ========= 10. 行程編輯（含 Google Map） =========
     let editingDayIndex = null;
     let editingScheduleIndex = null;
 
@@ -1332,6 +1419,7 @@
       scheduleTitle.value = item.title || "";
       scheduleSub.value = item.sub || "";
       scheduleNote.value = item.note || "";
+      scheduleMap.value = item.map || "";
 
       openModal(scheduleModal);
     }
@@ -1359,6 +1447,7 @@
         item.title = scheduleTitle.value.trim() || "未命名行程";
         item.sub = scheduleSub.value.trim();
         item.note = scheduleNote.value.trim();
+        item.map = scheduleMap.value.trim();
 
         saveTripData();
         renderDayContent();
