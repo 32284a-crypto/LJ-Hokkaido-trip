@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hokkaido 2026 Family Trip</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", sans-serif;
+      background: #f4f8ff;
+      color: #123456;
+    }
+    .app {
+      max-width: 430px;
+      margin: 0 auto;
+      background: #f4f8ff;
+      min-height: 100vh;
+    }
+
+    /* 頂部 banner */
+    .hero {
+      background: linear-gradient(135deg, #bde3ff, #e5f4ff);
+      padding: 16px 16px 20px;
+      border-radius: 0 0 24px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-title {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: 2px;
+    }
+    .hero-sub {
+      margin-top: 4px;
+      font-size: 14px;
+      opacity: 0.85;
+    }
+    .hero-tabs {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      overflow-x: auto;
+    }
+    .day-tab {
+      min-width: 64px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      text-align: center;
+      font-size: 12px;
+      background: rgba(255,255,255,0.6);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .day-tab.active {
+      background: #0b67ff;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .top-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .top-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    /* 內容卡片共用 */
+    .content {
+      padding: 16px;
+      padding-bottom: 40px;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 14px 14px 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      margin-bottom: 12px;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .card-subtitle {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+    .icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      background: #e6f0ff;
+    }
+
+    /* 天氣卡片 */
+    .weather-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+    .weather-temp {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .weather-temp span:nth-child(1) {
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .weather-temp span:nth-child(2) {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+    .weather-extra {
+      font-size: 12px;
+      text-align: right;
+    }
+
+    /* 行程列表 */
+    .timeline-item {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .timeline-time {
+      font-size: 12px;
+      font-weight: 600;
+      width: 46px;
+    }
+    .timeline-body {
+      flex: 1;
+    }
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: #f0f3ff;
+      margin-bottom: 2px;
+    }
+    .timeline-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .timeline-sub {
+      font-size: 11px;
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+    .timeline-note {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 2px;
+    }
+
+    /* 匯率 */
+    .rate-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-size: 13px;
+    }
+    .rate-row input,
+    .rate-row select {
+      width: 45%;
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px solid #d0ddff;
+      font-size: 13px;
+    }
+    .rate-meta {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    /* 購物清單 */
+    .shopping-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .shopping-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      font-size: 12px;
+    }
+    .shopping-name {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .shopping-note {
+      opacity: 0.75;
+      font-size: 11px;
+      margin-top: 2px;
+    }
+    .shopping-img {
+      width: 100%;
+      border-radius: 12px;
+      object-fit: cover;
+      margin-top: 6px;
+      max-height: 120px;
+    }
+
+    /* 費用紀錄 */
+    .total-card-main {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .total-card-sub {
+      margin-top: 4px;
+      font-size: 12px;
+      opacity: 0.85;
+    }
+    .expense-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f2ff;
+    }
+    .expense-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .expense-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #c5d8ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .expense-text-main {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .expense-text-sub {
+      font-size: 11px;
+      opacity: 0.75;
+      margin-top: 2px;
+    }
+    .expense-right {
+      text-align: right;
+      font-size: 13px;
+    }
+    .expense-delete {
+      color: #ff4d4f;
+      font-size: 14px;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+
+    /* 浮動新增按鈕 */
+    .fab {
+      position: fixed;
+      right: 20px;
+      bottom: 24px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #ffd54f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+      cursor: pointer;
+      z-index: 20;
+    }
+
+    /* modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 30;
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    .modal {
+      width: 90%;
+      max-width: 360px;
+      background: #fff;
+      border-radius: 18px;
+      padding: 16px 16px 14px;
+    }
+    .modal-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .form-group {
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 4px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #d0ddff;
+      padding: 6px 8px;
+      font-size: 13px;
+      resize: vertical;
+    }
+    .upload-box {
+      border: 1px dashed #c2ccee;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      font-size: 12px;
+      color: #7683a8;
+      margin-top: 4px;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .btn {
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 13px;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-secondary {
+      background: #f3f5ff;
+      color: #333;
+    }
+    .btn-primary {
+      background: #0b67ff;
+      color: #fff;
+    }
+
+    .footer-space { height: 80px; }
+    @media (min-width: 768px) {
+      .fab { right: calc(50% - 215px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- 頂部 Banner -->
+    <header class="hero">
+      <div>
+        <div class="hero-title">Hokkaido</div>
+        <div class="hero-sub">2026 Family Trip · 北海道家族旅行</div>
+      </div>
+
+      <!-- 模擬右下三個小圖示 -->
+      <div class="top-buttons">
+        <div class="top-btn">📍</div>
+        <div class="top-btn">🧺</div>
+        <div class="top-btn">💰</div>
+      </div>
+
+      <div class="hero-tabs" id="dayTabs"></div>
+    </header>
+
+    <!-- 主要內容 -->
+    <main class="content">
+      <!-- 每日行程 + 天氣 -->
+      <section id="dayContent"></section>
+
+      <!-- 匯率卡 -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="icon">💱</span>
+            匯率換算
+          </div>
+          <div class="card-subtitle">JPY ↔ TWD</div>
+        </div>
+        <div class="rate-row">
+          <input id="jpyInput" type="number" value="50000" />
+          <span>⇄</span>
+          <input id="twdInput" type="number" value="10750" />
+        </div>
+        <div class="rate-meta" id="rateText"></div>
+      </section>
+
+      <!-- 購物清單 -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="icon">🧺</span>
+            購物清單
+          </div>
+          <div class="card-subtitle">伴手禮 & 必買清單</div>
+        </div>
+        <div class="shopping-grid" id="shoppingGrid"></div>
+      </section>
+
+      <!-- 費用紀錄 -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="icon">💳</span>
+            費用紀錄
+          </div>
+          <div class="card-subtitle">住宿 / 交通 / 門票 / 餐飲</div>
+        </div>
+        <div class="total-card-main" id="totalJPY">¥0</div>
+        <div class="total-card-sub" id="totalTWD">約 NT$0</div>
+
+        <div id="expenseList" style="margin-top:10px;"></div>
+      </section>
+
+      <div class="footer-space"></div>
+    </main>
+  </div>
+
+  <!-- 浮動新增按鈕：點一下會問你要新增「購物」還是「費用」 -->
+  <div class="fab" id="fabBtn">＋</div>
+
+  <!-- 選擇新增類型的小對話框 -->
+  <div class="modal-overlay" id="typeModal">
+    <div class="modal">
+      <div class="modal-title">要新增什麼？</div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="typeCancel">取消</button>
+        <button class="btn btn-primary" id="addShoppingBtn">購物清單</button>
+        <button class="btn btn-primary" id="addExpenseBtn">費用</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增購物清單 Modal -->
+  <div class="modal-overlay" id="shoppingModal">
+    <div class="modal">
+      <div class="modal-title">新增購物清單</div>
+      <div class="form-group">
+        <label>商品名稱</label>
+        <input type="text" id="shoppingName" placeholder="例：六花亭 奶油葡萄夾心餅" />
+      </div>
+      <div class="form-group">
+        <label>備註 / 哪裡買</label>
+        <textarea id="shoppingNote" rows="2" placeholder="例：新千歲機場 / 札幌本店"></textarea>
+      </div>
+      <div class="form-group">
+        <label>上傳照片（選填）</label>
+        <div class="upload-box">
+          <input type="file" id="shoppingImageInput" accept="image/*" />
+          <div style="margin-top:4px;">選一張商品圖片（會存在這台裝置的瀏覽器）</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="shoppingCancel">取消</button>
+        <button class="btn btn-primary" id="shoppingSave">新增</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增費用 Modal -->
+  <div class="modal-overlay" id="expenseModal">
+    <div class="modal">
+      <div class="modal-title">新增費用紀錄</div>
+      <div class="form-group">
+        <label>項目名稱</label>
+        <input type="text" id="expenseTitle" placeholder="例：登別溫泉飯店" />
+      </div>
+      <div class="form-group">
+        <label>類別</label>
+        <select id="expenseCategory">
+          <option value="住宿">住宿</option>
+          <option value="交通">交通</option>
+          <option value="門票">門票</option>
+          <option value="餐飲">餐飲</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>日期</label>
+        <input type="date" id="expenseDate" />
+      </div>
+      <div class="form-group">
+        <label>付款方式（選填）</label>
+        <input type="text" id="expenseMethod" placeholder="例：信用卡 / 現金" />
+      </div>
+      <div class="form-group">
+        <label>金額 + 幣別</label>
+        <div style="display:flex;gap:8px;">
+          <input type="number" id="expenseAmount" placeholder="金額" />
+          <select id="expenseCurrency">
+            <option value="JPY">JPY</option>
+            <option value="TWD">TWD</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="expenseCancel">取消</button>
+        <button class="btn btn-primary" id="expenseSave">新增</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========= 1. 基本旅遊資料（你要改行程文字就改這裡） =========
+    const tripData = {
+      days: [
+        {
+          id: "2026-03-06",
+          label: "五 3/6",
+          weather: {
+            temp: 0,
+            low: -5,
+            feels: -8,
+            status: "大雪 / 降雪",
+            note: "本日步行 / 大眾運輸"
+          },
+          schedule: [
+            {
+              time: "06:00",
+              tag: "桃園機場報到",
+              title: "桃園國際機場 (TPE)",
+              sub: "Check-in · 航班 CI0130",
+              note: "中華航空 CI0130 08:35 起飛"
+            },
+            {
+              time: "13:15",
+              tag: "抵達北海道",
+              title: "新千歲機場 (CTS)",
+              sub: "入境、領行李、搭乘前往札幌的交通",
+              note: "預估 15:30 抵達札幌飯店附近"
+            },
+            {
+              time: "17:30",
+              tag: "入住飯店",
+              title: "札幌大通東急STAY飯店",
+              sub: "3/6 - 3/7 · 含早餐",
+              note: "放行李後可到大通公園 / 狸小路散步"
+            }
+          ]
+        },
+        {
+          id: "2026-03-07",
+          label: "六 3/7",
+          weather: {
+            temp: -1,
+            low: -6,
+            feels: -9,
+            status: "陰 / 小雪",
+            note: "建議多穿一層、防風外套"
+          },
+          schedule: [
+            {
+              time: "09:00",
+              tag: "札幌市區",
+              title: "札幌市區散步 & 咖啡",
+              sub: "大通公園 / 時計台 / 狸小路",
+              note: "推薦：附近咖啡店 & 北菓樓 / 六花亭本店"
+            },
+            {
+              time: "18:00",
+              tag: "晚餐",
+              title: "湯咖哩 / 成吉思汗烤肉",
+              sub: "依心情選一間排隊名店",
+              note: "可提前排隊或線上登記候位"
+            }
+          ]
+        }
+      ],
+      fx: {
+        rate: 0.215 // 1 JPY ≈ 0.215 TWD（自己改）
+      },
+      defaultShopping: [
+        {
+          id: "s1",
+          name: "六花亭 奶油葡萄夾心餅",
+          note: "札幌本店 & 新千歲機場"
+        },
+        {
+          id: "s2",
+          name: "LeTAO 雙層起司蛋糕",
+          note: "小樽本店 / 機場分店"
+        },
+        {
+          id: "s3",
+          name: "薯條三兄弟",
+          note: "Calbee+ / 新千歲機場限定"
+        }
+      ],
+      defaultExpenses: [
+        {
+          id: "e1",
+          title: "登別溫泉飯店",
+          category: "住宿",
+          date: "2026-03-09",
+          method: "信用卡",
+          amount: 80000,
+          currency: "JPY"
+        },
+        {
+          id: "e2",
+          title: "小樽水族館門票",
+          category: "門票",
+          date: "2026-03-07",
+          method: "信用卡",
+          amount: 3600,
+          currency: "JPY"
+        }
+      ]
+    };
+
+    // ========= 2. 讀取 / 儲存 localStorage =========
+    const SHOP_KEY = "hokkaidoShopping";
+    const EXP_KEY = "hokkaidoExpenses";
+
+    function loadShopping() {
+      const data = localStorage.getItem(SHOP_KEY);
+      if (data) return JSON.parse(data);
+      return tripData.defaultShopping;
+    }
+    function saveShopping(list) {
+      localStorage.setItem(SHOP_KEY, JSON.stringify(list));
+    }
+
+    function loadExpenses() {
+      const data = localStorage.getItem(EXP_KEY);
+      if (data) return JSON.parse(data);
+      return tripData.defaultExpenses;
+    }
+    function saveExpenses(list) {
+      localStorage.setItem(EXP_KEY, JSON.stringify(list));
+    }
+
+    let shoppingList = loadShopping();
+    let expenseList = loadExpenses();
+
+    // ========= 3. Render 行程 =========
+    const dayTabsEl = document.getElementById("dayTabs");
+    const dayContentEl = document.getElementById("dayContent");
+    let currentDayIndex = 0;
+
+    function renderTabs() {
+      dayTabsEl.innerHTML = "";
+      tripData.days.forEach((day, idx) => {
+        const tab = document.createElement("div");
+        tab.className = "day-tab" + (idx === currentDayIndex ? " active" : "");
+        tab.textContent = day.label;
+        tab.onclick = () => {
+          currentDayIndex = idx;
+          renderTabs();
+          renderDayContent();
+        };
+        dayTabsEl.appendChild(tab);
+      });
+    }
+
+    function renderDayContent() {
+      const day = tripData.days[currentDayIndex];
+      if (!day) return;
+      let html = "";
+
+      html += `
+        <section class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="icon">❄️</span>
+              ${day.weather.temp}℃ / ${day.weather.low}℃
+            </div>
+            <div class="card-subtitle">${day.weather.status}</div>
+          </div>
+          <div class="weather-main">
+            <div class="weather-temp">
+              <span>${day.weather.temp}°</span>
+              <span>體感 ${day.weather.feels}°C</span>
+            </div>
+            <div class="weather-extra">
+              <div>${day.weather.status}</div>
+              <div>${day.weather.note}</div>
+            </div>
+          </div>
+        </section>
+      `;
+
+      html += `
+        <section class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="icon">🗓</span>
+              今日行程
+            </div>
+            <div class="card-subtitle">${day.label}</div>
+          </div>
+          ${day.schedule.map(item => `
+            <div class="timeline-item">
+              <div class="timeline-time">${item.time}</div>
+              <div class="timeline-body">
+                <div class="tag">${item.tag}</div>
+                <div class="timeline-title">${item.title}</div>
+                <div class="timeline-sub">${item.sub || ""}</div>
+                ${item.note ? `<div class="timeline-note">${item.note}</div>` : ""}
+              </div>
+            </div>
+          `).join("")}
+        </section>
+      `;
+
+      dayContentEl.innerHTML = html;
+    }
+
+    // ========= 4. 匯率換算 =========
+    const jpyInput = document.getElementById("jpyInput");
+    const twdInput = document.getElementById("twdInput");
+    const rateText = document.getElementById("rateText");
+
+    function updateFromJPY() {
+      const jpy = parseFloat(jpyInput.value || "0");
+      const twd = Math.round(jpy * tripData.fx.rate);
+      twdInput.value = twd;
+    }
+    function updateFromTWD() {
+      const twd = parseFloat(twdInput.value || "0");
+      const jpy = Math.round(twd / tripData.fx.rate);
+      jpyInput.value = jpy;
+    }
+
+    jpyInput.addEventListener("input", updateFromJPY);
+    twdInput.addEventListener("input", updateFromTWD);
+
+    function initRate() {
+      rateText.textContent = `示意匯率：1 JPY ≈ ${tripData.fx.rate} TWD`;
+      updateFromJPY();
+    }
+
+    // ========= 5. 購物清單 =========
+    const shoppingGridEl = document.getElementById("shoppingGrid");
+
+    function renderShopping() {
+      shoppingGridEl.innerHTML = shoppingList.map(item => `
+        <div class="shopping-card">
+          <div class="shopping-name">${item.name}</div>
+          ${item.note ? `<div class="shopping-note">${item.note}</div>` : ""}
+          ${item.imageData ? `<img class="shopping-img" src="${item.imageData}" alt="">` : ""}
+        </div>
+      `).join("");
+    }
+
+    // ========= 6. 費用紀錄 =========
+    const expenseListEl = document.getElementById("expenseList");
+    const totalJPYEl = document.getElementById("totalJPY");
+    const totalTWDEl = document.getElementById("totalTWD");
+
+    function calcTotals() {
+      let totalJPY = 0;
+      expenseList.forEach(item => {
+        if (item.currency === "JPY") {
+          totalJPY += item.amount;
+        } else if (item.currency === "TWD") {
+          totalJPY += item.amount / tripData.fx.rate;
+        }
+      });
+      const totalTWD = Math.round(totalJPY * tripData.fx.rate);
+      totalJPYEl.textContent = "¥" + totalJPY.toLocaleString();
+      totalTWDEl.textContent = "約 NT$" + totalTWD.toLocaleString();
+    }
+
+    function categoryColor(cat) {
+      switch (cat) {
+        case "住宿": return "#ab47bc";
+        case "交通": return "#29b6f6";
+        case "門票": return "#26a69a";
+        case "餐飲": return "#ff7043";
+        default: return "#78909c";
+      }
+    }
+
+    function renderExpenses() {
+      expenseListEl.innerHTML = expenseList.map(item => `
+        <div class="expense-item">
+          <div class="expense-left">
+            <div class="expense-icon" style="background:${categoryColor(item.category)};">
+              ${item.category}
+            </div>
+            <div>
+              <div class="expense-text-main">${item.title}</div>
+              <div class="expense-text-sub">
+                ${item.date || ""} ${item.method ? " · " + item.method : ""}
+              </div>
+            </div>
+          </div>
+          <div class="expense-right">
+            <div>${item.currency === "JPY" ? "¥" : "NT$"}${item.amount.toLocaleString()}</div>
+            <span class="expense-delete" data-id="${item.id}">✕</span>
+          </div>
+        </div>
+      `).join("");
+
+      // 綁定刪除按鈕
+      document.querySelectorAll(".expense-delete").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-id");
+          expenseList = expenseList.filter(e => e.id !== id);
+          saveExpenses(expenseList);
+          renderExpenses();
+          calcTotals();
+        });
+      });
+
+      calcTotals();
+    }
+
+    // ========= 7. 各種 Modal 控制 =========
+    const fabBtn = document.getElementById("fabBtn");
+    const typeModal = document.getElementById("typeModal");
+    const typeCancel = document.getElementById("typeCancel");
+    const addShoppingBtn = document.getElementById("addShoppingBtn");
+    const addExpenseBtn = document.getElementById("addExpenseBtn");
+
+    const shoppingModal = document.getElementById("shoppingModal");
+    const shoppingCancel = document.getElementById("shoppingCancel");
+    const shoppingSave = document.getElementById("shoppingSave");
+    const shoppingName = document.getElementById("shoppingName");
+    const shoppingNote = document.getElementById("shoppingNote");
+    const shoppingImageInput = document.getElementById("shoppingImageInput");
+
+    const expenseModal = document.getElementById("expenseModal");
+    const expenseCancel = document.getElementById("expenseCancel");
+    const expenseSave = document.getElementById("expenseSave");
+    const expenseTitle = document.getElementById("expenseTitle");
+    const expenseCategory = document.getElementById("expenseCategory");
+    const expenseDate = document.getElementById("expenseDate");
+    const expenseMethod = document.getElementById("expenseMethod");
+    const expenseAmount = document.getElementById("expenseAmount");
+    const expenseCurrency = document.getElementById("expenseCurrency");
+
+    function openModal(m) { m.classList.add("show"); }
+    function closeModal(m) { m.classList.remove("show"); }
+
+    fabBtn.addEventListener("click", () => openModal(typeModal));
+    typeCancel.addEventListener("click", () => closeModal(typeModal));
+
+    addShoppingBtn.addEventListener("click", () => {
+      closeModal(typeModal);
+      shoppingName.value = "";
+      shoppingNote.value = "";
+      shoppingImageInput.value = "";
+      openModal(shoppingModal);
+    });
+
+    addExpenseBtn.addEventListener("click", () => {
+      closeModal(typeModal);
+      expenseTitle.value = "";
+      expenseMethod.value = "";
+      expenseAmount.value = "";
+      expenseCurrency.value = "JPY";
+      openModal(expenseModal);
+    });
+
+    shoppingCancel.addEventListener("click", () => closeModal(shoppingModal));
+    expenseCancel.addEventListener("click", () => closeModal(expenseModal));
+
+    // 新增購物
+    shoppingSave.addEventListener("click", () => {
+      const name = shoppingName.value.trim();
+      if (!name) {
+        alert("請輸入商品名稱");
+        return;
+      }
+      const note = shoppingNote.value.trim();
+
+      const file = shoppingImageInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const imageData = e.target.result;
+          shoppingList.push({
+            id: "s" + Date.now(),
+            name,
+            note,
+            imageData
+          });
+          saveShopping(shoppingList);
+          renderShopping();
+        };
+        reader.readAsDataURL(file);
+      } else {
+        shoppingList.push({
+          id: "s" + Date.now(),
+          name,
+          note
+        });
+        saveShopping(shoppingList);
+        renderShopping();
+      }
+
+      closeModal(shoppingModal);
+    });
+
+    // 新增費用
+    expenseSave.addEventListener("click", () => {
+      const title = expenseTitle.value.trim();
+      if (!title) {
+        alert("請輸入項目名稱");
+        return;
+      }
+      const amount = parseFloat(expenseAmount.value || "0");
+      if (!amount || amount <= 0) {
+        alert("請輸入金額");
+        return;
+      }
+      const data = {
+        id: "e" + Date.now(),
+        title,
+        category: expenseCategory.value,
+        date: expenseDate.value,
+        method: expenseMethod.value.trim(),
+        amount,
+        currency: expenseCurrency.value
+      };
+      expenseList.push(data);
+      saveExpenses(expenseList);
+      renderExpenses();
+      closeModal(expenseModal);
+    });
+
+    // ========= 8. 初始化 =========
+    function init() {
+      renderTabs();
+      renderDayContent();
+      initRate();
+      renderShopping();
+      renderExpenses();
+    }
+    init();
+  </script>
+</body>
+</html>
