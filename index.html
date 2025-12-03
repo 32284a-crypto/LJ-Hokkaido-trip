@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hokkiado</title>
-    <title>2025 相親相愛又一年</title>
+    <title>2025 Hokkiao </title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -123,7 +122,6 @@
 
         .btn-edit { background: var(--primary); color: white; }
         .btn-save { background: #27ae60; color: white; display: none; }
-        .btn-reset { background: #e74c3c; color: white; display: none; }
         
         body.editing .editable {
             border: 1px dashed #999;
@@ -133,7 +131,7 @@
             min-height: 1em;
             cursor: text;
         }
-        body.editing .btn-save, body.editing .btn-reset { display: block; }
+        body.editing .btn-save { display: block; }
         body.editing .btn-edit { display: none; }
 
         /* --- 行程表樣式 --- */
@@ -252,7 +250,7 @@
                 <tr>
                     <th width="30%">項目</th>
                     <th width="20%">類別</th>
-                    <th width="20%">付款人 (新功能)</th>
+                    <th width="20%">付款人</th>
                     <th>金額 (JPY)</th>
                 </tr>
             </thead>
@@ -265,20 +263,19 @@
 <div class="controls">
     <button class="btn-edit" onclick="toggleEditMode()">✏️ 編輯內容</button>
     <button class="btn-save" onclick="saveData()">💾 儲存全部</button>
-    <button class="btn-reset" onclick="resetData()">↺ 重置</button>
 </div>
 
 <script>
 // --- 1. 資料結構與預設值 ---
 const defaultData = {
-    meta: { title: "北海道滑雪 ⛷️" },
+    meta: { title: "Hokkiado⛷️" },
     schedule: [
         {
           id: "d1", label: "Day1 12/24",
           weather: { status: "抵達日", temp: "-1", feels: "-8" },
           events: [
             { time: "09:30", tag: "去程", title: "桃園機場報到", sub: "酷航 TR892", note: "起飛前3小時到" },
-            { time: "17:20", tag: "抵達", title: "新千歲機場", sub: "領行李、搭車", note: "先買個飯糰", map_url: "https://maps.app.goo.gl/3547Gq83L3F7E3qT6" }, // 👈 新增地圖連結範例
+            { time: "17:20", tag: "抵達", title: "新千歲機場", sub: "領行李、搭車", note: "先買個飯糰", map_url: "https://maps.app.goo.gl/3547Gq83L3F7E3qT6" },
             { time: "19:30", tag: "入住", title: "VESSEL HOTEL", sub: "中島公園", note: "附近有Lawson", map_url: "https://maps.app.goo.gl/wS78r9Qz1VzQ5T2G7" }
           ]
         },
@@ -292,7 +289,6 @@ const defaultData = {
           ]
         }
     ],
-    // 👈 購物清單改為物件，分為 Luna 和 Jen
     shopping: {
         luna: [
             { item: "白色戀人", note: "送同事", checked: false },
@@ -303,7 +299,6 @@ const defaultData = {
             { item: "北菓樓 泡芙", note: "機場吃", checked: false }
         ]
     },
-    // 👈 花費新增 payer 欄位
     expenses: [
         { item: "機票", type: "交通", cost: 12000, payer: "公基金" },
         { item: "住宿 (5晚)", type: "住宿", cost: 25000, payer: "Jen" },
@@ -329,7 +324,7 @@ function renderAll() {
             const mapIconHtml = ev.map_url ? 
                 `<a href="${ev.map_url}" target="_blank" class="map-icon" title="Google地圖連結">
                     <i class="fas fa-map-marker-alt"></i>
-                </a>` : ''; // 👈 地圖連結圖示
+                </a>` : '';
             
             return `
                 <div class="event-card">
@@ -396,7 +391,7 @@ function switchTab(tabId) {
     document.querySelectorAll('.nav-item')[index].classList.add('active');
 }
 
-// --- 5. 購物清單專屬功能 (新功能) ---
+// --- 5. 購物清單專屬功能 ---
 function renderShoppingList(listName) {
     activeShoppingList = listName; // 更新目前選中的清單
     
@@ -425,7 +420,7 @@ function switchShoppingList(listName) {
     renderShoppingList(listName);
 }
 
-// 購物清單打勾功能 (已更新為支援兩份清單)
+// 購物清單打勾功能
 function toggleCheck(listName, index) {
     tripData.shopping[listName][index].checked = !tripData.shopping[listName][index].checked;
     saveToLocal(); // 自動存
@@ -460,7 +455,7 @@ function saveData() {
                 tripData.schedule[d].events[e][key] = val;
             }
         } else if (scope === 'shopping') {
-            const listName = el.dataset.list; // 👈 增加 listName
+            const listName = el.dataset.list;
             const i = el.dataset.i;
             tripData.shopping[listName][i][el.dataset.key] = val;
         } else if (scope === 'expenses') {
@@ -479,16 +474,7 @@ function saveToLocal() {
     localStorage.setItem('myFullTripData', JSON.stringify(tripData));
 }
 
-function resetData() {
-    if(confirm('確定要重置？所有修改將消失！')) {
-        localStorage.removeItem('myFullTripData');
-        // 深複製一份 defaultData 以確保重置後與原始資料結構完全一樣
-        tripData = JSON.parse(JSON.stringify(defaultData)); 
-        renderAll();
-        document.body.classList.remove('editing');
-        alert('資料已重置回預設範例！');
-    }
-}
+// *** 註：已移除 resetData() 功能，確保資料不會被誤刪 ***
 
 // 啟動
 renderAll();
