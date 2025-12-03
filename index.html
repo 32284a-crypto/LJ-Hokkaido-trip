@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>北海道滑雪之旅</title>
+    <title>Hokkiado</title>
+    <title>2025 相親相愛又一年</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -149,14 +150,20 @@
             background: var(--card-bg); border-radius: 12px; padding: 15px;
             margin-bottom: 15px; margin-left: 10px; border-left: 4px solid var(--accent);
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: relative; /* 為了地圖圖示定位 */
         }
         .time-badge { background: var(--accent); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; margin-right: 5px;}
         .tag-badge { background: #eee; color: #555; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; }
         .event-title { font-size: 1.1rem; font-weight: bold; margin: 8px 0 4px 0; }
         .event-sub { font-size: 0.9rem; color: #555; }
         .event-note { font-size: 0.85rem; color: #666; background: #f8f9fa; padding: 8px; border-radius: 6px; margin-top: 8px; }
+        .map-icon { position: absolute; top: 10px; right: 10px; color: #2ecc71; font-size: 1.2rem; }
 
         /* --- 購物清單樣式 --- */
+        .shopping-nav { margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .shopping-nav button { background: #eee; color: var(--text); padding: 5px 15px; border-radius: 5px; font-weight: normal; margin-right: 10px; }
+        .shopping-nav button.active { background: var(--accent); color: white; font-weight: bold; }
+
         .shopping-item {
             display: flex; align-items: flex-start; gap: 10px;
             background: white; padding: 15px; border-radius: 10px; margin-bottom: 10px;
@@ -171,6 +178,32 @@
         .expense-table th { background: var(--primary); color: white; }
         .total-row { font-weight: bold; background: #f0f0f0; text-align: right; }
 
+        /* --- 手機版專用優化 (解決標題消失問題) --- */
+        @media (max-width: 600px) {
+            /* 讓圖片高度在手機上更小一些，節省空間 */
+            .banner-img {
+                height: 120px;
+            }
+
+            /* 當螢幕寬度小於 600px 時，標題和導覽列改成垂直堆疊 */
+            .header-content {
+                flex-direction: column; /* 讓內容由橫向變成縱向排列 */
+                align-items: flex-start; /* 讓標題靠左對齊 */
+                padding-bottom: 5px; /* 縮小一點間距 */
+            }
+
+            /* 讓標題和導覽列各自佔滿一行 */
+            .site-title, .nav-menu {
+                width: 100%; 
+            }
+
+            /* 讓導覽列的圖示在手機上平均分散，比較好點擊 */
+            .nav-menu {
+                justify-content: space-around;
+                padding-top: 5px;
+                border-top: 1px solid #eee; /* 加一條分隔線 */
+            }
+        }
     </style>
 </head>
 <body>
@@ -201,9 +234,14 @@
 
     <div id="tab-shopping" class="tab-content">
         <h2 style="margin-bottom: 20px;">🛍️ 購物/伴手禮清單</h2>
+        <div class="shopping-nav">
+            <button id="btn-luna" class="active" onclick="switchShoppingList('luna')">Luna 清單</button>
+            <button id="btn-jen" onclick="switchShoppingList('jen')">Jen 清單</button>
+        </div>
+
         <div id="shopping-list"></div>
         <div style="text-align: center; margin-top: 20px; color: #999; font-size: 0.9rem;">
-            (編輯模式下可直接修改文字，點擊圈圈可打勾)
+            (編輯模式下可修改文字，點擊圈圈可打勾)
         </div>
     </div>
 
@@ -212,8 +250,9 @@
         <table class="expense-table">
             <thead>
                 <tr>
-                    <th width="40%">項目</th>
-                    <th width="30%">類別</th>
+                    <th width="30%">項目</th>
+                    <th width="20%">類別</th>
+                    <th width="20%">付款人 (新功能)</th>
                     <th>金額 (JPY)</th>
                 </tr>
             </thead>
@@ -239,36 +278,43 @@ const defaultData = {
           weather: { status: "抵達日", temp: "-1", feels: "-8" },
           events: [
             { time: "09:30", tag: "去程", title: "桃園機場報到", sub: "酷航 TR892", note: "起飛前3小時到" },
-            { time: "17:20", tag: "抵達", title: "新千歲機場", sub: "領行李、搭車", note: "先買個飯糰" },
-            { time: "19:30", tag: "入住", title: "VESSEL HOTEL", sub: "中島公園", note: "附近有Lawson" }
+            { time: "17:20", tag: "抵達", title: "新千歲機場", sub: "領行李、搭車", note: "先買個飯糰", map_url: "https://maps.app.goo.gl/3547Gq83L3F7E3qT6" }, // 👈 新增地圖連結範例
+            { time: "19:30", tag: "入住", title: "VESSEL HOTEL", sub: "中島公園", note: "附近有Lawson", map_url: "https://maps.app.goo.gl/wS78r9Qz1VzQ5T2G7" }
           ]
         },
         {
           id: "d2", label: "Day2 12/25",
           weather: { status: "滑雪日", temp: "-6", feels: "-12" },
           events: [
-            { time: "08:00", tag: "出發", title: "前往手稻雪場", sub: "JR+巴士", note: "記得帶手套" },
+            { time: "08:00", tag: "出發", title: "前往手稻雪場", sub: "JR+巴士", note: "記得帶手套", map_url: "https://maps.app.goo.gl/S6M9Uj2X7P4A5B7T8" },
             { time: "12:00", tag: "午餐", title: "雪場食堂", sub: "咖哩飯/拉麵", note: "約1500日幣" },
-            { time: "18:00", tag: "晚餐", title: "湯咖哩", sub: "Suage+", note: "要排隊" }
+            { time: "18:00", tag: "晚餐", title: "湯咖哩", sub: "Suage+", note: "要排隊", map_url: "https://maps.app.goo.gl/G2Q3K4R5S6T7U8V9W" }
           ]
         }
     ],
-    shopping: [
-        { item: "白色戀人", note: "送同事", checked: false },
-        { item: "六花亭 奶油夾心", note: "自留", checked: false },
-        { item: "北菓樓 泡芙", note: "機場吃", checked: false },
-        { item: "藥妝: 合力他命", note: "幫媽媽買", checked: false }
-    ],
+    // 👈 購物清單改為物件，分為 Luna 和 Jen
+    shopping: {
+        luna: [
+            { item: "白色戀人", note: "送同事", checked: false },
+            { item: "藥妝: 合力他命", note: "幫媽媽買", checked: false }
+        ],
+        jen: [
+            { item: "六花亭 奶油夾心", note: "自留", checked: false },
+            { item: "北菓樓 泡芙", note: "機場吃", checked: false }
+        ]
+    },
+    // 👈 花費新增 payer 欄位
     expenses: [
-        { item: "機票", type: "交通", cost: 12000 },
-        { item: "住宿 (5晚)", type: "住宿", cost: 25000 },
-        { item: "滑雪票", type: "娛樂", cost: 6000 },
-        { item: "預備金", type: "雜支", cost: 50000 }
+        { item: "機票", type: "交通", cost: 12000, payer: "公基金" },
+        { item: "住宿 (5晚)", type: "住宿", cost: 25000, payer: "Jen" },
+        { item: "滑雪票", type: "娛樂", cost: 6000, payer: "Luna" },
+        { item: "預備金", type: "雜支", cost: 50000, payer: "公基金" }
     ]
 };
 
 // --- 2. 初始化與讀取 ---
 let tripData = JSON.parse(localStorage.getItem('myFullTripData')) || defaultData;
+let activeShoppingList = 'luna'; // 新增狀態：目前顯示誰的購物清單
 
 // --- 3. 渲染畫面 (Render) ---
 function renderAll() {
@@ -279,17 +325,25 @@ function renderAll() {
     const sContainer = document.getElementById('schedule-list');
     sContainer.innerHTML = '';
     tripData.schedule.forEach((day, dIndex) => {
-        let eventsHtml = day.events.map((ev, eIndex) => `
-            <div class="event-card">
-                <div>
-                    <span class="time-badge editable" data-scope="schedule" data-d="${dIndex}" data-e="${eIndex}" data-key="time">${ev.time}</span>
-                    <span class="tag-badge editable" data-scope="schedule" data-d="${dIndex}" data-e="${eIndex}" data-key="tag">${ev.tag}</span>
+        let eventsHtml = day.events.map((ev, eIndex) => {
+            const mapIconHtml = ev.map_url ? 
+                `<a href="${ev.map_url}" target="_blank" class="map-icon" title="Google地圖連結">
+                    <i class="fas fa-map-marker-alt"></i>
+                </a>` : ''; // 👈 地圖連結圖示
+            
+            return `
+                <div class="event-card">
+                    ${mapIconHtml}
+                    <div>
+                        <span class="time-badge editable" data-scope="schedule" data-d="${dIndex}" data-e="${eIndex}" data-key="time">${ev.time}</span>
+                        <span class="tag-badge editable" data-scope="schedule" data-d="${dIndex}" data-e="${eIndex}" data-key="tag">${ev.tag}</span>
+                    </div>
+                    <div class="event-title editable" data-scope="schedule" data-d="${dIndex}" data-e="${eIndex}" data-key="title">${ev.title}</div>
+                    <div class="event-sub editable" data-scope="schedule" data-d="${dIndex}" data-e="${eIndex}" data-key="sub">${ev.sub}</div>
+                    <div class="event-note editable" data-scope="schedule" data-d="${dIndex}" data-e="${eIndex}" data-key="note">${ev.note}</div>
                 </div>
-                <div class="event-title editable" data-scope="schedule" data-d="${dIndex}" data-e="${eIndex}" data-key="title">${ev.title}</div>
-                <div class="event-sub editable" data-scope="schedule" data-d="${dIndex}" data-e="${eIndex}" data-key="sub">${ev.sub}</div>
-                <div class="event-note editable" data-scope="schedule" data-d="${dIndex}" data-e="${eIndex}" data-key="note">${ev.note}</div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
 
         sContainer.innerHTML += `
             <div class="day-section">
@@ -305,19 +359,8 @@ function renderAll() {
         `;
     });
 
-    // C. 渲染購物清單 (Shopping)
-    const shopContainer = document.getElementById('shopping-list');
-    shopContainer.innerHTML = tripData.shopping.map((item, index) => `
-        <div class="shopping-item">
-            <div class="check-box ${item.checked ? 'checked' : ''}" onclick="toggleCheck(${index})">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div style="flex:1;">
-                <div class="editable" style="font-weight:bold" data-scope="shopping" data-i="${index}" data-key="item">${item.item}</div>
-                <div class="editable" style="font-size:0.9em; color:#666" data-scope="shopping" data-i="${index}" data-key="note">${item.note}</div>
-            </div>
-        </div>
-    `).join('');
+    // C. 渲染購物清單 (Shopping) - 預設或上次選中的清單
+    renderShoppingList(activeShoppingList);
 
     // D. 渲染花費 (Expenses)
     const expContainer = document.getElementById('expense-list');
@@ -325,6 +368,7 @@ function renderAll() {
         <tr>
             <td><div class="editable" data-scope="expenses" data-i="${index}" data-key="item">${ex.item}</div></td>
             <td><div class="editable" data-scope="expenses" data-i="${index}" data-key="type">${ex.type}</div></td>
+            <td><div class="editable" data-scope="expenses" data-i="${index}" data-key="payer">${ex.payer}</div></td>
             <td><div class="editable" data-scope="expenses" data-i="${index}" data-key="cost">${ex.cost}</div></td>
         </tr>
     `).join('');
@@ -333,7 +377,7 @@ function renderAll() {
     const total = tripData.expenses.reduce((sum, item) => sum + Number(item.cost), 0);
     expContainer.innerHTML += `
         <tr class="total-row">
-            <td colspan="2">總預估花費</td>
+            <td colspan="3">總預估花費</td>
             <td>¥ ${total.toLocaleString()}</td>
         </tr>
     `;
@@ -352,11 +396,40 @@ function switchTab(tabId) {
     document.querySelectorAll('.nav-item')[index].classList.add('active');
 }
 
-// --- 5. 購物清單打勾功能 ---
-function toggleCheck(index) {
-    tripData.shopping[index].checked = !tripData.shopping[index].checked;
+// --- 5. 購物清單專屬功能 (新功能) ---
+function renderShoppingList(listName) {
+    activeShoppingList = listName; // 更新目前選中的清單
+    
+    // 更新按鈕高亮狀態
+    document.getElementById('btn-luna').classList.remove('active');
+    document.getElementById('btn-jen').classList.remove('active');
+    document.getElementById('btn-' + listName).classList.add('active');
+
+    const list = tripData.shopping[listName] || [];
+    const shopContainer = document.getElementById('shopping-list');
+    
+    shopContainer.innerHTML = list.map((item, index) => `
+        <div class="shopping-item">
+            <div class="check-box ${item.checked ? 'checked' : ''}" onclick="toggleCheck('${listName}', ${index})">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div style="flex:1;">
+                <div class="editable" style="font-weight:bold" data-scope="shopping" data-list="${listName}" data-i="${index}" data-key="item">${item.item}</div>
+                <div class="editable" style="font-size:0.9em; color:#666" data-scope="shopping" data-list="${listName}" data-i="${index}" data-key="note">${item.note}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function switchShoppingList(listName) {
+    renderShoppingList(listName);
+}
+
+// 購物清單打勾功能 (已更新為支援兩份清單)
+function toggleCheck(listName, index) {
+    tripData.shopping[listName][index].checked = !tripData.shopping[listName][index].checked;
     saveToLocal(); // 自動存
-    renderAll();
+    renderShoppingList(listName); // 只重新渲染當前清單
 }
 
 // --- 6. 編輯與儲存核心邏輯 ---
@@ -387,8 +460,9 @@ function saveData() {
                 tripData.schedule[d].events[e][key] = val;
             }
         } else if (scope === 'shopping') {
+            const listName = el.dataset.list; // 👈 增加 listName
             const i = el.dataset.i;
-            tripData.shopping[i][el.dataset.key] = val;
+            tripData.shopping[listName][i][el.dataset.key] = val;
         } else if (scope === 'expenses') {
             const i = el.dataset.i;
             tripData.expenses[i][el.dataset.key] = val;
@@ -397,7 +471,7 @@ function saveData() {
 
     saveToLocal();
     toggleEditMode();
-    renderAll(); // 重新渲染以更新加總數字
+    renderAll(); // 重新渲染以更新加總數字和所有內容
     alert('✅ 全部資料已儲存！');
 }
 
@@ -408,14 +482,18 @@ function saveToLocal() {
 function resetData() {
     if(confirm('確定要重置？所有修改將消失！')) {
         localStorage.removeItem('myFullTripData');
-        tripData = JSON.parse(JSON.stringify(defaultData));
+        // 深複製一份 defaultData 以確保重置後與原始資料結構完全一樣
+        tripData = JSON.parse(JSON.stringify(defaultData)); 
         renderAll();
         document.body.classList.remove('editing');
+        alert('資料已重置回預設範例！');
     }
 }
 
 // 啟動
 renderAll();
+// 確保一開始顯示行程分頁
+switchTab('schedule');
 
 </script>
 </body>
