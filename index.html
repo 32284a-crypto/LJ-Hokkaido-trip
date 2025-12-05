@@ -1315,32 +1315,7 @@
       });
     }
 
-    // ========= 4. 匯率 =========
-    const jpyInput = document.getElementById("jpyInput");
-    const twdInput = document.getElementById("twdInput");
-    const rateText = document.getElementById("rateText");
-
-    function updateFromJPY() {
-      const jpy = parseFloat(jpyInput.value || "0");
-      const twd = Math.round(jpy * tripData.fx.rate);
-      twdInput.value = twd;
-    }
-    function updateFromTWD() {
-      const twd = parseFloat(twdInput.value || "0");
-      const jpy = Math.round(twd / tripData.fx.rate);
-      jpyInput.value = jpy;
-    }
-    if (jpyInput && twdInput) {
-      jpyInput.addEventListener("input", updateFromJPY);
-      twdInput.addEventListener("input", updateFromTWD);
-    }
-    function initRate() {
-      if (!rateText) return;
-      rateText.textContent = `示意匯率：1 JPY ≈ ${tripData.fx.rate} TWD`;
-      updateFromJPY();
-    }
-
-    // ========= 5. 購物清單 =========
+    // ========= 4. 購物清單 =========
     const shoppingGridAllEl = document.getElementById("shoppingGridAll");
     const shoppingStoreFilter = document.getElementById("shoppingStoreFilter");
 
@@ -1369,7 +1344,7 @@
       shoppingStoreFilter.addEventListener("change", renderShopping);
     }
 
-    // ========= 6. 費用紀錄 =========
+    // ========= 5. 費用紀錄 =========
     const expenseListEl = document.getElementById("expenseList");
     const totalJPYEl = document.getElementById("totalJPY");
     const totalTWDEl = document.getElementById("totalTWD");
@@ -1476,8 +1451,33 @@
       });
 
       calcTotalsAndSettlement();
+  
     }
+    // ========= 6. 匯率 =========
+    const jpyInput = document.getElementById("jpyInput");
+    const twdInput = document.getElementById("twdInput");
+    const rateText = document.getElementById("rateText");
 
+    function updateFromJPY() {
+      const jpy = parseFloat(jpyInput.value || "0");
+      const twd = Math.round(jpy * tripData.fx.rate);
+      twdInput.value = twd;
+    }
+    function updateFromTWD() {
+      const twd = parseFloat(twdInput.value || "0");
+      const jpy = Math.round(twd / tripData.fx.rate);
+      jpyInput.value = jpy;
+    }
+    if (jpyInput && twdInput) {
+      jpyInput.addEventListener("input", updateFromJPY);
+      twdInput.addEventListener("input", updateFromTWD);
+    }
+    function initRate() {
+      if (!rateText) return;
+      rateText.textContent = `示意匯率：1 JPY ≈ ${tripData.fx.rate} TWD`;
+      updateFromJPY();
+    }
+    
     // ========= 7. Hero 背景 =========
     const heroEl = document.getElementById("hero");
     const changeBgBtn = document.getElementById("changeBgBtn");
