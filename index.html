@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta property="og:title" content="Hokkaido 2025｜相親相愛又一年" />
   <meta property="og:description" content="Luna & Jen 的北海道滑雪旅遊小本🧣❄️" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://images.pexels.com/photos/792381/pexels-photo-792381.jpeg?auto=compress&cs=tinysrgb&w=1200" />
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -20,440 +23,344 @@
       background: #f4f8ff;
     }
 
-    /* 頂部 banner */
+    /* ---------- Header ---------- */
     .hero {
       position: relative;
       padding: 16px 16px 20px;
-      border-radius: 0 0 24px 24px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      background: linear-gradient(135deg, #bde3ff, #e5f4ff);
-      background-size: cover;
-      background-position: center;
-      color: #123456;
+      background: linear-gradient(135deg, #c7e3ff, #f8fbff);
+      border-bottom-left-radius: 24px;
+      border-bottom-right-radius: 24px;
       overflow: hidden;
     }
-    .hero-overlay {
+    .hero-bg {
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(189,227,255,0.9), rgba(229,244,255,0.9));
+      background-image: url("https://images.pexels.com/photos/792381/pexels-photo-792381.jpeg?auto=compress&cs=tinysrgb&w=800");
+      background-size: cover;
+      background-position: center;
+      opacity: 0.18;
       pointer-events: none;
     }
     .hero-inner {
       position: relative;
       z-index: 1;
     }
-    .hero-title {
-      font-size: 24px;
-      font-weight: 600;
-      letter-spacing: 2px;
-    }
-    .hero-sub {
-      margin-top: 4px;
-      font-size: 14px;
-      opacity: 0.9;
-    }
-
-    /* 右上角 icon（可換背景） */
-    .hero-bg-icon {
-      position: absolute;
-      top: 10px;
-      right: 12px;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: none;
-      background: rgba(255,255,255,0.95);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    .hero-top {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 18px;
-      z-index: 2;
-    }
-
-    /* 圓形 icon 導覽 */
-    .hero-nav {
-      display: flex;
-      gap: 10px;
-      margin-top: 14px;
-    }
-    .hero-nav-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      border: none;
-      background: rgba(255,255,255,0.95);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 20px;
-    }
-    .hero-nav-btn.active {
-      background: #0b67ff;
-      color: #fff;
-    }
-
-    .hero-toolbar {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-      flex-wrap: wrap;
-    }
-    .hero-btn {
-      border-radius: 999px;
-      border: none;
-      padding: 5px 10px;
-      font-size: 12px;
-      background: rgba(255,255,255,0.9);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .hero-btn span {
-      font-size: 14px;
-    }
-
-    .hero-tabs {
-      display: flex;
-      gap: 8px;
-      margin-top: 14px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-    .day-tab {
-      min-width: 80px;
-      padding: 8px 10px;
-      border-radius: 14px;
-      text-align: center;
-      font-size: 12px;
-      background: rgba(255,255,255,0.8);
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .day-tab.active {
-      background: #0b67ff;
-      color: #fff;
-      font-weight: 600;
-    }
-
-    .content {
-      padding: 16px;
-      padding-bottom: 40px;
-    }
-
-    .card {
-      background: #ffffff;
-      border-radius: 18px;
-      padding: 14px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
       margin-bottom: 12px;
     }
-    .card-header {
+    .hero-title-group {
       display: flex;
       align-items: center;
+      gap: 8px;
+    }
+    .hero-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+    .hero-title-texts {
+      display: flex;
+      flex-direction: column;
+    }
+    .hero-title-texts h1 {
+      font-size: 20px;
+      letter-spacing: 1px;
+    }
+    .hero-title-texts span {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pill-btn {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: none;
+      font-size: 12px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.9);
+      color: #123456;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+    .pill-btn.primary {
+      background: #4b7cfb;
+      color: #fff;
+    }
+
+    /* ---------- Common card ---------- */
+    .page {
+      padding: 12px 16px 24px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(15,30,70,0.08);
+      margin-bottom: 16px;
+    }
+    .card-header-row {
+      display: flex;
       justify-content: space-between;
+      align-items: center;
       margin-bottom: 8px;
     }
     .card-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
       font-size: 14px;
       font-weight: 600;
-    }
-    .card-subtitle {
-      font-size: 12px;
-      opacity: 0.7;
-    }
-    .icon {
-      width: 20px;
-      height: 20px;
-      border-radius: 999px;
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      background: #e6f0ff;
+      gap: 6px;
+    }
+    .card-title span.icon {
+      font-size: 16px;
+    }
+    .subtext {
+      font-size: 11px;
+      color: #788;
     }
 
-    /* 天氣卡 */
-    .weather-main {
+    .small-pill {
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: none;
+      background: #eef3ff;
+      color: #345;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    /* ---------- Day selector ---------- */
+    .day-scroll {
       display: flex;
-      align-items: center;
+      overflow-x: auto;
+      gap: 8px;
+      padding: 4px 0 8px;
+    }
+    .day-pill {
+      flex: 0 0 auto;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid transparent;
+      background: #e3ecff;
+      color: #345;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .day-pill.active {
+      background: #4b7cfb;
+      color: #fff;
+    }
+
+    /* ---------- Weather ---------- */
+    .weather-row {
+      display: flex;
       justify-content: space-between;
-      margin-top: 4px;
+      align-items: center;
+      margin-bottom: 4px;
     }
-    .weather-temp {
-      display: flex;
-      align-items: baseline;
-      gap: 4px;
+    .weather-main {
+      font-size: 24px;
+      font-weight: 600;
     }
-    .weather-temp span:nth-child(1) {
-      font-size: 28px;
-      font-weight: 700;
-    }
-    .weather-temp span:nth-child(2) {
+    .weather-sub {
       font-size: 12px;
-      opacity: 0.7;
+      color: #456;
+      text-align: right;
     }
-    .weather-extra {
-      font-size: 12px;
+    .weather-note-input {
+      width: 120px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.8);
+      padding: 3px 8px;
+      font-size: 11px;
+      background: rgba(255,255,255,0.9);
       text-align: right;
     }
 
-    /* 行程 timeline */
-    .timeline-item {
-      display: flex;
-      gap: 10px;
+    /* ---------- Itinerary ---------- */
+    .timeline {
       margin-top: 10px;
-      align-items: flex-start;
+    }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 50px 1fr;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px dashed #e2e6f0;
+    }
+    .timeline-item:last-child {
+      border-bottom: none;
     }
     .timeline-time {
       font-size: 12px;
+      color: #567;
+      padding-top: 4px;
+    }
+    .timeline-content-title {
+      font-size: 13px;
       font-weight: 600;
-      width: 46px;
-      flex-shrink: 0;
+      margin-bottom: 2px;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
     }
-    .timeline-body {
-      flex: 1;
-    }
-    .tag {
-      display: inline-block;
+    .timeline-content-note {
       font-size: 11px;
-      padding: 2px 6px;
-      border-radius: 999px;
-      background: #f0f3ff;
+      color: #667;
       margin-bottom: 2px;
     }
-    .timeline-title {
-      font-size: 13px;
-      font-weight: 600;
-    }
-    .timeline-sub {
-      font-size: 11px;
-      opacity: 0.8;
-      margin-top: 2px;
-    }
-    .timeline-note {
-      font-size: 11px;
-      opacity: 0.7;
-      margin-top: 2px;
-    }
-    .timeline-edit {
-      margin-left: 6px;
-      font-size: 12px;
-      cursor: pointer;
-      opacity: 0.7;
-    }
     .timeline-map-link {
-      display: inline-block;
       font-size: 11px;
-      margin-top: 2px;
-      color: #0b67ff;
+      color: #4b7cfb;
       text-decoration: none;
     }
-    .timeline-map-link::after {
-      content: " ↗";
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 1px 6px;
+      border-radius: 999px;
       font-size: 10px;
-    }
-    .timeline-img {
-      width: 100%;
-      max-height: 160px;
-      object-fit: cover;
-      border-radius: 12px;
-      margin-top: 6px;
+      background: #eef3ff;
+      color: #456;
     }
 
-    /* 匯率 */
-    .rate-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 6px;
-      font-size: 13px;
+    .icon-btn {
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 0 3px;
     }
-    .rate-row input {
-      width: 45%;
+
+    /* ---------- Shopping ---------- */
+    .shopping-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .shopping-toolbar select {
+      flex: 1;
       padding: 6px 8px;
       border-radius: 10px;
-      border: 1px solid #d0ddff;
-      font-size: 13px;
+      border: 1px solid #dde3f2;
+      font-size: 12px;
+      background: #f6f8ff;
     }
-    .rate-meta {
-      font-size: 11px;
-      opacity: 0.7;
-      margin-top: 4px;
-      text-align: right;
-    }
-
-    /* 購物清單 */
-    .shopping-grid {
+    .grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0,1fr));
       gap: 10px;
-      margin-top: 8px;
     }
     .shopping-card {
-      background: #ffffff;
       border-radius: 16px;
-      padding: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      font-size: 12px;
+      background: #f9fbff;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
       position: relative;
     }
-    .shopping-name-row {
+    .shopping-thumb-wrap {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #dde5ff;
+      height: 120px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 4px;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .shopping-thumb-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
     .shopping-name {
+      font-size: 12px;
       font-weight: 600;
-      margin-bottom: 4px;
     }
-    .shopping-edit {
-      font-size: 13px;
-      cursor: pointer;
-      opacity: 0.7;
+    .shopping-store {
+      font-size: 11px;
+      color: #567;
     }
     .shopping-note {
-      opacity: 0.75;
       font-size: 11px;
-      margin-top: 2px;
-    }
-    .shopping-img {
-      width: 100%;
-      height: auto;
-      max-height: 120px;
-      object-fit: contain; /* 自動縮到方格內，完整顯示 */
-      border-radius: 12px;
-      margin-top: 6px;
-      cursor: pointer;
+      color: #789;
     }
 
-    /* 放大圖片 overlay */
-    .image-viewer-overlay {
+    /* image preview overlay */
+    #imagePreviewOverlay {
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.7);
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 60;
+      z-index: 999;
     }
-    .image-viewer-overlay.show {
-      display: flex;
-    }
-    .image-viewer-overlay img {
+    #imagePreviewOverlay img {
       max-width: 90vw;
       max-height: 90vh;
       border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      background: #fff;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
     }
 
-    /* 費用紀錄 */
-    .total-card-main {
-      font-size: 18px;
-      font-weight: 700;
-    }
-    .total-card-sub {
-      margin-top: 4px;
+    /* ---------- Expenses ---------- */
+    .expense-group-title {
       font-size: 12px;
-      opacity: 0.85;
+      font-weight: 600;
+      margin: 10px 0 4px;
+      color: #567;
     }
     .expense-item {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid #f0f2ff;
-    }
-    .expense-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .expense-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: #c5d8ff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      color: #fff;
-      flex-shrink: 0;
-    }
-    .expense-text-main {
-      font-size: 13px;
-      font-weight: 600;
-    }
-    .expense-text-sub {
-      font-size: 11px;
-      opacity: 0.75;
-      margin-top: 2px;
-    }
-    .expense-right {
-      text-align: right;
-      font-size: 13px;
-    }
-    .expense-delete {
-      color: #ff4d4f;
-      font-size: 14px;
-      cursor: pointer;
-      margin-left: 8px;
-    }
-
-    /* 支付人 pill 按鈕 */
-    .pill-group {
-      display: inline-flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .pill-btn {
-      border-radius: 999px;
-      border: 1px solid #d0ddff;
-      padding: 4px 10px;
+      align-items: flex-start;
+      padding: 6px 0;
+      border-bottom: 1px dashed #e2e6f0;
       font-size: 12px;
-      background: #fff;
-      cursor: pointer;
     }
-    .pill-btn.active {
-      background: #0b67ff;
-      color: #fff;
-      border-color: #0b67ff;
+    .expense-item:last-child { border-bottom: none; }
+    .expense-left {
+      max-width: 65%;
     }
-
-    /* 只在切換的 view 上顯示 */
-    .view-section {
-      display: none;
+    .expense-name {
+      font-weight: 600;
+      margin-bottom: 2px;
     }
-
-    /* 浮動新增按鈕 */
-    .fab {
-      position: fixed;
-      right: 20px;
-      bottom: 24px;
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: #ffd54f;
+    .expense-meta {
+      font-size: 11px;
+      color: #567;
+    }
+    .expense-amount {
+      font-weight: 600;
+      color: #e24343;
+    }
+    .summary-row {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
-      cursor: pointer;
-      z-index: 20;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-top: 4px;
     }
 
-    /* Modal 通用 */
+    /* ---------- Modal ---------- */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -461,17 +368,17 @@
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 30;
-    }
-    .modal-overlay.show {
-      display: flex;
+      z-index: 900;
+      padding: 16px;
     }
     .modal {
-      width: 90%;
-      max-width: 360px;
+      width: 100%;
+      max-width: 420px;
       background: #fff;
       border-radius: 18px;
-      padding: 16px 16px 14px;
+      padding: 14px 14px 16px;
+      max-height: 100%;
+      overflow-y: auto;
     }
     .modal-title {
       font-size: 15px;
@@ -480,132 +387,141 @@
     }
     .form-group {
       margin-bottom: 8px;
-      font-size: 12px;
     }
     .form-group label {
+      font-size: 12px;
       display: block;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
-    .form-group input,
+    .form-group input[type="text"],
+    .form-group input[type="time"],
+    .form-group input[type="date"],
+    .form-group input[type="number"],
     .form-group select,
     .form-group textarea {
       width: 100%;
-      border-radius: 10px;
-      border: 1px solid #d0ddff;
-      padding: 6px 8px;
       font-size: 13px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px solid #dde3f2;
+      background: #f7f8fd;
+    }
+    .form-group textarea {
       resize: vertical;
+      min-height: 60px;
     }
-    .upload-box {
-      border: 1px dashed #c2ccee;
-      border-radius: 12px;
-      padding: 12px;
-      text-align: center;
-      font-size: 12px;
-      color: #7683a8;
-      margin-top: 4px;
-    }
-    .modal-actions {
+    .modal-footer {
+      margin-top: 10px;
       display: flex;
       justify-content: flex-end;
-      gap: 10px;
-      margin-top: 12px;
+      gap: 8px;
     }
     .btn {
-      border-radius: 999px;
       padding: 6px 14px;
-      font-size: 13px;
+      border-radius: 999px;
       border: none;
+      font-size: 12px;
       cursor: pointer;
     }
-    .btn-secondary {
-      background: #f3f5ff;
-      color: #333;
+    .btn.secondary {
+      background: #e5e7f5;
+      color: #345;
     }
-    .btn-primary {
-      background: #0b67ff;
+    .btn.primary {
+      background: #4b7cfb;
+      color: #fff;
+    }
+    .btn.danger {
+      background: #ff5c5c;
       color: #fff;
     }
 
-    .footer-space { height: 80px; }
-    @media (min-width: 768px) {
-      .fab { right: calc(50% - 215px); }
-    }
+    /* utility */
+    .mt-6 { margin-top: 6px; }
+    .mt-10 { margin-top: 10px; }
   </style>
 </head>
 <body>
   <div class="app">
-    <!-- 頂部 Banner -->
-    <header class="hero" id="hero">
-      <div class="hero-overlay"></div>
+    <!-- Header -->
+    <header class="hero">
+      <div class="hero-bg"></div>
       <div class="hero-inner">
-        <button class="hero-bg-icon" id="changeBgBtn" title="更換背景">🎿</button>
-
-        <div class="hero-title">Hokkaido</div>
-        <div class="hero-sub">2025 相親相愛又一年</div>
-
-        <!-- 圓形 icon 導覽 -->
-        <div class="hero-nav">
-          <button class="hero-nav-btn active" data-view="plan" title="行程">🗺️</button>
-          <button class="hero-nav-btn" data-view="fx" title="匯率">💱</button>
-          <button class="hero-nav-btn" data-view="shopping" title="購物清單">🧺</button>
-          <button class="hero-nav-btn" data-view="expense" title="費用紀錄">💳</button>
+        <div class="hero-top">
+          <div class="hero-title-group">
+            <div class="hero-icon">⛷️</div>
+            <div class="hero-title-texts">
+              <h1>Hokkaido Trip</h1>
+              <span>2025 相親相愛又一年</span>
+            </div>
+          </div>
+          <div class="hero-actions">
+            <button class="pill-btn" onclick="editTitle()">標題</button>
+            <button class="pill-btn primary" onclick="openSyncModal()">資料同步</button>
+          </div>
         </div>
 
-        <!-- 編輯行程 -->
-        <div class="hero-toolbar">
-          <button class="hero-btn" id="editTodayBtn">
-            <span>✏️</span> 編輯今日行程
-          </button>
+        <!-- top quick buttons -->
+        <div style="display:flex;gap:10px;margin-bottom:10px;">
+          <button class="pill-btn" onclick="scrollToSection('itineraryPage')">行程</button>
+          <button class="pill-btn" onclick="scrollToSection('shoppingPage')">購物</button>
+          <button class="pill-btn" onclick="scrollToSection('expensePage')">花費</button>
         </div>
 
-        <input type="file" id="bgFileInput" accept="image/*" style="display:none" />
-
-        <!-- Day Tabs -->
-        <div class="hero-tabs" id="dayTabs"></div>
+        <!-- Day tabs -->
+        <div class="day-scroll" id="dayScroll"></div>
       </div>
     </header>
 
-    <!-- 主要內容 -->
-    <main class="content">
-      <!-- 行程 view -->
-      <section id="view-plan">
-        <section id="dayContent"></section>
+    <!-- Main pages -->
+    <main class="page">
+
+      <!-- 行程 -->
+      <section id="itineraryPage">
+        <div class="card">
+          <div class="card-header-row">
+            <div class="card-title">
+              <span class="icon">❄️</span> 今日天氣 & 行程
+            </div>
+            <div class="subtext" id="todayDayLabel"></div>
+          </div>
+
+          <div class="weather-row">
+            <div>
+              <div style="font-size:12px;margin-bottom:2px;" id="weatherRangeText">-3°C / -8°C</div>
+              <div class="weather-main" id="weatherMainText">-3°</div>
+              <div class="subtext" id="weatherFeelText">體感 -10°C</div>
+            </div>
+            <div class="weather-sub">
+              <div style="margin-bottom:4px;">右側小標題可改：</div>
+              <input id="weatherNoteInput" class="weather-note-input" type="text" placeholder="例如：市區 & 換飯店" />
+            </div>
+          </div>
+
+          <div class="card-header-row mt-10">
+            <div class="card-title">
+              <span class="icon">🗓️</span> 今日行程
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button class="small-pill" onclick="openItineraryModal()">新增行程</button>
+            </div>
+          </div>
+
+          <div id="itineraryList" class="timeline"></div>
+        </div>
       </section>
 
-      <!-- 匯率 view -->
-      <section id="view-fx" class="view-section">
-        <section class="card">
-          <div class="card-header">
+      <!-- 購物清單 -->
+      <section id="shoppingPage">
+        <div class="card">
+          <div class="card-header-row">
             <div class="card-title">
-              <span class="icon">💱</span>
-              匯率換算
+              <span class="icon">🧺</span> 購物清單
             </div>
-            <div class="card-subtitle">JPY ↔ TWD</div>
+            <button class="small-pill" onclick="openShoppingModal()">新增商品</button>
           </div>
-          <div class="rate-row">
-            <input id="jpyInput" type="number" value="50000" />
-            <span>⇄</span>
-            <input id="twdInput" type="number" value="10750" />
-          </div>
-          <div class="rate-meta" id="rateText"></div>
-        </section>
-      </section>
-
-      <!-- 購物 view：店家篩選＋卡片 -->
-      <section id="view-shopping" class="view-section">
-        <section class="card">
-          <div class="card-header">
-            <div class="card-title">
-              <span class="icon">🧺</span>
-              購物清單
-            </div>
-            <div class="card-subtitle">可依店家或人來管理</div>
-          </div>
-
-          <div class="form-group" style="margin-top:4px;">
-            <label style="font-size:12px;">依店家篩選</label>
-            <select id="shoppingStoreFilter" style="width:100%;border-radius:10px;border:1px solid #d0ddff;padding:4px 8px;font-size:13px;">
+          <div class="shopping-toolbar">
+            <select id="shoppingStoreFilter" onchange="renderShopping()">
               <option value="ALL">全部店家</option>
               <option value="無印良品">無印良品</option>
               <option value="大創">大創</option>
@@ -617,56 +533,80 @@
               <option value="全家">全家</option>
               <option value="藥妝店">藥妝店</option>
               <option value="Uniqlo">Uniqlo</option>
-              <option value="滑雪用品">滑雪用品</option>
               <option value="機場/伴手禮">機場 / 伴手禮</option>
             </select>
           </div>
-
-          <div class="shopping-grid" id="shoppingGridAll"></div>
-        </section>
+          <div id="shoppingGrid" class="grid"></div>
+        </div>
       </section>
 
-      <!-- 費用 view -->
-      <section id="view-expense" class="view-section">
-        <section class="card">
-          <div class="card-header">
+      <!-- 花費紀錄 -->
+      <section id="expensePage">
+        <div class="card">
+          <div class="card-header-row">
             <div class="card-title">
-              <span class="icon">💳</span>
-              費用紀錄
+              <span class="icon">💰</span> 花費紀錄
             </div>
-            <div class="card-subtitle">可註記付款人：Luna / Jen / 公基金</div>
+            <button class="small-pill" onclick="openExpenseModal()">新增花費</button>
           </div>
-          <div class="total-card-main" id="totalJPY">¥0</div>
-          <div class="total-card-sub" id="totalTWD">約 NT$0</div>
-          <div class="total-card-sub" id="settleSummary"></div>
+          <div id="expenseList"></div>
 
-          <div id="expenseList" style="margin-top:10px;"></div>
-        </section>
+          <div class="mt-10" style="border-top:1px solid #eef1fb;padding-top:8px;">
+            <div class="card-title" style="font-size:13px;">總結</div>
+            <div class="summary-row">
+              <span>Luna 總額 (NT)：</span>
+              <span id="summaryLuna">-</span>
+            </div>
+            <div class="summary-row">
+              <span>Jen 總額 (NT)：</span>
+              <span id="summaryJen">-</span>
+            </div>
+            <div class="summary-row">
+              <span>共同花費 (NT)：</span>
+              <span id="summaryShared">-</span>
+            </div>
+            <div class="summary-row" style="margin-top:6px;font-weight:600;">
+              <span>結算結果：</span>
+              <span id="settlementText">-</span>
+            </div>
+          </div>
+        </div>
       </section>
-
-      <div class="footer-space"></div>
     </main>
   </div>
 
-  <!-- 浮動新增按鈕 -->
-  <div class="fab" id="fabBtn">＋</div>
-
-  <!-- 新增類型選擇 Modal -->
-  <div class="modal-overlay" id="typeModal">
+  <!-- 行程 Modal -->
+  <div class="modal-overlay" id="itineraryModal">
     <div class="modal">
-      <div class="modal-title">要新增什麼？</div>
-      <div class="modal-actions">
-        <button class="btn btn-secondary" id="typeCancel">取消</button>
-        <button class="btn btn-primary" id="addShoppingBtn">購物清單</button>
-        <button class="btn btn-primary" id="addExpenseBtn">費用</button>
+      <div class="modal-title" id="itineraryModalTitle">新增行程</div>
+      <div class="form-group">
+        <label>時間</label>
+        <input type="time" id="itineraryTime" />
+      </div>
+      <div class="form-group">
+        <label>標題</label>
+        <input type="text" id="itineraryTitle" placeholder="例如：北海道神宮" />
+      </div>
+      <div class="form-group">
+        <label>說明</label>
+        <textarea id="itineraryNote" placeholder="餐廳 / 行程備註"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Google Map 連結（可選）</label>
+        <input type="text" id="itineraryMap" placeholder="貼上 Google Map 連結" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn secondary" onclick="closeItineraryModal()">取消</button>
+        <button class="btn danger" id="itineraryDeleteBtn" style="display:none;" onclick="deleteItinerary()">刪除</button>
+        <button class="btn primary" onclick="saveItinerary()">儲存</button>
       </div>
     </div>
   </div>
 
-  <!-- 新增 / 編輯購物清單 Modal -->
+  <!-- 購物 Modal -->
   <div class="modal-overlay" id="shoppingModal">
     <div class="modal">
-      <div class="modal-title">新增 / 編輯購物清單</div>
+      <div class="modal-title" id="shoppingModalTitle">新增 / 編輯購物清單</div>
       <div class="form-group">
         <label>商品名稱</label>
         <input type="text" id="shoppingName" placeholder="例：六花亭 奶油葡萄夾心餅" />
@@ -685,1197 +625,735 @@
           <option value="全家">全家</option>
           <option value="藥妝店">藥妝店</option>
           <option value="Uniqlo">Uniqlo</option>
-          <option value="滑雪用品">滑雪用品</option>
-          <option value="機場/伴手禮">機場 / 伴手禮</option>
+          <option value="機場/伴手禮">機場／伴手禮</option>
         </select>
       </div>
       <div class="form-group">
-        <label>備註 / 哪家分店</label>
-        <textarea id="shoppingNote" rows="2" placeholder="例：新千歲機場 / 札幌本店 / 多家藥妝店都有"></textarea>
+        <label>備註 / 欲買數量</label>
+        <textarea id="shoppingNote" placeholder="例如：自用 2 盒、送人 3 盒"></textarea>
       </div>
       <div class="form-group">
-        <label>誰要買？</label>
-        <select id="shoppingOwner">
-          <option value="Luna">Luna</option>
-          <option value="Jen">Jen</option>
-        </select>
+        <label>商品圖片（可選）</label>
+        <input type="file" accept="image/*" id="shoppingImageInput" />
+        <div class="subtext">圖片會自動縮小填滿方格，點擊卡片圖片可以放大。</div>
       </div>
-      <div class="form-group">
-        <label>上傳照片（選填，重新選擇會覆蓋原圖）</label>
-        <div class="upload-box">
-          <input type="file" id="shoppingImageInput" accept="image/*" />
-          <div style="margin-top:4px;">選一張商品圖片（會存在這台裝置的瀏覽器）</div>
-        </div>
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-secondary" id="shoppingCancel">取消</button>
-        <button class="btn btn-primary" id="shoppingSave">儲存</button>
+      <div class="modal-footer">
+        <button class="btn secondary" onclick="closeShoppingModal()">取消</button>
+        <button class="btn danger" id="shoppingDeleteBtn" style="display:none;" onclick="deleteShopping()">刪除</button>
+        <button class="btn primary" onclick="saveShopping()">儲存</button>
       </div>
     </div>
   </div>
 
-  <!-- 新增費用 Modal（無類別，有付款人 pill） -->
+  <!-- 花費 Modal -->
   <div class="modal-overlay" id="expenseModal">
     <div class="modal">
-      <div class="modal-title">新增費用紀錄</div>
-      <div class="form-group">
-        <label>項目名稱</label>
-        <input type="text" id="expenseTitle" placeholder="例：登別溫泉飯店" />
-      </div>
+      <div class="modal-title" id="expenseModalTitle">新增花費</div>
       <div class="form-group">
         <label>日期</label>
         <input type="date" id="expenseDate" />
       </div>
       <div class="form-group">
-        <label>付款方式（選填）</label>
-        <input type="text" id="expenseMethod" placeholder="例：信用卡 / 現金 / 線上付款" />
+        <label>項目名稱</label>
+        <input type="text" id="expenseName" placeholder="例：Klook 一日遊" />
       </div>
       <div class="form-group">
         <label>付款人</label>
-        <div class="pill-group" id="expensePayerGroup">
-          <button type="button" class="pill-btn active" data-payer="Luna">Luna</button>
-          <button type="button" class="pill-btn" data-payer="Jen">Jen</button>
-          <button type="button" class="pill-btn" data-payer="公基金">公基金</button>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>金額 + 幣別（記「總額」，系統會幫忙平分）</label>
         <div style="display:flex;gap:8px;">
-          <input type="number" id="expenseAmount" placeholder="金額" />
-          <select id="expenseCurrency">
-            <option value="JPY">JPY</option>
-            <option value="TWD">TWD</option>
-          </select>
+          <button id="payerLuna" class="btn secondary" type="button" onclick="setPayer('Luna')">Luna</button>
+          <button id="payerJen" class="btn secondary" type="button" onclick="setPayer('Jen')">Jen</button>
+          <button id="payerShared" class="btn secondary" type="button" onclick="setPayer('Shared')">共同</button>
         </div>
       </div>
-      <div class="modal-actions">
-        <button class="btn btn-secondary" id="expenseCancel">取消</button>
-        <button class="btn btn-primary" id="expenseSave">新增</button>
+      <div class="form-group">
+        <label>金額</label>
+        <input type="number" id="expenseAmount" step="0.5" placeholder="例如 7000" />
+      </div>
+      <div class="form-group">
+        <label>幣別</label>
+        <select id="expenseCurrency">
+          <option value="TWD">NTD</option>
+          <option value="JPY">JPY</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>備註（可寫誰先付、匯率等）</label>
+        <textarea id="expenseNote"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn secondary" onclick="closeExpenseModal()">取消</button>
+        <button class="btn danger" id="expenseDeleteBtn" style="display:none;" onclick="deleteExpense()">刪除</button>
+        <button class="btn primary" onclick="saveExpense()">儲存</button>
       </div>
     </div>
   </div>
 
-  <!-- 編輯天氣 Modal -->
-  <div class="modal-overlay" id="weatherModal">
-    <div class="modal">
-      <div class="modal-title">編輯今日天氣文字</div>
-      <div class="form-group">
-        <label>天氣狀態（右上那行）</label>
-        <input type="text" id="weatherStatus" placeholder="例：市區日 & 換飯店" />
-      </div>
-      <div class="form-group">
-        <label>補充說明（右下那行）</label>
-        <textarea id="weatherNote" rows="2" placeholder="例：白天札幌市區 & 住相鐵薄野"></textarea>
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-secondary" id="weatherCancel">取消</button>
-        <button class="btn btn-primary" id="weatherSave">儲存</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 編輯行程 Modal（含 Google Map 連結 + 圖片） -->
-  <div class="modal-overlay" id="scheduleModal">
-    <div class="modal">
-      <div class="modal-title">編輯行程</div>
-      <div class="form-group">
-        <label>時間</label>
-        <input type="text" id="scheduleTime" placeholder="例：07:50 或 TBD" />
-      </div>
-      <div class="form-group">
-        <label>標籤（tag）</label>
-        <input type="text" id="scheduleTag" placeholder="例：去程 / 景點 / 滑雪 / TBD" />
-      </div>
-      <div class="form-group">
-        <label>標題（title）</label>
-        <input type="text" id="scheduleTitle" placeholder="例：旭山動物園" />
-      </div>
-      <div class="form-group">
-        <label>副標（sub）</label>
-        <input type="text" id="scheduleSub" placeholder="例：約 1 小時 40 分 · 自由活動" />
-      </div>
-      <div class="form-group">
-        <label>備註（note，可留白）</label>
-        <textarea id="scheduleNote" rows="2" placeholder="例：本行程包含門票"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Google 地圖連結（選填）</label>
-        <input type="text" id="scheduleMap" placeholder="https://maps.app.goo.gl/..." />
-      </div>
-      <div class="form-group">
-        <label>行程圖片（選填）</label>
-        <div class="upload-box">
-          <input type="file" id="scheduleImageInput" accept="image/*" />
-          <div style="margin-top:4px;">選一張這個景點的照片</div>
-        </div>
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-secondary" id="scheduleCancel">取消</button>
-        <button class="btn btn-primary" id="scheduleSave">儲存</button>
+  <!-- 資料同步 Modal -->
+  <div class="modal-overlay" id="syncModal">
+    <div class="modal" style="max-width:640px;">
+      <div class="modal-title">資料同步</div>
+      <p style="font-size:12px;line-height:1.6;margin-bottom:8px;">
+        這裡可以匯出／匯入本頁所有資料（行程、購物清單、花費紀錄）。<br>
+        ＜匯出＞ 在主要裝置按「匯出」，複製下面的文字。<br>
+        ＜匯入＞ 在另一台裝置開啟同一網址，貼上文字後按「匯入」，即可覆蓋本裝置的資料。
+      </p>
+      <textarea
+        id="syncTextarea"
+        placeholder="按下「匯出」後，這裡會出現一大段文字。請全選複製，到另一個裝置貼上再按「匯入」。"
+        style="width:100%;height:200px;font-size:11px;white-space:pre;resize:vertical;border-radius:8px;border:1px solid #ddd;padding:6px;box-sizing:border-box;"
+      ></textarea>
+      <div class="modal-footer">
+        <button class="btn secondary" type="button" onclick="exportAllData()">匯出</button>
+        <button class="btn primary" type="button" onclick="importAllData()">匯入</button>
+        <button class="btn secondary" type="button" onclick="closeSyncModal()">關閉</button>
       </div>
     </div>
   </div>
 
-  <!-- 放大購物圖片 Overlay -->
-  <div class="image-viewer-overlay" id="imageViewer">
-    <img id="imageViewerImg" alt="">
+  <!-- 圖片放大 overlay -->
+  <div id="imagePreviewOverlay" onclick="hideImagePreview()">
+    <img id="imagePreviewImg" src="" alt="preview" />
   </div>
 
   <script>
-    // ========= 1. 預設旅遊資料 =========
-    const defaultTripData = {
-      days: [
-        {
-          id: "2025-12-24",
-          label: "Day1 12/24",
-          weather: {
-            temp: -1,
-            low: -6,
-            feels: -8,
-            status: "抵達日",
-            note: "酷航 TR892 · 抵達札幌 & 住 VESSEL"
-          },
-          schedule: [
-            {
-              time: "09:30",
-              tag: "去程",
-              title: "桃園機場報到",
-              sub: "TPE · 酷航 TR892",
-              note: "建議起飛前 3 小時到機場",
-              map: "",
-              image: ""
-            },
-            {
-              time: "12:30",
-              tag: "去程",
-              title: "TR892 TPE → CTS",
-              sub: "酷航 TR892 12:30 起飛，預計 17:20 抵達",
-              note: "",
-              map: "",
-              image: ""
-            },
-            {
-              time: "17:20",
-              tag: "抵達",
-              title: "新千歲機場 (CTS)",
-              sub: "入境、領行李、前往札幌",
-              note: "可在機場先買交通卡 / 上廁所 / 小補給",
-              map: "https://maps.app.goo.gl/",
-              image: ""
-            },
-            {
-              time: "19:30",
-              tag: "入住",
-              title: "VESSEL HOTEL 中島公園",
-              sub: "12/24–12/26 · 14:00 入住 / 11:00 退房",
-              note: "放好行李，可去附近逛逛 / 超市 / 便利商店",
-              map: "",
-              image: ""
-            },
-            {
-              time: "21:00",
-              tag: "TBD",
-              title: "札幌夜散步（待決定）",
-              sub: "大通公園 / 狸小路 or 其他",
-              note: "",
-              map: "",
-              image: ""
-            }
-          ]
-        },
-        {
-          id: "2025-12-25",
-          label: "Day2 12/25",
-          weather: {
-            temp: -5,
-            low: -10,
-            feels: -12,
-            status: "Klook 一日遊",
-            note: "旭山動物園 + 青池 + 白鬚瀑布 + 精靈露臺"
-          },
-          schedule: [
-            {
-              time: "07:50",
-              tag: "去程",
-              title: "集合出發",
-              sub: "札幌 → 旭川方向（依憑證集合點）",
-              note: "",
-              map: "",
-              image: ""
-            },
-            {
-              time: "10:30",
-              tag: "景點",
-              title: "旭山動物園",
-              sub: "約 1 小時 40 分 · 自由活動",
-              note: "本行程包含旭山動物園門票",
-              map: "",
-              image: ""
-            },
-            {
-              time: "13:10",
-              tag: "景點",
-              title: "白金青池",
-              sub: "約 15 分鐘 · 自由活動",
-              note: "",
-              map: "",
-              image: ""
-            },
-            {
-              time: "13:30",
-              tag: "景點",
-              title: "白鬚瀑布",
-              sub: "約 25 分鐘 · 自由活動",
-              note: "",
-              map: "",
-              image: ""
-            },
-            {
-              time: "15:00",
-              tag: "景點",
-              title: "森林精靈露臺",
-              sub: "約 1 小時 20 分 · 自由活動",
-              note: "拍照、散步、喝東西",
-              map: "",
-              image: ""
-            },
-            {
-              time: "18:30",
-              tag: "回程",
-              title: "返回札幌",
-              sub: "回到集合地點附近解散",
-              note: "晚餐 / 夜晚行程 TBD",
-              map: "",
-              image: ""
-            }
-          ]
-        },
-        {
-          id: "2025-12-26",
-          label: "Day3 12/26",
-          weather: {
-            temp: -3,
-            low: -8,
-            feels: -10,
-            status: "市區日 & 換飯店",
-            note: "白天札幌市區 & 住相鐵薄野"
-          },
-          schedule: [
-            {
-              time: "08:00",
-              tag: "景點",
-              title: "北海道神宮",
-              sub: "早上散步 · 吃清餅 / 投幣求籤",
-              note: "",
-              map: "",
-              image: ""
-            },
-            {
-              time: "12:00",
-              tag: "景點",
-              title: "北海道廳本廳舍",
-              sub: "紅磚建築 · 拍照散步",
-              note: "",
-              map: "",
-              image: ""
-            },
-            {
-              time: "15:00",
-              tag: "換飯店",
-              title: "相鐵 FRESA INN 薄野",
-              sub: "12/26–12/29 · 15:00 入住 / 11:00 退房",
-              note: "",
-              map: "",
-              image: ""
-            }
-          ]
-        },
-        {
-          id: "2025-12-27",
-          label: "Day4 12/27",
-          weather: {
-            temp: -6,
-            low: -12,
-            feels: -15,
-            status: "滑雪日",
-            note: "雪長姐 · 手稻滑雪場"
-          },
-          schedule: [
-            {
-              time: "07:00",
-              tag: "出發",
-              title: "札幌 → 手稻滑雪場",
-              sub: "搭 JR / 巴士（依實際安排）",
-              note: "前一天先確認車班時間",
-              map: "",
-              image: ""
-            },
-            {
-              time: "09:00",
-              tag: "滑雪",
-              title: "集合 & 租裝備",
-              sub: "手稻滑雪場 · 與雪長姐會合",
-              note: "",
-              map: "",
-              image: ""
-            },
-            {
-              time: "10:00",
-              tag: "滑雪",
-              title: "滑雪教學 & 自由滑",
-              sub: "中午可在雪場用餐",
-              note: "",
-              map: "",
-              image: ""
-            },
-            {
-              time: "16:00",
-              tag: "回程",
-              title: "離開手稻滑雪場",
-              sub: "搭車返回札幌",
-              note: "回到薄野附近吃晚餐 / 泡湯 TBD",
-              map: "",
-              image: ""
-            }
-          ]
-        },
-        {
-          id: "2025-12-28",
-          label: "Day5 12/28",
-          weather: {
-            temp: -6,
-            low: -12,
-            feels: -15,
-            status: "自由滑雪 / 自由行",
-            note: "看狀況再決定要去哪裡玩雪或市區逛街"
-          },
-          schedule: [
-            {
-              time: "TBD",
-              tag: "TBD",
-              title: "自由滑雪 or 市區行程",
-              sub: "之後再自己決定細節",
-              note: "",
-              map: "",
-              image: ""
-            }
-          ]
-        },
-        {
-          id: "2025-12-29",
-          label: "Day6 12/29",
-          weather: {
-            temp: -3,
-            low: -8,
-            feels: -10,
-            status: "回程日",
-            note: "收拾行李 + 機場採買"
-          },
-          schedule: [
-            {
-              time: "11:00",
-              tag: "退房",
-              title: "退房 · 相鐵 FRESA INN 薄野",
-              sub: "最晚 11:00 退房，可先帶行李去札幌站寄物",
-              note: "",
-              map: "",
-              image: ""
-            },
-            {
-              time: "12:00",
-              tag: "前往機場",
-              title: "札幌 → 新千歲機場",
-              sub: "搭 JR / 巴士前往 CTS",
-              note: "預留時間逛機場 & 買伴手禮",
-              map: "",
-              image: ""
-            },
-            {
-              time: "13:55",
-              tag: "回程",
-              title: "FD243 CTS → TPE",
-              sub: "Airasia FD243 13:55 起飛，預計 17:55 抵達",
-              note: "",
-              map: "",
-              image: ""
-            }
-          ]
-        }
-      ],
-      fx: { rate: 0.215 },
-      // 初始購物清單（文字版，可再自己新增）
-      defaultShopping: [
-        { id: "s-muji-01", owner: "Luna", store: "無印良品", name: "福吉茶", note: "" },
-        { id: "s-daiso-01", owner: "Luna", store: "大創", name: "折疊梳子", note: "" },
-        { id: "s-daiso-02", owner: "Luna", store: "大創", name: "鋁罐（收納用）", note: "" },
-        { id: "s-3c-01", owner: "Luna", store: "3COINS", name: "旅行收納袋", note: "" },
-        { id: "s-3c-02", owner: "Luna", store: "3COINS", name: "多功能微波調理烤盤", note: "" },
-        { id: "s-3c-03", owner: "Luna", store: "3COINS", name: "毛巾手套", note: "" },
-        { id: "s-3c-04", owner: "Luna", store: "3COINS", name: "橘色雜物袋", note: "" },
-        { id: "s-hands-01", owner: "Luna", store: "Hands", name: "Pincha 即飲抹茶塊", note: "" },
-        { id: "s-cvs-01", owner: "Luna", store: "超商", name: "健達出奇蛋 皮克敏", note: "" },
-        { id: "s-711-01", owner: "Luna", store: "7-11", name: "帶皮薯條", note: "" },
-        { id: "s-711-02", owner: "Luna", store: "7-11", name: "葡萄餅乾", note: "" },
-        { id: "s-lawson-01", owner: "Luna", store: "Lawson", name: "黃豆粉綜合堅果", note: "" },
-        { id: "s-family-01", owner: "Luna", store: "全家", name: "Calbee 森永7激洋芋片（暫名）", note: "" },
-        { id: "s-family-02", owner: "Luna", store: "全家", name: "半生水蜜桃乾", note: "" },
-        { id: "s-family-03", owner: "Luna", store: "全家", name: "鱈魚肉腸", note: "" }
-      ],
-      // 初始費用
-      defaultExpenses: [
-        {
-          id: "e-hand-rent",
-          title: "手稻雪具租借",
-          date: "2025-11-17",
-          method: "Jen 先付 NT$5,086",
-          amount: 5086,
-          currency: "TWD",
-          payer: "Jen"
-        },
-        {
-          id: "e-klook-day",
-          title: "Klook 一日",
-          date: "2025-10-05",
-          method: "Luna 先付 NT$3,423",
-          amount: 3423,
-          currency: "TWD",
-          payer: "Luna"
-        },
-        {
-          id: "e-hotel-1226-27",
-          title: "12/26–12/27（1晚）",
-          date: "2025-09-06",
-          method: "Jen 先付 NT$3,659",
-          amount: 3659,
-          currency: "TWD",
-          payer: "Jen"
-        },
-        {
-          id: "e-yuki-class",
-          title: "雪長姐一日課",
-          date: "2025-09-04",
-          method: "Jen 先付 NT$14,000",
-          amount: 14000,
-          currency: "TWD",
-          payer: "Jen"
-        },
-        {
-          id: "e-hotel-1227-29",
-          title: "12/27–12/29（2晚）",
-          date: "2025-09-04",
-          method: "Luna 先付 NT$6,193",
-          amount: 6193,
-          currency: "TWD",
-          payer: "Luna"
-        },
-        {
-          id: "e-hotel-1224-26",
-          title: "12/24–12/26（2晚）",
-          date: "2025-09-04",
-          method: "Luna 先付 NT$7,903",
-          amount: 7903,
-          currency: "TWD",
-          payer: "Luna"
-        },
-        {
-          id: "e-flight",
-          title: "機票",
-          date: "2025-09-01",
-          method: "Luna 先付 NT$28,296",
-          amount: 28296,
-          currency: "TWD",
-          payer: "Luna"
-        }
-      ]
+    // ====== 基本設定 ======
+    const STORAGE_KEYS = {
+      itinerary: "hk_itinerary_v1",
+      shopping: "hk_shopping_v3",
+      expenses: "hk_expenses_v3",
+      header: "hk_header_v1"
     };
 
-    // ========= 2. localStorage =========
-    const TRIP_KEY = "hk_trip_data_v3";
-    const SHOP_KEY = "hk_shopping_v3";
-    const EXP_KEY  = "hk_expenses_v4";
-    const HERO_BG_KEY = "hk_hero_bg_v2";
+    const defaultDays = [
+      { id: "d1", label: "Day1 12/24", date: "2025-12-24" },
+      { id: "d2", label: "Day2 12/25", date: "2025-12-25" },
+      { id: "d3", label: "Day3 12/26", date: "2025-12-26" },
+      { id: "d4", label: "Day4 12/27", date: "2025-12-27" },
+      { id: "d5", label: "Day5 12/28", date: "2025-12-28" },
+      { id: "d6", label: "Day6 12/29", date: "2025-12-29" }
+    ];
 
-    const safeParse = str => {
-      try { return JSON.parse(str); } catch { return null; }
-    };
+    let itineraryData = loadJSON(STORAGE_KEYS.itinerary, {
+      selectedDayId: "d1",
+      days: defaultDays.map(d => ({ ...d, weatherNote: "", items: [] }))
+    });
 
-    function loadTripData() {
-      const data = localStorage.getItem(TRIP_KEY);
-      return data ? safeParse(data) : null;
-    }
-    function saveTripData() {
-      localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
-    }
-    function loadShopping() {
-      const data = localStorage.getItem(SHOP_KEY);
-      if (data) return safeParse(data) || defaultTripData.defaultShopping;
-      return defaultTripData.defaultShopping;
-    }
-    function saveShopping() {
-      localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
-    }
-    function loadExpenses() {
-      const data = localStorage.getItem(EXP_KEY);
-      if (data) return safeParse(data) || defaultTripData.defaultExpenses;
-      return defaultTripData.defaultExpenses;
-    }
-    function saveExpenses() {
-      localStorage.setItem(EXP_KEY, JSON.stringify(expenseList));
-    }
+    let shoppingData = loadJSON(STORAGE_KEYS.shopping, {
+      items: []
+    });
 
-    let tripData = loadTripData() || defaultTripData;
-    let shoppingList = loadShopping();
-    let expenseList = loadExpenses();
+    let expenseData = loadJSON(STORAGE_KEYS.expenses, {
+      items: [],
+      fxJPY: 0.215 // 預設匯率，可之後依實際狀況修改
+    });
 
-    // ========= 3. 行程 & Tabs =========
-    const dayTabsEl = document.getElementById("dayTabs");
-    const dayContentEl = document.getElementById("dayContent");
-    let currentDayIndex = 0;
+    let headerData = loadJSON(STORAGE_KEYS.header, {
+      title: "Hokkaido Trip",
+      subtitle: "2025 相親相愛又一年"
+    });
 
-    function getTimeValue(t) {
-      if (!t) return 24 * 60 + 59;
-      const m = /^(\d{1,2}):(\d{2})$/.exec(t.trim());
-      if (!m) return 24 * 60 + 59;
-      const h = parseInt(m[1], 10), min = parseInt(m[2], 10);
-      if (h < 0 || h > 23 || min < 0 || min > 59) return 24 * 60 + 59;
-      return h * 60 + min;
+    function loadJSON(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        return JSON.parse(raw);
+      } catch (e) {
+        console.warn("loadJSON error for key", key, e);
+        return fallback;
+      }
     }
 
-    function sortScheduleForDay(dayIdx) {
-      const day = tripData.days[dayIdx];
-      if (!day || !day.schedule) return;
-      day.schedule.sort((a, b) => getTimeValue(a.time) - getTimeValue(b.time));
+    function saveJSON(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
     }
 
-    function renderTabs() {
-      dayTabsEl.innerHTML = "";
-      tripData.days.forEach((day, idx) => {
-        const tab = document.createElement("div");
-        tab.className = "day-tab" + (idx === currentDayIndex ? " active" : "");
-        tab.textContent = day.label;
-        tab.onclick = () => {
-          currentDayIndex = idx;
-          renderTabs();
-          renderDayContent();
+    function genId() {
+      return "id_" + Math.random().toString(36).slice(2, 9);
+    }
+
+    // ====== Header ======
+    function renderHeader() {
+      document.querySelector(".hero-title-texts h1").textContent = headerData.title;
+      document.querySelector(".hero-title-texts span").textContent = headerData.subtitle;
+    }
+
+    function editTitle() {
+      const newTitle = prompt("主標題（例如：Hokkaido Trip）", headerData.title);
+      if (newTitle !== null && newTitle.trim() !== "") headerData.title = newTitle.trim();
+      const newSub = prompt("副標題（例如：2025 相親相愛又一年）", headerData.subtitle);
+      if (newSub !== null && newSub.trim() !== "") headerData.subtitle = newSub.trim();
+      renderHeader();
+      saveJSON(STORAGE_KEYS.header, headerData);
+    }
+
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      window.scrollTo({
+        top: el.offsetTop - 70,
+        behavior: "smooth"
+      });
+    }
+
+    // ====== Day Tabs & Itinerary ======
+    let currentEditingItineraryId = null;
+
+    function getCurrentDay() {
+      return itineraryData.days.find(d => d.id === itineraryData.selectedDayId) || itineraryData.days[0];
+    }
+
+    function renderDayTabs() {
+      const wrap = document.getElementById("dayScroll");
+      wrap.innerHTML = "";
+      itineraryData.days.forEach(day => {
+        const btn = document.createElement("button");
+        btn.className = "day-pill" + (day.id === itineraryData.selectedDayId ? " active" : "");
+        btn.textContent = day.label;
+        btn.onclick = () => {
+          itineraryData.selectedDayId = day.id;
+          saveJSON(STORAGE_KEYS.itinerary, itineraryData);
+          renderDayTabs();
+          renderItinerary();
         };
-        dayTabsEl.appendChild(tab);
+        wrap.appendChild(btn);
       });
     }
 
-    function renderDayContent() {
-      const day = tripData.days[currentDayIndex];
-      if (!day) return;
+    function renderItinerary() {
+      const day = getCurrentDay();
+      document.getElementById("todayDayLabel").textContent = day.label;
+      document.getElementById("weatherNoteInput").value = day.weatherNote || "";
 
-      sortScheduleForDay(currentDayIndex);
+      // 依時間自動排序
+      const sorted = [...(day.items || [])].sort((a, b) => {
+        if (!a.time && !b.time) return 0;
+        if (!a.time) return 1;
+        if (!b.time) return -1;
+        return a.time.localeCompare(b.time);
+      });
 
-      let html = `
-        <section class="card">
-          <div class="card-header">
-            <div class="card-title">
-              <span class="icon">❄️</span>
-              ${day.weather.temp}℃ / ${day.weather.low}℃
-            </div>
-            <div style="text-align:right;">
-              <div class="card-subtitle">${day.weather.status}</div>
-              <span class="timeline-edit weather-edit" data-day="${currentDayIndex}">✏️</span>
-            </div>
-          </div>
-          <div class="weather-main">
-            <div class="weather-temp">
-              <span>${day.weather.temp}°</span>
-              <span>體感 ${day.weather.feels}°C</span>
-            </div>
-            <div class="weather-extra">
-              <div>${day.weather.status}</div>
-              <div>${day.weather.note}</div>
-            </div>
-          </div>
-        </section>
-      `;
+      const list = document.getElementById("itineraryList");
+      list.innerHTML = "";
+      if (sorted.length === 0) {
+        list.innerHTML = '<div class="subtext">還沒有行程，點右上「新增行程」來排一下吧。</div>';
+        return;
+      }
 
-      html += `
-        <section class="card">
-          <div class="card-header">
-            <div class="card-title">
-              <span class="icon">🗓</span>
-              今日行程
-            </div>
-            <div class="card-subtitle">${day.label}</div>
-          </div>
-          ${day.schedule.map((item, idx) => `
-            <div class="timeline-item">
-              <div class="timeline-time">${item.time}</div>
-              <div class="timeline-body">
-                <div>
-                  <span class="tag">${item.tag}</span>
-                  <span class="timeline-edit" data-day="${currentDayIndex}" data-idx="${idx}">✏️</span>
-                </div>
-                <div class="timeline-title">${item.title}</div>
-                <div class="timeline-sub">${item.sub || ""}</div>
-                ${item.note ? `<div class="timeline-note">${item.note}</div>` : ""}
-                ${item.map ? `<a href="${item.map}" target="_blank" class="timeline-map-link">🗺️ Google 地圖</a>` : ""}
-                ${item.image ? `<img class="timeline-img" src="${item.image}" alt="">` : ""}
-              </div>
-            </div>
-          `).join("")}
-        </section>
-      `;
+      sorted.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "timeline-item";
 
-      dayContentEl.innerHTML = html;
+        const timeDiv = document.createElement("div");
+        timeDiv.className = "timeline-time";
+        timeDiv.textContent = item.time || "--:--";
 
-      document.querySelectorAll(".timeline-edit").forEach(btn => {
-        if (btn.classList.contains("weather-edit")) return;
-        btn.addEventListener("click", () => {
-          const d = parseInt(btn.dataset.day, 10);
-          const i = parseInt(btn.dataset.idx, 10);
-          openScheduleModal(d, i);
+        const content = document.createElement("div");
+        const titleRow = document.createElement("div");
+        titleRow.className = "timeline-content-title";
+
+        const t = document.createElement("div");
+        t.textContent = item.title || "(未命名行程)";
+        const r = document.createElement("div");
+        r.innerHTML = '<button class="icon-btn" onclick="editItinerary(\'' + item.id + '\')">✏️</button>';
+        titleRow.appendChild(t);
+        titleRow.appendChild(r);
+
+        const note = document.createElement("div");
+        note.className = "timeline-content-note";
+        note.textContent = item.note || "";
+
+        content.appendChild(titleRow);
+        if (item.note) content.appendChild(note);
+        if (item.map) {
+          const map = document.createElement("a");
+          map.className = "timeline-map-link";
+          map.href = item.map;
+          map.target = "_blank";
+          map.textContent = "Google Map";
+          content.appendChild(map);
+        }
+
+        row.appendChild(timeDiv);
+        row.appendChild(content);
+        list.appendChild(row);
+      });
+    }
+
+    function openItineraryModal() {
+      currentEditingItineraryId = null;
+      document.getElementById("itineraryModalTitle").textContent = "新增行程";
+      document.getElementById("itineraryTime").value = "";
+      document.getElementById("itineraryTitle").value = "";
+      document.getElementById("itineraryNote").value = "";
+      document.getElementById("itineraryMap").value = "";
+      document.getElementById("itineraryDeleteBtn").style.display = "none";
+      document.getElementById("itineraryModal").style.display = "flex";
+    }
+
+    function editItinerary(id) {
+      const day = getCurrentDay();
+      const item = day.items.find(x => x.id === id);
+      if (!item) return;
+      currentEditingItineraryId = id;
+      document.getElementById("itineraryModalTitle").textContent = "編輯行程";
+      document.getElementById("itineraryTime").value = item.time || "";
+      document.getElementById("itineraryTitle").value = item.title || "";
+      document.getElementById("itineraryNote").value = item.note || "";
+      document.getElementById("itineraryMap").value = item.map || "";
+      document.getElementById("itineraryDeleteBtn").style.display = "inline-block";
+      document.getElementById("itineraryModal").style.display = "flex";
+    }
+
+    function closeItineraryModal() {
+      document.getElementById("itineraryModal").style.display = "none";
+    }
+
+    function saveItinerary() {
+      const time = document.getElementById("itineraryTime").value;
+      const title = document.getElementById("itineraryTitle").value.trim();
+      const note = document.getElementById("itineraryNote").value.trim();
+      const map = document.getElementById("itineraryMap").value.trim();
+      const day = getCurrentDay();
+
+      if (currentEditingItineraryId) {
+        const item = day.items.find(x => x.id === currentEditingItineraryId);
+        if (item) {
+          item.time = time;
+          item.title = title || "(未命名行程)";
+          item.note = note;
+          item.map = map;
+        }
+      } else {
+        day.items.push({
+          id: genId(),
+          time,
+          title: title || "(未命名行程)",
+          note,
+          map
         });
-      });
+      }
 
-      document.querySelectorAll(".weather-edit").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const d = parseInt(btn.dataset.day, 10);
-          openWeatherModal(d);
-        });
-      });
+      saveJSON(STORAGE_KEYS.itinerary, itineraryData);
+      closeItineraryModal();
+      renderItinerary();
     }
 
-    // ========= 4. 匯率 =========
-    const jpyInput = document.getElementById("jpyInput");
-    const twdInput = document.getElementById("twdInput");
-    const rateText = document.getElementById("rateText");
-
-    function updateFromJPY() {
-      const jpy = parseFloat(jpyInput.value || "0");
-      const twd = Math.round(jpy * tripData.fx.rate);
-      twdInput.value = twd;
-    }
-    function updateFromTWD() {
-      const twd = parseFloat(twdInput.value || "0");
-      const jpy = Math.round(twd / tripData.fx.rate);
-      jpyInput.value = jpy;
-    }
-    if (jpyInput && twdInput) {
-      jpyInput.addEventListener("input", updateFromJPY);
-      twdInput.addEventListener("input", updateFromTWD);
-    }
-    function initRate() {
-      if (!rateText) return;
-      rateText.textContent = `示意匯率：1 JPY ≈ ${tripData.fx.rate} TWD`;
-      updateFromJPY();
+    function deleteItinerary() {
+      const day = getCurrentDay();
+      if (!currentEditingItineraryId) return;
+      const idx = day.items.findIndex(x => x.id === currentEditingItineraryId);
+      if (idx >= 0 && confirm("確定要刪除這個行程嗎？")) {
+        day.items.splice(idx, 1);
+        saveJSON(STORAGE_KEYS.itinerary, itineraryData);
+        closeItineraryModal();
+        renderItinerary();
+      }
     }
 
-    // ========= 5. 購物清單 =========
-    const shoppingGridAllEl = document.getElementById("shoppingGridAll");
-    const shoppingStoreFilter = document.getElementById("shoppingStoreFilter");
-    let editingShoppingId = null;
+    // 天氣右邊小標題
+    document.getElementById("weatherNoteInput").addEventListener("change", () => {
+      const day = getCurrentDay();
+      day.weatherNote = document.getElementById("weatherNoteInput").value.trim();
+      saveJSON(STORAGE_KEYS.itinerary, itineraryData);
+    });
+
+    // ====== Shopping ======
+    let currentEditingShoppingId = null;
+    let tempShoppingImageData = null;
 
     function renderShopping() {
-      if (!shoppingGridAllEl) return;
-
-      const storeFilter = shoppingStoreFilter ? shoppingStoreFilter.value : "ALL";
-      let items = shoppingList;
-      if (storeFilter !== "ALL") {
-        items = items.filter(i => i.store === storeFilter);
+      const grid = document.getElementById("shoppingGrid");
+      const filter = document.getElementById("shoppingStoreFilter").value;
+      let items = shoppingData.items || [];
+      if (filter !== "ALL") {
+        items = items.filter(i => i.store === filter);
+      }
+      grid.innerHTML = "";
+      if (items.length === 0) {
+        grid.innerHTML = '<div class="subtext">目前沒有符合條件的商品。</div>';
+        return;
       }
 
-      shoppingGridAllEl.innerHTML = items.map(item => `
-        <div class="shopping-card">
-          <div class="shopping-name-row">
-            <div class="shopping-name">${item.name}</div>
-            <span class="shopping-edit" data-id="${item.id}">✏️</span>
-          </div>
-          <div class="shopping-note">
-            ${item.store ? `🏪 ${item.store}` : ""}${item.owner ? ` · 👤 ${item.owner}` : ""}
-          </div>
-          ${item.note ? `<div class="shopping-note">${item.note}</div>` : ""}
-          ${item.imageData ? `<img class="shopping-img" src="${item.imageData}" alt="">` : ""}
-        </div>
-      `).join("");
+      items.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "shopping-card";
 
-      // 綁定購物編輯
-      document.querySelectorAll(".shopping-edit").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const id = btn.dataset.id;
-          const item = shoppingList.find(i => i.id === id);
-          if (!item) return;
-          editingShoppingId = id;
-          shoppingName.value = item.name || "";
-          shoppingNote.value = item.note || "";
-          shoppingOwner.value = item.owner || "Luna";
-          shoppingStore.value = item.store || "";
-          shoppingImageInput.value = "";
-          openModal(shoppingModal);
-        });
-      });
-    }
-
-    if (shoppingStoreFilter) {
-      shoppingStoreFilter.addEventListener("change", renderShopping);
-    }
-
-    // 放大圖片 viewer
-    const imageViewer = document.getElementById("imageViewer");
-    const imageViewerImg = document.getElementById("imageViewerImg");
-    if (shoppingGridAllEl && imageViewer && imageViewerImg) {
-      shoppingGridAllEl.addEventListener("click", e => {
-        const img = e.target.closest(".shopping-img");
-        if (!img) return;
-        imageViewerImg.src = img.src;
-        imageViewer.classList.add("show");
-      });
-      imageViewer.addEventListener("click", () => {
-        imageViewer.classList.remove("show");
-      });
-    }
-
-    // ========= 6. 費用紀錄 =========
-    const expenseListEl = document.getElementById("expenseList");
-    const totalJPYEl = document.getElementById("totalJPY");
-    const totalTWDEl = document.getElementById("totalTWD");
-
-    function payerColor(p) {
-      switch (p) {
-        case "Luna": return "#ffb6c1";
-        case "Jen": return "#90caf9";
-        case "公基金": return "#a5d6a7";
-        default: return "#78909c";
-      }
-    }
-
-    function calcTotalsAndSettlement() {
-      let totalJPY = 0;
-      const rate = tripData.fx.rate;
-
-      const people = ["Luna", "Jen"];
-      const balances = {
-        Luna: { paid: 0, should: 0 },
-        Jen:  { paid: 0, should: 0 }
-      };
-
-      expenseList.forEach(item => {
-        let amountTWD = item.currency === "JPY"
-          ? item.amount * rate
-          : item.amount;
-
-        if (item.currency === "JPY") {
-          totalJPY += item.amount;
+        const imgWrap = document.createElement("div");
+        imgWrap.className = "shopping-thumb-wrap";
+        if (item.image) {
+          const img = document.createElement("img");
+          img.src = item.image;
+          img.alt = item.name || "";
+          img.onclick = () => showImagePreview(item.image);
+          imgWrap.appendChild(img);
         } else {
-          totalJPY += amountTWD / rate;
+          imgWrap.textContent = "無圖片";
         }
 
-        const share = amountTWD / people.length;
-        people.forEach(p => {
-          balances[p].should += share;
-        });
+        const nameDiv = document.createElement("div");
+        nameDiv.className = "shopping-name";
+        nameDiv.textContent = item.name || "(未命名商品)";
 
-        if (item.payer === "Luna") {
-          balances.Luna.paid += amountTWD;
-        } else if (item.payer === "Jen") {
-          balances.Jen.paid += amountTWD;
-        }
+        const storeDiv = document.createElement("div");
+        storeDiv.className = "shopping-store";
+        storeDiv.textContent = item.store || "店家未指定";
+
+        const noteDiv = document.createElement("div");
+        noteDiv.className = "shopping-note";
+        noteDiv.textContent = item.note || "";
+
+        const actions = document.createElement("div");
+        actions.style.display = "flex";
+        actions.style.justifyContent = "flex-end";
+        actions.innerHTML = '<button class="icon-btn" onclick="editShopping(\'' + item.id + '\')">✏️</button>';
+
+        card.appendChild(imgWrap);
+        card.appendChild(nameDiv);
+        card.appendChild(storeDiv);
+        if (item.note) card.appendChild(noteDiv);
+        card.appendChild(actions);
+        grid.appendChild(card);
       });
+    }
 
-      const totalTWD = Math.round(totalJPY * rate);
-      totalJPYEl.textContent = "¥" + Math.round(totalJPY).toLocaleString();
-      totalTWDEl.textContent = "約 NT$" + totalTWD.toLocaleString();
+    function openShoppingModal() {
+      currentEditingShoppingId = null;
+      tempShoppingImageData = null;
+      document.getElementById("shoppingModalTitle").textContent = "新增購物清單";
+      document.getElementById("shoppingName").value = "";
+      document.getElementById("shoppingStore").value = "";
+      document.getElementById("shoppingNote").value = "";
+      document.getElementById("shoppingImageInput").value = "";
+      document.getElementById("shoppingDeleteBtn").style.display = "none";
+      document.getElementById("shoppingModal").style.display = "flex";
+    }
 
-      const settleEl = document.getElementById("settleSummary");
-      if (!settleEl) return;
+    function editShopping(id) {
+      const item = (shoppingData.items || []).find(i => i.id === id);
+      if (!item) return;
+      currentEditingShoppingId = id;
+      tempShoppingImageData = item.image || null;
+      document.getElementById("shoppingModalTitle").textContent = "編輯購物清單";
+      document.getElementById("shoppingName").value = item.name || "";
+      document.getElementById("shoppingStore").value = item.store || "";
+      document.getElementById("shoppingNote").value = item.note || "";
+      document.getElementById("shoppingImageInput").value = "";
+      document.getElementById("shoppingDeleteBtn").style.display = "inline-block";
+      document.getElementById("shoppingModal").style.display = "flex";
+    }
 
-      const lText = `Luna：實付 NT$${Math.round(balances.Luna.paid).toLocaleString()} / 應付 NT$${Math.round(balances.Luna.should).toLocaleString()}`;
-      const jText = `Jen：實付 NT$${Math.round(balances.Jen.paid).toLocaleString()} / 應付 NT$${Math.round(balances.Jen.should).toLocaleString()}`;
+    function closeShoppingModal() {
+      document.getElementById("shoppingModal").style.display = "none";
+      tempShoppingImageData = null;
+    }
 
-      const netLuna = balances.Luna.paid - balances.Luna.should;
-      let settleLine = "";
-      const diff = Math.round(netLuna);
+    document.getElementById("shoppingImageInput").addEventListener("change", function () {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        tempShoppingImageData = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
 
-      if (Math.abs(diff) < 10) {
-        settleLine = "目前幾乎平手，不用互相轉帳～";
-      } else if (diff > 0) {
-        settleLine = `Jen 大約需要給 Luna NT$${diff.toLocaleString()}`;
+    function saveShopping() {
+      const name = document.getElementById("shoppingName").value.trim();
+      const store = document.getElementById("shoppingStore").value;
+      const note = document.getElementById("shoppingNote").value.trim();
+
+      if (currentEditingShoppingId) {
+        const item = shoppingData.items.find(i => i.id === currentEditingShoppingId);
+        if (item) {
+          item.name = name || "(未命名商品)";
+          item.store = store;
+          item.note = note;
+          if (tempShoppingImageData) item.image = tempShoppingImageData;
+        }
       } else {
-        settleLine = `Luna 大約需要給 Jen NT$${Math.abs(diff).toLocaleString()}`;
+        shoppingData.items.push({
+          id: genId(),
+          name: name || "(未命名商品)",
+          store,
+          note,
+          image: tempShoppingImageData
+        });
       }
 
-      settleEl.innerHTML = `${lText}<br>${jText}<br><b>${settleLine}</b>`;
+      saveJSON(STORAGE_KEYS.shopping, shoppingData);
+      closeShoppingModal();
+      renderShopping();
+    }
+
+    function deleteShopping() {
+      if (!currentEditingShoppingId) return;
+      if (!confirm("確定刪除這個商品嗎？")) return;
+      const idx = shoppingData.items.findIndex(i => i.id === currentEditingShoppingId);
+      if (idx >= 0) shoppingData.items.splice(idx, 1);
+      saveJSON(STORAGE_KEYS.shopping, shoppingData);
+      closeShoppingModal();
+      renderShopping();
+    }
+
+    function showImagePreview(src) {
+      const overlay = document.getElementById("imagePreviewOverlay");
+      const img = document.getElementById("imagePreviewImg");
+      img.src = src;
+      overlay.style.display = "flex";
+    }
+
+    function hideImagePreview() {
+      document.getElementById("imagePreviewOverlay").style.display = "none";
+    }
+
+    // ====== Expenses ======
+    let currentEditingExpenseId = null;
+    let currentPayer = "Luna";
+
+    function setPayer(payer) {
+      currentPayer = payer;
+      ["Luna","Jen","Shared"].forEach(p => {
+        const btn = document.getElementById("payer" + p);
+        if (!btn) return;
+        if (p === payer) {
+          btn.classList.remove("secondary");
+          btn.classList.add("primary");
+        } else {
+          btn.classList.add("secondary");
+          btn.classList.remove("primary");
+        }
+      });
     }
 
     function renderExpenses() {
-      if (!expenseListEl) return;
-      expenseListEl.innerHTML = expenseList.map(item => `
-        <div class="expense-item">
-          <div class="expense-left">
-            <div class="expense-icon" style="background:${payerColor(item.payer)};">
-              ${item.payer || ""}
-            </div>
-            <div>
-              <div class="expense-text-main">${item.title}</div>
-              <div class="expense-text-sub">
-                ${item.date || ""}${item.method ? " · " + item.method : ""}${item.payer ? " · " + item.payer : ""}
-              </div>
-            </div>
-          </div>
-          <div class="expense-right">
-            <div>${item.currency === "JPY" ? "¥" : "NT$"}${item.amount.toLocaleString()}</div>
-            <span class="expense-delete" data-id="${item.id}">✕</span>
-          </div>
-        </div>
-      `).join("");
+      const wrap = document.getElementById("expenseList");
+      const items = (expenseData.items || []).slice().sort((a,b) => (a.date || "").localeCompare(b.date || ""));
+      wrap.innerHTML = "";
+      if (items.length === 0) {
+        wrap.innerHTML = '<div class="subtext">尚未新增任何花費。</div>';
+      } else {
+        let currentDate = "";
+        items.forEach(item => {
+          if (item.date !== currentDate) {
+            currentDate = item.date;
+            const dt = document.createElement("div");
+            dt.className = "expense-group-title";
+            dt.textContent = item.date || "(未填日期)";
+            wrap.appendChild(dt);
+          }
+          const row = document.createElement("div");
+          row.className = "expense-item";
 
-      document.querySelectorAll(".expense-delete").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const id = btn.dataset.id;
-          expenseList = expenseList.filter(e => e.id !== id);
-          saveExpenses();
-          renderExpenses();
+          const left = document.createElement("div");
+          left.className = "expense-left";
+          const name = document.createElement("div");
+          name.className = "expense-name";
+          name.textContent = item.name || "(未命名花費)";
+          const meta = document.createElement("div");
+          meta.className = "expense-meta";
+          meta.textContent = (item.payer || "") + " 先付 / " + (item.currency || "NTD");
+          if (item.note) {
+            meta.textContent += " ｜ " + item.note;
+          }
+          left.appendChild(name);
+          left.appendChild(meta);
+
+          const right = document.createElement("div");
+          right.style.textAlign = "right";
+          const amt = document.createElement("div");
+          amt.className = "expense-amount";
+          amt.textContent = (item.currency || "NTD") + " " + (item.amount || 0);
+          const editBtn = document.createElement("button");
+          editBtn.className = "icon-btn";
+          editBtn.textContent = "✏️";
+          editBtn.onclick = () => editExpense(item.id);
+          right.appendChild(amt);
+          right.appendChild(editBtn);
+
+          row.appendChild(left);
+          row.appendChild(right);
+          wrap.appendChild(row);
         });
-      });
+      }
 
-      calcTotalsAndSettlement();
+      updateExpenseSummary();
     }
 
-    // ========= 7. Hero 背景 =========
-    const heroEl = document.getElementById("hero");
-    const changeBgBtn = document.getElementById("changeBgBtn");
-    const bgFileInput = document.getElementById("bgFileInput");
+    function openExpenseModal() {
+      currentEditingExpenseId = null;
+      document.getElementById("expenseModalTitle").textContent = "新增花費";
+      document.getElementById("expenseDate").value = "";
+      document.getElementById("expenseName").value = "";
+      document.getElementById("expenseAmount").value = "";
+      document.getElementById("expenseNote").value = "";
+      document.getElementById("expenseCurrency").value = "TWD";
+      document.getElementById("expenseDeleteBtn").style.display = "none";
+      setPayer("Luna");
+      document.getElementById("expenseModal").style.display = "flex";
+    }
 
-    function loadHeroBg() {
-      const bg = localStorage.getItem(HERO_BG_KEY);
-      if (bg && heroEl) {
-        heroEl.style.backgroundImage = `url(${bg})`;
+    function editExpense(id) {
+      const item = (expenseData.items || []).find(i => i.id === id);
+      if (!item) return;
+      currentEditingExpenseId = id;
+      document.getElementById("expenseModalTitle").textContent = "編輯花費";
+      document.getElementById("expenseDate").value = item.date || "";
+      document.getElementById("expenseName").value = item.name || "";
+      document.getElementById("expenseAmount").value = item.amount || "";
+      document.getElementById("expenseNote").value = item.note || "";
+      document.getElementById("expenseCurrency").value = item.currency || "TWD";
+      setPayer(item.payer || "Luna");
+      document.getElementById("expenseDeleteBtn").style.display = "inline-block";
+      document.getElementById("expenseModal").style.display = "flex";
+    }
+
+    function closeExpenseModal() {
+      document.getElementById("expenseModal").style.display = "none";
+    }
+
+    function saveExpense() {
+      const date = document.getElementById("expenseDate").value;
+      const name = document.getElementById("expenseName").value.trim();
+      const amount = parseFloat(document.getElementById("expenseAmount").value || "0");
+      const note = document.getElementById("expenseNote").value.trim();
+      const currency = document.getElementById("expenseCurrency").value;
+
+      if (isNaN(amount) || amount <= 0) {
+        alert("請輸入正確金額");
+        return;
+      }
+
+      const obj = {
+        id: currentEditingExpenseId || genId(),
+        date,
+        name: name || "(未命名花費)",
+        payer: currentPayer,
+        amount,
+        currency,
+        note
+      };
+
+      if (currentEditingExpenseId) {
+        const idx = expenseData.items.findIndex(i => i.id === currentEditingExpenseId);
+        if (idx >= 0) expenseData.items[idx] = obj;
+      } else {
+        expenseData.items.push(obj);
+      }
+
+      saveJSON(STORAGE_KEYS.expenses, expenseData);
+      closeExpenseModal();
+      renderExpenses();
+    }
+
+    function deleteExpense() {
+      if (!currentEditingExpenseId) return;
+      if (!confirm("確定刪除此筆花費？")) return;
+      const idx = expenseData.items.findIndex(i => i.id === currentEditingExpenseId);
+      if (idx >= 0) expenseData.items.splice(idx, 1);
+      saveJSON(STORAGE_KEYS.expenses, expenseData);
+      closeExpenseModal();
+      renderExpenses();
+    }
+
+    function updateExpenseSummary() {
+      const fx = expenseData.fxJPY || 0.215;
+      let lunaNT = 0, jenNT = 0, sharedNT = 0;
+      (expenseData.items || []).forEach(item => {
+        let nt = item.amount || 0;
+        if (item.currency === "JPY") nt = nt * fx;
+        if (item.payer === "Luna") lunaNT += nt;
+        else if (item.payer === "Jen") jenNT += nt;
+        else sharedNT += nt;
+      });
+      document.getElementById("summaryLuna").textContent = "NT$ " + lunaNT.toFixed(0);
+      document.getElementById("summaryJen").textContent = "NT$ " + jenNT.toFixed(0);
+      document.getElementById("summaryShared").textContent = "NT$ " + sharedNT.toFixed(0);
+
+      const halfShared = sharedNT / 2;
+      const lunaTotal = lunaNT + halfShared;
+      const jenTotal = jenNT + halfShared;
+      const diff = lunaTotal - jenTotal;
+      let text;
+      if (Math.abs(diff) < 1) {
+        text = "目前雙方已大致平衡";
+      } else if (diff > 0) {
+        text = "最後 Jen 需要給 Luna 約 NT$ " + diff.toFixed(0);
+      } else {
+        text = "最後 Luna 需要給 Jen 約 NT$ " + Math.abs(diff).toFixed(0);
+      }
+      document.getElementById("settlementText").textContent = text;
+    }
+
+    // ====== 資料同步 ======
+    function openSyncModal() {
+      document.getElementById("syncModal").style.display = "flex";
+    }
+    function closeSyncModal() {
+      document.getElementById("syncModal").style.display = "none";
+    }
+
+    function exportAllData() {
+      const data = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key) continue;
+        if (key.startsWith("hk_")) {
+          data[key] = localStorage.getItem(key);
+        }
+      }
+      const textarea = document.getElementById("syncTextarea");
+      textarea.value = JSON.stringify(data, null, 2);
+      if (Object.keys(data).length === 0) {
+        alert("目前沒有找到任何 hk_ 開頭的資料可以匯出。");
+      } else {
+        alert("匯出完成，請全選上方文字並複製，貼到另一個裝置的資料同步視窗中。");
       }
     }
-    if (changeBgBtn && bgFileInput) {
-      changeBgBtn.addEventListener("click", () => bgFileInput.click());
-      bgFileInput.addEventListener("change", e => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = ev => {
-          const dataUrl = ev.target.result;
-          heroEl.style.backgroundImage = `url(${dataUrl})`;
-          localStorage.setItem(HERO_BG_KEY, dataUrl);
-        };
-        reader.readAsDataURL(file);
+
+    function importAllData() {
+      const textarea = document.getElementById("syncTextarea");
+      const raw = (textarea.value || "").trim();
+      if (!raw) {
+        alert("請先貼上從另一個裝置匯出的資料。");
+        return;
+      }
+      let parsed;
+      try {
+        parsed = JSON.parse(raw);
+      } catch (e) {
+        alert("匯入失敗：內容不是有效的 JSON 格式。");
+        return;
+      }
+      if (!parsed || typeof parsed !== "object") {
+        alert("匯入失敗：資料格式不正確。");
+        return;
+      }
+      const keys = Object.keys(parsed).filter(k => k.startsWith("hk_"));
+      if (keys.length === 0) {
+        alert("匯入資料中沒有 hk_ 開頭的項目。");
+        return;
+      }
+      const ok = confirm(
+        "匯入後會覆蓋本裝置原本的行程 / 購物清單 / 花費等資料。\n\n" +
+        "建議先在本裝置按一次「匯出」備份，再進行匯入。\n\n確定要匯入嗎？"
+      );
+      if (!ok) return;
+      keys.forEach(key => {
+        localStorage.setItem(key, String(parsed[key]));
       });
+      alert("匯入完成，頁面將重新整理。");
+      location.reload();
     }
 
-    // ========= 8. View 切換 =========
-    const viewPlan = document.getElementById("view-plan");
-    const viewFx = document.getElementById("view-fx");
-    const viewShopping = document.getElementById("view-shopping");
-    const viewExpense = document.getElementById("view-expense");
-    const heroNavButtons = document.querySelectorAll(".hero-nav-btn");
-    let currentView = "plan";
-
-    const viewMap = { plan: viewPlan, fx: viewFx, shopping: viewShopping, expense: viewExpense };
-
-    function setView(view) {
-      currentView = view;
-      Object.entries(viewMap).forEach(([key, el]) => {
-        if (!el) return;
-        el.style.display = key === view ? "block" : "none";
-      });
-      heroNavButtons.forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.view === view);
-      });
-    }
-
-    heroNavButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        const view = btn.dataset.view;
-        setView(view);
-      });
-    });
-
-    // ========= 9. Modal & 新增 =========
-    const fabBtn = document.getElementById("fabBtn");
-    const typeModal = document.getElementById("typeModal");
-    const typeCancel = document.getElementById("typeCancel");
-    const addShoppingBtn = document.getElementById("addShoppingBtn");
-    const addExpenseBtn = document.getElementById("addExpenseBtn");
-
-    const shoppingModal = document.getElementById("shoppingModal");
-    const shoppingCancel = document.getElementById("shoppingCancel");
-    const shoppingSave = document.getElementById("shoppingSave");
-    const shoppingName = document.getElementById("shoppingName");
-    const shoppingNote = document.getElementById("shoppingNote");
-    const shoppingOwner = document.getElementById("shoppingOwner");
-    const shoppingStore = document.getElementById("shoppingStore");
-    const shoppingImageInput = document.getElementById("shoppingImageInput");
-
-    const expenseModal = document.getElementById("expenseModal");
-    const expenseCancel = document.getElementById("expenseCancel");
-    const expenseSave = document.getElementById("expenseSave");
-    const expenseTitle = document.getElementById("expenseTitle");
-    const expenseDate = document.getElementById("expenseDate");
-    const expenseMethod = document.getElementById("expenseMethod");
-    const expenseAmount = document.getElementById("expenseAmount");
-    const expenseCurrency = document.getElementById("expenseCurrency");
-    const expensePayerGroup = document.getElementById("expensePayerGroup");
-    let currentExpensePayer = "Luna";
-
-    const scheduleModal = document.getElementById("scheduleModal");
-    const scheduleCancel = document.getElementById("scheduleCancel");
-    const scheduleSave = document.getElementById("scheduleSave");
-    const scheduleTime = document.getElementById("scheduleTime");
-    const scheduleTag = document.getElementById("scheduleTag");
-    const scheduleTitle = document.getElementById("scheduleTitle");
-    const scheduleSub = document.getElementById("scheduleSub");
-    const scheduleNote = document.getElementById("scheduleNote");
-    const scheduleMap = document.getElementById("scheduleMap");
-    const scheduleImageInput = document.getElementById("scheduleImageInput");
-    const editTodayBtn = document.getElementById("editTodayBtn");
-
-    const weatherModal = document.getElementById("weatherModal");
-    const weatherCancel = document.getElementById("weatherCancel");
-    const weatherSave = document.getElementById("weatherSave");
-    const weatherStatusInput = document.getElementById("weatherStatus");
-    const weatherNoteInput = document.getElementById("weatherNote");
-    let editingWeatherDayIndex = null;
-
-    // 開啟 / 關閉 modal 時記錄與還原捲動位置
-    let lastScrollY = 0;
-    const openModal = m => {
-      lastScrollY = window.scrollY || window.pageYOffset || 0;
-      m.classList.add("show");
-      document.body.style.overflow = "hidden";
-    };
-    const closeModal = m => {
-      m.classList.remove("show");
-      document.body.style.overflow = "";
-      window.scrollTo({ top: lastScrollY, behavior: "auto" });
-    };
-
-    if (fabBtn) {
-      fabBtn.addEventListener("click", () => {
-        openModal(typeModal);
-      });
-    }
-    if (typeCancel) {
-      typeCancel.addEventListener("click", () => closeModal(typeModal));
-    }
-    if (addShoppingBtn) {
-      addShoppingBtn.addEventListener("click", () => {
-        closeModal(typeModal);
-        editingShoppingId = null;
-        shoppingName.value = "";
-        shoppingNote.value = "";
-        shoppingOwner.value = "Luna";
-        shoppingStore.value = "";
-        shoppingImageInput.value = "";
-        openModal(shoppingModal);
-      });
-    }
-    if (addExpenseBtn) {
-      addExpenseBtn.addEventListener("click", () => {
-        closeModal(typeModal);
-        expenseTitle.value = "";
-        expenseMethod.value = "";
-        expenseAmount.value = "";
-        expenseCurrency.value = "JPY";
-        currentExpensePayer = "Luna";
-        const today = new Date().toISOString().slice(0,10);
-        expenseDate.value = today;
-        Array.from(expensePayerGroup.querySelectorAll(".pill-btn")).forEach(btn => {
-          btn.classList.toggle("active", btn.dataset.payer === "Luna");
-        });
-        openModal(expenseModal);
-      });
-    }
-
-    if (shoppingCancel) shoppingCancel.addEventListener("click", () => closeModal(shoppingModal));
-    if (expenseCancel) expenseCancel.addEventListener("click", () => closeModal(expenseModal));
-    if (scheduleCancel) scheduleCancel.addEventListener("click", () => closeModal(scheduleModal));
-    if (weatherCancel) weatherCancel.addEventListener("click", () => closeModal(weatherModal));
-
-    // 付款人 pill
-    if (expensePayerGroup) {
-      expensePayerGroup.addEventListener("click", e => {
-        const btn = e.target.closest(".pill-btn");
-        if (!btn) return;
-        currentExpensePayer = btn.dataset.payer;
-        Array.from(expensePayerGroup.querySelectorAll(".pill-btn")).forEach(b => {
-          b.classList.toggle("active", b === btn);
-        });
-      });
-    }
-
-    // 新增 / 編輯購物
-    if (shoppingSave) {
-      shoppingSave.addEventListener("click", () => {
-        const name = shoppingName.value.trim();
-        if (!name) { alert("請輸入商品名稱"); return; }
-        const note = shoppingNote.value.trim();
-        const owner = shoppingOwner.value || "Luna";
-        const store = shoppingStore.value || "";
-        const file = shoppingImageInput.files[0];
-
-        const existingItem = editingShoppingId
-          ? shoppingList.find(i => i.id === editingShoppingId)
-          : null;
-        const existingImageData = existingItem ? existingItem.imageData : undefined;
-
-        const applyUpdate = (fileData) => {
-          const imageData = fileData !== undefined ? fileData : existingImageData;
-          if (editingShoppingId && existingItem) {
-            existingItem.name = name;
-            existingItem.note = note;
-            existingItem.owner = owner;
-            existingItem.store = store;
-            if (imageData !== undefined) existingItem.imageData = imageData;
-          } else {
-            shoppingList.push({
-              id: "s" + Date.now(),
-              owner,
-              store,
-              name,
-              note,
-              imageData
-            });
-          }
-          saveShopping();
-          renderShopping();
-          editingShoppingId = null;
-          closeModal(shoppingModal);
-        };
-
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = ev => applyUpdate(ev.target.result);
-          reader.readAsDataURL(file);
-        } else {
-          applyUpdate(undefined);
-        }
-      });
-    }
-
-    // 新增費用
-    if (expenseSave) {
-      expenseSave.addEventListener("click", () => {
-        const title = expenseTitle.value.trim();
-        if (!title) { alert("請輸入項目名稱"); return; }
-        const amount = parseFloat(expenseAmount.value || "0");
-        if (!amount || amount <= 0) { alert("請輸入金額"); return; }
-
-        const data = {
-          id: "e" + Date.now(),
-          title,
-          date: expenseDate.value,
-          method: expenseMethod.value.trim(),
-          amount,
-          currency: expenseCurrency.value,
-          payer: currentExpensePayer
-        };
-        expenseList.push(data);
-        saveExpenses();
-        renderExpenses();
-        closeModal(expenseModal);
-      });
-    }
-
-    // ========= 10. 行程編輯 =========
-    let editingDayIndex = null;
-    let editingScheduleIndex = null;
-
-    function openScheduleModal(dayIdx, schedIdx) {
-      editingDayIndex = dayIdx;
-      editingScheduleIndex = schedIdx;
-      const item = tripData.days[dayIdx].schedule[schedIdx];
-
-      scheduleTime.value = item.time || "";
-      scheduleTag.value = item.tag || "";
-      scheduleTitle.value = item.title || "";
-      scheduleSub.value = item.sub || "";
-      scheduleNote.value = item.note || "";
-      scheduleMap.value = item.map || "";
-      if (scheduleImageInput) scheduleImageInput.value = "";
-
-      openModal(scheduleModal);
-    }
-
-    if (editTodayBtn) {
-      editTodayBtn.addEventListener("click", () => {
-        const day = tripData.days[currentDayIndex];
-        if (!day || !day.schedule.length) {
-          alert("這一天還沒有行程可以編輯。");
-          return;
-        }
-        openScheduleModal(currentDayIndex, 0);
-      });
-    }
-
-    if (scheduleSave) {
-      scheduleSave.addEventListener("click", () => {
-        if (editingDayIndex === null || editingScheduleIndex === null) {
-          closeModal(scheduleModal);
-          return;
-        }
-        const item = tripData.days[editingDayIndex].schedule[editingScheduleIndex];
-        item.time = scheduleTime.value.trim() || "TBD";
-        item.tag = scheduleTag.value.trim() || "TBD";
-        item.title = scheduleTitle.value.trim() || "未命名行程";
-        item.sub = scheduleSub.value.trim();
-        item.note = scheduleNote.value.trim();
-        item.map = scheduleMap.value.trim();
-
-        const afterSave = () => {
-          sortScheduleForDay(editingDayIndex);
-          saveTripData();
-          renderDayContent();
-          closeModal(scheduleModal);
-        };
-
-        const file = scheduleImageInput.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = ev => {
-            item.image = ev.target.result;
-            afterSave();
-          };
-          reader.readAsDataURL(file);
-        } else {
-          afterSave();
-        }
-      });
-    }
-
-    // ========= 11. 天氣編輯 =========
-    function openWeatherModal(dayIdx) {
-      editingWeatherDayIndex = dayIdx;
-      const w = tripData.days[dayIdx].weather;
-      weatherStatusInput.value = w.status || "";
-      weatherNoteInput.value = w.note || "";
-      openModal(weatherModal);
-    }
-
-    if (weatherSave) {
-      weatherSave.addEventListener("click", () => {
-        if (editingWeatherDayIndex === null) {
-          closeModal(weatherModal);
-          return;
-        }
-        const w = tripData.days[editingWeatherDayIndex].weather;
-        w.status = weatherStatusInput.value.trim() || w.status;
-        w.note = weatherNoteInput.value.trim() || w.note;
-        saveTripData();
-        renderDayContent();
-        closeModal(weatherModal);
-      });
-    }
-
-    // ========= 12. 初始化 =========
+    // ====== 初始化 ======
     function init() {
-      tripData.days.forEach((_, idx) => sortScheduleForDay(idx));
-      renderTabs();
-      renderDayContent();
-      initRate();
+      renderHeader();
+      renderDayTabs();
+      renderItinerary();
       renderShopping();
       renderExpenses();
-      loadHeroBg();
-      setView("plan");
     }
+
     init();
   </script>
 </body>
