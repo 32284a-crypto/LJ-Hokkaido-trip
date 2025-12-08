@@ -23,14 +23,30 @@
     /* 頂部 banner */
     .hero {
       position: relative;
-      padding: 16px 16px 20px;
-      border-radius: 0 0 24px 24px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      background: linear-gradient(135deg, #bde3ff, #e5f4ff);
-      background-size: cover;
-      background-position: center;
-      color: #123456;
-      overflow: hidden;
+  padding: 16px 16px 20px;
+  border-radius: 0 0 24px 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+
+  /* 這行改成你的背景圖路徑 */
+  background-image: url("hero-snowboard.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* 淡淡藍色底，避免圖片載入前是一片白 */
+  background-color: #e5f1ff;
+
+  color: #123456;
+  overflow: hidden;
+}
+
+/* 淡化一點圖片，文字比較清楚 */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(244, 248, 255, 0.25);  /* 想要更清楚就把 0.45 改小一點 */
+  pointer-events: none;
     }
     .hero-overlay {
       position: absolute;
