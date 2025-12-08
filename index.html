@@ -303,10 +303,22 @@
       padding: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       font-size: 12px;
+      position: relative;
+    }
+    .shopping-name-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 4px;
     }
     .shopping-name {
       font-weight: 600;
       margin-bottom: 4px;
+    }
+    .shopping-edit {
+      font-size: 13px;
+      cursor: pointer;
+      opacity: 0.7;
     }
     .shopping-note {
       opacity: 0.75;
@@ -315,10 +327,33 @@
     }
     .shopping-img {
       width: 100%;
-      border-radius: 12px;
-      object-fit: cover;
-      margin-top: 6px;
+      height: auto;
       max-height: 120px;
+      object-fit: contain; /* 自動縮到方格內，完整顯示 */
+      border-radius: 12px;
+      margin-top: 6px;
+      cursor: pointer;
+    }
+
+    /* 放大圖片 overlay */
+    .image-viewer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 60;
+    }
+    .image-viewer-overlay.show {
+      display: flex;
+    }
+    .image-viewer-overlay img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      background: #fff;
     }
 
     /* 費用紀錄 */
@@ -510,12 +545,12 @@
         <div class="hero-sub">2025 相親相愛又一年</div>
 
         <!-- 圓形 icon 導覽 -->
-  <div class="hero-nav">
-  <button class="hero-nav-btn active" data-view="plan" title="行程">🗺️</button>
-  <button class="hero-nav-btn" data-view="shopping" title="購物清單">🧺</button>
-  <button class="hero-nav-btn" data-view="expense" title="費用紀錄">💳</button>
-  <button class="hero-nav-btn" data-view="fx" title="匯率">💱</button>
-</div>
+        <div class="hero-nav">
+          <button class="hero-nav-btn active" data-view="plan" title="行程">🗺️</button>
+          <button class="hero-nav-btn" data-view="fx" title="匯率">💱</button>
+          <button class="hero-nav-btn" data-view="shopping" title="購物清單">🧺</button>
+          <button class="hero-nav-btn" data-view="expense" title="費用紀錄">💳</button>
+        </div>
 
         <!-- 編輯行程 -->
         <div class="hero-toolbar">
@@ -549,9 +584,9 @@
             <div class="card-subtitle">JPY ↔ TWD</div>
           </div>
           <div class="rate-row">
-            <input id="jpyInput" type="number" value="" />
+            <input id="jpyInput" type="number" value="50000" />
             <span>⇄</span>
-            <input id="twdInput" type="number" value="" />
+            <input id="twdInput" type="number" value="10750" />
           </div>
           <div class="rate-meta" id="rateText"></div>
         </section>
@@ -625,10 +660,10 @@
     </div>
   </div>
 
-  <!-- 新增購物清單 Modal -->
+  <!-- 新增 / 編輯購物清單 Modal -->
   <div class="modal-overlay" id="shoppingModal">
     <div class="modal">
-      <div class="modal-title">新增購物清單</div>
+      <div class="modal-title">新增 / 編輯購物清單</div>
       <div class="form-group">
         <label>商品名稱</label>
         <input type="text" id="shoppingName" placeholder="例：六花亭 奶油葡萄夾心餅" />
@@ -660,7 +695,7 @@
         </select>
       </div>
       <div class="form-group">
-        <label>上傳照片（選填）</label>
+        <label>上傳照片（選填，重新選擇會覆蓋原圖）</label>
         <div class="upload-box">
           <input type="file" id="shoppingImageInput" accept="image/*" />
           <div style="margin-top:4px;">選一張商品圖片（會存在這台裝置的瀏覽器）</div>
@@ -668,7 +703,7 @@
       </div>
       <div class="modal-actions">
         <button class="btn btn-secondary" id="shoppingCancel">取消</button>
-        <button class="btn btn-primary" id="shoppingSave">新增</button>
+        <button class="btn btn-primary" id="shoppingSave">儲存</button>
       </div>
     </div>
   </div>
@@ -773,6 +808,11 @@
         <button class="btn btn-primary" id="scheduleSave">儲存</button>
       </div>
     </div>
+  </div>
+
+  <!-- 放大購物圖片 Overlay -->
+  <div class="image-viewer-overlay" id="imageViewer">
+    <img id="imageViewerImg" alt="">
   </div>
 
   <script>
@@ -1059,40 +1099,23 @@
       fx: { rate: 0.215 },
       // 初始購物清單（文字版，可再自己新增）
       defaultShopping: [
-        // 無印良品
         { id: "s-muji-01", owner: "Luna", store: "無印良品", name: "福吉茶", note: "" },
-
-        // 大創
         { id: "s-daiso-01", owner: "Luna", store: "大創", name: "折疊梳子", note: "" },
         { id: "s-daiso-02", owner: "Luna", store: "大創", name: "鋁罐（收納用）", note: "" },
-
-        // 3COINS
         { id: "s-3c-01", owner: "Luna", store: "3COINS", name: "旅行收納袋", note: "" },
         { id: "s-3c-02", owner: "Luna", store: "3COINS", name: "多功能微波調理烤盤", note: "" },
         { id: "s-3c-03", owner: "Luna", store: "3COINS", name: "毛巾手套", note: "" },
         { id: "s-3c-04", owner: "Luna", store: "3COINS", name: "橘色雜物袋", note: "" },
-
-        // Hands
         { id: "s-hands-01", owner: "Luna", store: "Hands", name: "Pincha 即飲抹茶塊", note: "" },
-
-        // 超商通用
         { id: "s-cvs-01", owner: "Luna", store: "超商", name: "健達出奇蛋 皮克敏", note: "" },
-
-        // 7-11
         { id: "s-711-01", owner: "Luna", store: "7-11", name: "帶皮薯條", note: "" },
         { id: "s-711-02", owner: "Luna", store: "7-11", name: "葡萄餅乾", note: "" },
-
-        // Lawson
         { id: "s-lawson-01", owner: "Luna", store: "Lawson", name: "黃豆粉綜合堅果", note: "" },
-
-        // 全家
         { id: "s-family-01", owner: "Luna", store: "全家", name: "Calbee 森永7激洋芋片（暫名）", note: "" },
         { id: "s-family-02", owner: "Luna", store: "全家", name: "半生水蜜桃乾", note: "" },
-        { id: "s-family-03", owner: "Luna", store: "全家", name: "鱈魚肉腸", note: "" },
-
-        // 可以再慢慢自己加：藥妝、美妝、面膜等等
+        { id: "s-family-03", owner: "Luna", store: "全家", name: "鱈魚肉腸", note: "" }
       ],
-      // 初始費用（用總額，系統會幫忙平分）
+      // 初始費用
       defaultExpenses: [
         {
           id: "e-hand-rent",
@@ -1203,7 +1226,6 @@
     const dayContentEl = document.getElementById("dayContent");
     let currentDayIndex = 0;
 
-    // 把時間字串轉成分鐘，非時間格式排最後
     function getTimeValue(t) {
       if (!t) return 24 * 60 + 59;
       const m = /^(\d{1,2}):(\d{2})$/.exec(t.trim());
@@ -1238,7 +1260,6 @@
       const day = tripData.days[currentDayIndex];
       if (!day) return;
 
-      // render 前先排序
       sortScheduleForDay(currentDayIndex);
 
       let html = `
@@ -1296,7 +1317,6 @@
 
       dayContentEl.innerHTML = html;
 
-      // 行程編輯
       document.querySelectorAll(".timeline-edit").forEach(btn => {
         if (btn.classList.contains("weather-edit")) return;
         btn.addEventListener("click", () => {
@@ -1306,7 +1326,6 @@
         });
       });
 
-      // 天氣編輯
       document.querySelectorAll(".weather-edit").forEach(btn => {
         btn.addEventListener("click", () => {
           const d = parseInt(btn.dataset.day, 10);
@@ -1315,9 +1334,35 @@
       });
     }
 
-    // ========= 4. 購物清單 =========
+    // ========= 4. 匯率 =========
+    const jpyInput = document.getElementById("jpyInput");
+    const twdInput = document.getElementById("twdInput");
+    const rateText = document.getElementById("rateText");
+
+    function updateFromJPY() {
+      const jpy = parseFloat(jpyInput.value || "0");
+      const twd = Math.round(jpy * tripData.fx.rate);
+      twdInput.value = twd;
+    }
+    function updateFromTWD() {
+      const twd = parseFloat(twdInput.value || "0");
+      const jpy = Math.round(twd / tripData.fx.rate);
+      jpyInput.value = jpy;
+    }
+    if (jpyInput && twdInput) {
+      jpyInput.addEventListener("input", updateFromJPY);
+      twdInput.addEventListener("input", updateFromTWD);
+    }
+    function initRate() {
+      if (!rateText) return;
+      rateText.textContent = `示意匯率：1 JPY ≈ ${tripData.fx.rate} TWD`;
+      updateFromJPY();
+    }
+
+    // ========= 5. 購物清單 =========
     const shoppingGridAllEl = document.getElementById("shoppingGridAll");
     const shoppingStoreFilter = document.getElementById("shoppingStoreFilter");
+    let editingShoppingId = null;
 
     function renderShopping() {
       if (!shoppingGridAllEl) return;
@@ -1330,7 +1375,10 @@
 
       shoppingGridAllEl.innerHTML = items.map(item => `
         <div class="shopping-card">
-          <div class="shopping-name">${item.name}</div>
+          <div class="shopping-name-row">
+            <div class="shopping-name">${item.name}</div>
+            <span class="shopping-edit" data-id="${item.id}">✏️</span>
+          </div>
           <div class="shopping-note">
             ${item.store ? `🏪 ${item.store}` : ""}${item.owner ? ` · 👤 ${item.owner}` : ""}
           </div>
@@ -1338,13 +1386,44 @@
           ${item.imageData ? `<img class="shopping-img" src="${item.imageData}" alt="">` : ""}
         </div>
       `).join("");
+
+      // 綁定購物編輯
+      document.querySelectorAll(".shopping-edit").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.dataset.id;
+          const item = shoppingList.find(i => i.id === id);
+          if (!item) return;
+          editingShoppingId = id;
+          shoppingName.value = item.name || "";
+          shoppingNote.value = item.note || "";
+          shoppingOwner.value = item.owner || "Luna";
+          shoppingStore.value = item.store || "";
+          shoppingImageInput.value = "";
+          openModal(shoppingModal);
+        });
+      });
     }
 
     if (shoppingStoreFilter) {
       shoppingStoreFilter.addEventListener("change", renderShopping);
     }
 
-    // ========= 5. 費用紀錄 =========
+    // 放大圖片 viewer
+    const imageViewer = document.getElementById("imageViewer");
+    const imageViewerImg = document.getElementById("imageViewerImg");
+    if (shoppingGridAllEl && imageViewer && imageViewerImg) {
+      shoppingGridAllEl.addEventListener("click", e => {
+        const img = e.target.closest(".shopping-img");
+        if (!img) return;
+        imageViewerImg.src = img.src;
+        imageViewer.classList.add("show");
+      });
+      imageViewer.addEventListener("click", () => {
+        imageViewer.classList.remove("show");
+      });
+    }
+
+    // ========= 6. 費用紀錄 =========
     const expenseListEl = document.getElementById("expenseList");
     const totalJPYEl = document.getElementById("totalJPY");
     const totalTWDEl = document.getElementById("totalTWD");
@@ -1358,7 +1437,6 @@
       }
     }
 
-    // 計算總額 & 結算（像 LINE Split）
     function calcTotalsAndSettlement() {
       let totalJPY = 0;
       const rate = tripData.fx.rate;
@@ -1374,14 +1452,12 @@
           ? item.amount * rate
           : item.amount;
 
-        // 總額（以 JPY 表示只是參考）
         if (item.currency === "JPY") {
           totalJPY += item.amount;
         } else {
           totalJPY += amountTWD / rate;
         }
 
-        // 公基金不參與 Luna / Jen 分帳
         const share = amountTWD / people.length;
         people.forEach(p => {
           balances[p].should += share;
@@ -1451,33 +1527,8 @@
       });
 
       calcTotalsAndSettlement();
-  
     }
-    // ========= 6. 匯率 =========
-    const jpyInput = document.getElementById("jpyInput");
-    const twdInput = document.getElementById("twdInput");
-    const rateText = document.getElementById("rateText");
 
-    function updateFromJPY() {
-      const jpy = parseFloat(jpyInput.value || "0");
-      const twd = Math.round(jpy * tripData.fx.rate);
-      twdInput.value = twd;
-    }
-    function updateFromTWD() {
-      const twd = parseFloat(twdInput.value || "0");
-      const jpy = Math.round(twd / tripData.fx.rate);
-      jpyInput.value = jpy;
-    }
-    if (jpyInput && twdInput) {
-      jpyInput.addEventListener("input", updateFromJPY);
-      twdInput.addEventListener("input", updateFromTWD);
-    }
-    function initRate() {
-      if (!rateText) return;
-      rateText.textContent = `示意匯率：1 JPY ≈ ${tripData.fx.rate} TWD`;
-      updateFromJPY();
-    }
-    
     // ========= 7. Hero 背景 =========
     const heroEl = document.getElementById("hero");
     const changeBgBtn = document.getElementById("changeBgBtn");
@@ -1578,11 +1629,23 @@
     const weatherNoteInput = document.getElementById("weatherNote");
     let editingWeatherDayIndex = null;
 
-    const openModal = m => m.classList.add("show");
-    const closeModal = m => m.classList.remove("show");
+    // 開啟 / 關閉 modal 時記錄與還原捲動位置
+    let lastScrollY = 0;
+    const openModal = m => {
+      lastScrollY = window.scrollY || window.pageYOffset || 0;
+      m.classList.add("show");
+      document.body.style.overflow = "hidden";
+    };
+    const closeModal = m => {
+      m.classList.remove("show");
+      document.body.style.overflow = "";
+      window.scrollTo({ top: lastScrollY, behavior: "auto" });
+    };
 
     if (fabBtn) {
-      fabBtn.addEventListener("click", () => openModal(typeModal));
+      fabBtn.addEventListener("click", () => {
+        openModal(typeModal);
+      });
     }
     if (typeCancel) {
       typeCancel.addEventListener("click", () => closeModal(typeModal));
@@ -1590,6 +1653,7 @@
     if (addShoppingBtn) {
       addShoppingBtn.addEventListener("click", () => {
         closeModal(typeModal);
+        editingShoppingId = null;
         shoppingName.value = "";
         shoppingNote.value = "";
         shoppingOwner.value = "Luna";
@@ -1632,7 +1696,7 @@
       });
     }
 
-    // 新增購物
+    // 新增 / 編輯購物
     if (shoppingSave) {
       shoppingSave.addEventListener("click", () => {
         const name = shoppingName.value.trim();
@@ -1642,20 +1706,42 @@
         const store = shoppingStore.value || "";
         const file = shoppingImageInput.files[0];
 
-        const addItem = imageData => {
-          shoppingList.push({ id: "s" + Date.now(), owner, store, name, note, imageData });
+        const existingItem = editingShoppingId
+          ? shoppingList.find(i => i.id === editingShoppingId)
+          : null;
+        const existingImageData = existingItem ? existingItem.imageData : undefined;
+
+        const applyUpdate = (fileData) => {
+          const imageData = fileData !== undefined ? fileData : existingImageData;
+          if (editingShoppingId && existingItem) {
+            existingItem.name = name;
+            existingItem.note = note;
+            existingItem.owner = owner;
+            existingItem.store = store;
+            if (imageData !== undefined) existingItem.imageData = imageData;
+          } else {
+            shoppingList.push({
+              id: "s" + Date.now(),
+              owner,
+              store,
+              name,
+              note,
+              imageData
+            });
+          }
           saveShopping();
           renderShopping();
+          editingShoppingId = null;
+          closeModal(shoppingModal);
         };
 
         if (file) {
           const reader = new FileReader();
-          reader.onload = ev => addItem(ev.target.result);
+          reader.onload = ev => applyUpdate(ev.target.result);
           reader.readAsDataURL(file);
         } else {
-          addItem(undefined);
+          applyUpdate(undefined);
         }
-        closeModal(shoppingModal);
       });
     }
 
