@@ -1918,16 +1918,16 @@
       });
     }
 
-    // ========= 12. 資料同步（同步碼） =========
+     // ========= 12. 資料同步（同步碼） =========
     const SYNC_VERSION = 1;
 
+    // 目前同步包含：行程 tripData + 購物清單 shoppingList + 費用紀錄 expenseList
     function buildSyncPayload() {
       return {
         v: SYNC_VERSION,
         tripData,
         shoppingList,
-        expenseList,
-        heroBg: localStorage.getItem(HERO_BG_KEY) || null
+        expenseList
       };
     }
 
@@ -1967,29 +1967,38 @@
           alert("請先貼上同步碼。");
           return;
         }
-        if (!confirm("套用同步碼會覆蓋目前這台裝置上的行程 / 購物 / 費用與背景。要繼續嗎？")) return;
+        if (!confirm("套用同步碼會覆蓋目前這台裝置上的『行程』、『購物清單』及『費用紀錄』（不會影響背景）。要繼續嗎？")) return;
         try {
           const data = decodeSync(code);
           if (!data || data.v !== SYNC_VERSION) {
             alert("同步碼版本不相容或格式錯誤。");
             return;
           }
-          tripData = data.tripData || tripData;
-          shoppingList = data.shoppingList || shoppingList;
-          expenseList = data.expenseList || expenseList;
-          if (data.heroBg) {
-            localStorage.setItem(HERO_BG_KEY, data.heroBg);
+
+          // 覆蓋 行程 + 購物 + 費用；背景維持各裝置自己原本的
+          if (data.tripData) {
+            tripData = data.tripData;
           }
+          if (data.shoppingList) {
+            shoppingList = data.shoppingList;
+          }
+          if (data.expenseList) {
+            expenseList = data.expenseList;
+          }
+
+          // 寫回 localStorage（這三個）
           saveTripData();
           saveShopping();
           saveExpenses();
-          alert("已套用同步資料，畫面會重新整理。");
+
+          alert("已套用同步資料（行程＋購物清單＋費用紀錄），畫面會重新整理。");
           location.reload();
         } catch (e) {
           alert("同步碼解析失敗，請確認是否有貼錯或被截斷。");
         }
       });
     }
+
 
     // ========= 13. 初始化 =========
     function init() {
