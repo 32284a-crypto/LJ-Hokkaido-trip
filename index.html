@@ -1918,86 +1918,80 @@
       });
     }
 
-     // ========= 12. 資料同步（同步碼） =========
-    const SYNC_VERSION = 1;
+ // ========= 12. 資料同步（同步碼） =========
+const SYNC_VERSION = 1;
 
-    // 目前同步包含：行程 tripData + 購物清單 shoppingList + 費用紀錄 expenseList
-    function buildSyncPayload() {
-      return {
-        v: SYNC_VERSION,
-        tripData,
-        shoppingList,
-        expenseList
-      };
-    }
+// 只同步：行程 + 購物 + 費用，不同步背景圖
+function buildSyncPayload() {
+  return {
+    v: SYNC_VERSION,
+    tripData,
+    shoppingList,
+    expenseList
+  };
+}
 
-    function encodeSync(payload) {
-      const json = JSON.stringify(payload);
-      return btoa(encodeURIComponent(json));
-    }
+function encodeSync(payload) {
+  const json = JSON.stringify(payload);
+  return btoa(encodeURIComponent(json));
+}
 
-    function decodeSync(code) {
-      const json = decodeURIComponent(atob(code.trim()));
-      return JSON.parse(json);
-    }
+function decodeSync(code) {
+  const json = decodeURIComponent(atob(code.trim()));
+  return JSON.parse(json);
+}
 
-    if (syncBtn && syncModal && syncText) {
-      syncBtn.addEventListener("click", () => {
-        syncText.value = "";
-        openModal(syncModal);
-      });
+if (syncBtn && syncModal && syncText) {
+  syncBtn.addEventListener("click", () => {
+    syncText.value = "";
+    openModal(syncModal);
+  });
+}
+if (syncClose) {
+  syncClose.addEventListener("click", () => closeModal(syncModal));
+}
+if (syncExport) {
+  syncExport.addEventListener("click", () => {
+    const payload = buildSyncPayload();
+    const code = encodeSync(payload);
+    syncText.value = code;
+    syncText.focus();
+    syncText.select();
+    try { document.execCommand("copy"); } catch {}
+  });
+}
+if (syncImport) {
+  syncImport.addEventListener("click", () => {
+    const code = (syncText.value || "").trim();
+    if (!code) {
+      alert("請先貼上同步碼。");
+      return;
     }
-    if (syncClose) {
-      syncClose.addEventListener("click", () => closeModal(syncModal));
-    }
-    if (syncExport) {
-      syncExport.addEventListener("click", () => {
-        const payload = buildSyncPayload();
-        const code = encodeSync(payload);
-        syncText.value = code;
-        syncText.focus();
-        syncText.select();
-        try { document.execCommand("copy"); } catch {}
-      });
-    }
-    if (syncImport) {
-      syncImport.addEventListener("click", () => {
-        const code = (syncText.value || "").trim();
-        if (!code) {
-          alert("請先貼上同步碼。");
-          return;
-        }
-        if (!confirm("套用同步碼會覆蓋目前這台裝置上的『行程』、『購物清單』及『費用紀錄』（不會影響背景）。要繼續嗎？")) return;
-        try {
-          const data = decodeSync(code);
-          if (!data || data.v !== SYNC_VERSION) {
-            alert("同步碼版本不相容或格式錯誤。");
-            return;
-          }
+    if (!confirm("套用同步碼會覆蓋目前這台裝置上的行程 / 購物 / 費用。要繼續嗎？")) return;
+    try {
+      const data = decodeSync(code);
+      if (!data || data.v !== SYNC_VERSION) {
+        alert("同步碼版本不相容或格式錯誤。");
+        return;
+      }
 
-          // 覆蓋 行程 + 購物 + 費用；背景維持各裝置自己原本的
-          if (data.tripData) {
-            tripData = data.tripData;
-          }
-          if (data.shoppingList) {
-            shoppingList = data.shoppingList;
-          }
-          if (data.expenseList) {
-            expenseList = data.expenseList;
-          }
+      // 套用資料（背景就不管了）
+      tripData     = data.tripData     || tripData;
+      shoppingList = data.shoppingList || shoppingList;
+      expenseList  = data.expenseList  || expenseList;
 
-          // 寫回 localStorage（這三個）
-          saveTripData();
-          saveShopping();
-          saveExpenses();
+      saveTripData();
+      saveShopping();
+      saveExpenses();
 
-          alert("已套用同步資料（行程＋購物清單＋費用紀錄），畫面會重新整理。");
-          location.reload();
-        } catch (e) {
-          alert("同步碼解析失敗，請確認是否有貼錯或被截斷。");
-        }
-      });
+      alert("已套用同步資料，畫面會重新整理。");
+      location.reload();
+    } catch (e) {
+      alert("同步碼解析失敗，請確認是否有貼錯或被截斷。");
     }
+  });
+}
+
 
 
     // ========= 13. 初始化 =========
