@@ -1,4 +1,14 @@
-<script type="module">
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>Hokkaido Trip Planner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="hero">
+        </header>
+    <script type="module">
   // ========= 0. Firebase 設定 (已導入您的專案配置) =========
   // 引入 Firebase SDK 模組 (注意：這裡使用 CDN 連結，需在支援模組的環境下執行，例如部署到 GitHub Pages)
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -44,7 +54,7 @@
           weather: { temp: -5, low: -10, feels: -12, status: "Klook 一日遊", note: "旭山動物園 + 青池 + 白鬚瀑布 + 精靈露臺" },
           schedule: [
             { time: "07:50", tag: "去程", title: "集合出發", sub: "札幌 → 旭川方向（依憑證集合點）", note: "", map: "", image: "" },
-            { time: "10:30", tag: "景點", title: "旭山動物園", sub: "約 1 小時 40 分 · 自由活動", note: "行程含旭山動物園門票", map: "", image: "" },
+            { time: "10:30", tag: "景點", title: "旭山動物園", sub: "約 1 小時 40 分 · 自由活動", note: "本行程包含旭山動物園門票", map: "", image: "" },
             { time: "13:10", tag: "景點", title: "白金青池", sub: "約 15 分鐘 · 自由活動", note: "", map: "", image: "" },
             { time: "13:30", tag: "景點", title: "白鬚瀑布", sub: "約 25 分鐘 · 自由活動", note: "", map: "", image: "" },
             { time: "15:00", tag: "景點", title: "森林精靈露臺", sub: "約 1 小時 20 分 · 自由活動", note: "拍照、散步、喝東西", map: "", image: "" },
@@ -94,17 +104,20 @@
       fx: { rate: 0.215 },
       shopping: [
         { id: "s-muji-01", owner: "Luna", store: "無印良品", name: "福吉茶", note: "" },
+        { id: "s-daiso-01", owner: "Luna", store: "大創", name: "折疊梳子", note: "" },
+        { id: "s-daiso-02", owner: "Luna", store: "大創", name: "鋁罐（收納用）", note: "" },
         { id: "s-3c-01", owner: "Luna", store: "3COINS", name: "旅行收納袋", note: "" },
         { id: "s-3c-02", owner: "Luna", store: "3COINS", name: "多功能微波調理烤盤", note: "" },
-        { id: "s-3c-03", owner: "Luna", store: "3COINS", name: "毛毛手套", note: "" },
-        { id: "s-3c-04", owner: "Luna", store: "3COINS", name: "狗狗裝", note: "" },
+        { id: "s-3c-03", owner: "Luna", store: "3COINS", name: "毛巾手套", note: "" },
+        { id: "s-3c-04", owner: "Luna", store: "3COINS", name: "橘色雜物袋", note: "" },
+        { id: "s-hands-01", owner: "Luna", store: "Hands", name: "Pincha 即飲抹茶塊", note: "" },
         { id: "s-cvs-01", owner: "Luna", store: "超商", name: "健達出奇蛋 皮克敏", note: "" },
         { id: "s-711-01", owner: "Luna", store: "7-11", name: "帶皮薯條", note: "" },
         { id: "s-711-02", owner: "Luna", store: "7-11", name: "葡萄餅乾", note: "" },
         { id: "s-lawson-01", owner: "Luna", store: "Lawson", name: "黃豆粉綜合堅果", note: "" },
-        { id: "s-family-01", owner: "Luna", store: "全家", name: "Calves蒜香美乃滋洋芋片", note: "" },
+        { id: "s-family-01", owner: "Luna", store: "全家", name: "Calbee 森永7激洋芋片（暫名）", note: "" },
         { id: "s-family-02", owner: "Luna", store: "全家", name: "半生水蜜桃乾", note: "" },
-        { id: "s-family-03", owner: "Luna", store: "全家", name: "鮭魚肉乾", note: "" }
+        { id: "s-family-03", owner: "Luna", store: "全家", name: "鱈魚肉腸", note: "" }
       ],
       expenses: [
         { id: "e-hand-rent", title: "手稻雪具租借", date: "2025-11-17", method: "Jen 先付 NT$5,086", amount: 5086, currency: "TWD", payer: "Jen" },
