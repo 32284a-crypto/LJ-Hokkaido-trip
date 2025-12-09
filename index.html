@@ -553,12 +553,15 @@
           <button class="hero-nav-btn" data-view="expense" title="費用紀錄">💳</button>
         </div>
 
-        <!-- 工具列：編輯行程（Firebase 自動同步，不再需要同步碼按鈕） -->
+        <!-- 工具列：編輯行程 -->
         <div class="hero-toolbar">
           <button class="hero-btn" id="editTodayBtn">
             <span>✏️</span> 編輯今日行程
           </button>
         </div>
+
+        <!-- 雲端狀態提示 -->
+        <div id="cloudStatus" style="margin-top:6px;font-size:11px;opacity:0.8;"></div>
 
         <input type="file" id="bgFileInput" accept="image/*" style="display:none" />
 
@@ -822,7 +825,7 @@
     <img id="imageViewerImg" alt="">
   </div>
 
-  <!-- 這支 script 改成 module，並整合 Firebase + 所有 JS -->
+  <!-- 主腳本：Firebase + App -->
   <script type="module">
     // ======== 0. Firebase 初始化 ========
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -842,10 +845,10 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // 所有裝置共用同一筆文件
+    // 這次旅程共用的一筆文件 ID
     const TRIP_DOC_ID = "hokkaido-2025-main";
 
-    // ======== 1. 預設旅遊資料 ========
+    // ======== 1. 預設旅遊資料 =========
     const defaultTripData = {
       days: [
         {
@@ -1128,17 +1131,20 @@
       fx: { rate: 0.215 },
       defaultShopping: [
         { id: "s-muji-01", owner: "Luna", store: "無印良品", name: "福吉茶", note: "" },
+        { id: "s-daiso-01", owner: "Luna", store: "大創", name: "折疊梳子", note: "" },
+        { id: "s-daiso-02", owner: "Luna", store: "大創", name: "鋁罐（收納用）", note: "" },
         { id: "s-3c-01", owner: "Luna", store: "3COINS", name: "旅行收納袋", note: "" },
         { id: "s-3c-02", owner: "Luna", store: "3COINS", name: "多功能微波調理烤盤", note: "" },
-        { id: "s-3c-03", owner: "Luna", store: "3COINS", name: "毛毛手套", note: "" },
-        { id: "s-3c-04", owner: "Luna", store: "3COINS", name: "各種寵物裝", note: "" },
+        { id: "s-3c-03", owner: "Luna", store: "3COINS", name: "毛巾手套", note: "" },
+        { id: "s-3c-04", owner: "Luna", store: "3COINS", name: "橘色雜物袋", note: "" },
+        { id: "s-hands-01", owner: "Luna", store: "Hands", name: "Pincha 即飲抹茶塊", note: "" },
         { id: "s-cvs-01", owner: "Luna", store: "超商", name: "健達出奇蛋 皮克敏", note: "" },
         { id: "s-711-01", owner: "Luna", store: "7-11", name: "帶皮薯條", note: "" },
         { id: "s-711-02", owner: "Luna", store: "7-11", name: "葡萄餅乾", note: "" },
         { id: "s-lawson-01", owner: "Luna", store: "Lawson", name: "黃豆粉綜合堅果", note: "" },
-        { id: "s-family-01", owner: "Luna", store: "全家", name: "Calves蒜香美乃滋洋芋片", note: "" },
+        { id: "s-family-01", owner: "Luna", store: "全家", name: "Calbee 森永7激洋芋片（暫名）", note: "" },
         { id: "s-family-02", owner: "Luna", store: "全家", name: "半生水蜜桃乾", note: "" },
-        { id: "s-family-03", owner: "Luna", store: "全家", name: "鮭魚肉乾", note: "" }
+        { id: "s-family-03", owner: "Luna", store: "全家", name: "鱈魚肉腸", note: "" }
       ],
       defaultExpenses: [
         {
@@ -1207,36 +1213,57 @@
       ]
     };
 
-    // ======== 2. localStorage key ========
+    // ======== 2. localStorage + 雲端同步橋接 =========
     const TRIP_KEY = "hk_trip_data_v3";
     const SHOP_KEY = "hk_shopping_v3";
     const EXP_KEY  = "hk_expenses_v4";
     const HERO_BG_KEY = "hk_hero_bg_v2";
 
+    const cloudStatusEl = document.getElementById("cloudStatus");
+
     const safeParse = str => {
       try { return JSON.parse(str); } catch { return null; }
     };
 
-    function loadTripDataFromLocal() {
+    // 主要狀態
+    let tripData = loadTripData() || defaultTripData;
+    let shoppingList = loadShopping();
+    let expenseList = loadExpenses();
+
+    function showCloudStatus(text) {
+      if (cloudStatusEl) cloudStatusEl.textContent = text;
+    }
+
+    function loadTripData() {
       const data = localStorage.getItem(TRIP_KEY);
       return data ? safeParse(data) : null;
     }
-    function loadShoppingFromLocal() {
+    function loadShopping() {
       const data = localStorage.getItem(SHOP_KEY);
       if (data) return safeParse(data) || defaultTripData.defaultShopping;
       return defaultTripData.defaultShopping;
     }
-    function loadExpensesFromLocal() {
+    function loadExpenses() {
       const data = localStorage.getItem(EXP_KEY);
       if (data) return safeParse(data) || defaultTripData.defaultExpenses;
       return defaultTripData.defaultExpenses;
     }
 
-    let tripData = loadTripDataFromLocal() || defaultTripData;
-    let shoppingList = loadShoppingFromLocal();
-    let expenseList = loadExpensesFromLocal();
+    // 將目前狀態寫入 localStorage（可選擇是否要觸發雲端）
+    function saveTripData(skipCloud = false) {
+      localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
+      if (!skipCloud) saveToCloud();
+    }
+    function saveShopping(skipCloud = false) {
+      localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
+      if (!skipCloud) saveToCloud();
+    }
+    function saveExpenses(skipCloud = false) {
+      localStorage.setItem(EXP_KEY, JSON.stringify(expenseList));
+      if (!skipCloud) saveToCloud();
+    }
 
-    // ======== 3. Firebase 雲端同步 ========
+    // ======== 2-1. 寫入 Firebase（完整同步）=========
     async function saveToCloud() {
       try {
         await setDoc(
@@ -1245,50 +1272,54 @@
             tripData,
             shoppingList,
             expenseList,
-            updatedAt: Date.now()
+            updatedAt: new Date().toISOString()
           },
           { merge: true }
         );
-      } catch (err) {
-        console.error("saveToCloud error", err);
+        showCloudStatus("已同步雲端 ✅");
+      } catch (e) {
+        console.error("saveToCloud error", e);
+        showCloudStatus("雲端儲存失敗，以本機資料為主 ❌");
       }
     }
 
-    async function loadFromCloud() {
+    // ======== 2-2. 第一次載入時，嘗試從雲端覆蓋 ========
+    async function loadFromCloudFirst() {
+      showCloudStatus("雲端載入中…");
       try {
         const ref = doc(db, "trips", TRIP_DOC_ID);
         const snap = await getDoc(ref);
         if (snap.exists()) {
-          const data = snap.data();
+          const data = snap.data() || {};
           if (data.tripData)     tripData     = data.tripData;
           if (data.shoppingList) shoppingList = data.shoppingList;
           if (data.expenseList)  expenseList  = data.expenseList;
 
-          // 同步回 localStorage（這裡不要呼叫 saveToCloud，避免迴圈）
-          localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
-          localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
-          localStorage.setItem(EXP_KEY, JSON.stringify(expenseList));
+          // 更新本機 cache，但不要再觸發 saveToCloud
+          saveTripData(true);
+          saveShopping(true);
+          saveExpenses(true);
+
+          // 重新 render
+          renderTabs();
+          renderDayContent();
+          renderShopping();
+          renderExpenses();
+          initRate();
+
+          showCloudStatus("已從雲端載入最新資料 ✅");
+        } else {
+          // 雲端還沒有資料，建立第一筆
+          await saveToCloud();
+          showCloudStatus("已建立雲端資料 ✅");
         }
-      } catch (err) {
-        console.error("loadFromCloud error", err);
+      } catch (e) {
+        console.error("loadFromCloudFirst error", e);
+        showCloudStatus("雲端讀取失敗，以本機資料為主 ❌");
       }
     }
 
-    // 寫入時：localStorage + Firebase
-    function saveTripData() {
-      localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
-      saveToCloud();
-    }
-    function saveShopping() {
-      localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
-      saveToCloud();
-    }
-    function saveExpenses() {
-      localStorage.setItem(EXP_KEY, JSON.stringify(expenseList));
-      saveToCloud();
-    }
-
-    // ======== 4. 行程 & Tabs ========
+    // ======== 3. 行程 & Tabs =========
     const dayTabsEl = document.getElementById("dayTabs");
     const dayContentEl = document.getElementById("dayContent");
     let currentDayIndex = 0;
@@ -1401,7 +1432,7 @@
       });
     }
 
-    // ======== 5. 匯率 ========
+    // ========= 4. 匯率 =========
     const jpyInput = document.getElementById("jpyInput");
     const twdInput = document.getElementById("twdInput");
     const rateText = document.getElementById("rateText");
@@ -1419,20 +1450,21 @@
     function initRate() {
       if (!rateText) return;
       rateText.textContent = `示意匯率：1 JPY ≈ ${tripData.fx.rate} TWD`;
-      if (jpyInput && twdInput) {
-        updateFromJPY();
-        jpyInput.addEventListener("input", updateFromJPY);
-        twdInput.addEventListener("input", updateFromTWD);
-      }
+      if (jpyInput && twdInput) updateFromJPY();
+    }
+    if (jpyInput && twdInput) {
+      jpyInput.addEventListener("input", updateFromJPY);
+      twdInput.addEventListener("input", updateFromTWD);
     }
 
-    // ======== 6. 購物清單 ========
+    // ========= 5. 購物清單 =========
     const shoppingGridAllEl = document.getElementById("shoppingGridAll");
     const shoppingStoreFilter = document.getElementById("shoppingStoreFilter");
     let editingShoppingId = null;
 
     function renderShopping() {
       if (!shoppingGridAllEl) return;
+
       const storeFilter = shoppingStoreFilter ? shoppingStoreFilter.value : "ALL";
       let items = shoppingList;
       if (storeFilter !== "ALL") {
@@ -1488,7 +1520,7 @@
       });
     }
 
-    // ======== 7. 費用紀錄 ========
+    // ========= 6. 費用紀錄 =========
     const expenseListEl = document.getElementById("expenseList");
     const totalJPYEl = document.getElementById("totalJPY");
     const totalTWDEl = document.getElementById("totalTWD");
@@ -1594,7 +1626,7 @@
       calcTotalsAndSettlement();
     }
 
-    // ======== 8. Hero 背景（僅本機） ========
+    // ========= 7. Hero 背景 =========
     const heroEl = document.getElementById("hero");
     const changeBgBtn = document.getElementById("changeBgBtn");
     const bgFileInput = document.getElementById("bgFileInput");
@@ -1620,7 +1652,7 @@
       });
     }
 
-    // ======== 9. View 切換 ========
+    // ========= 8. View 切換 =========
     const viewPlan = document.getElementById("view-plan");
     const viewFx = document.getElementById("view-fx");
     const viewShopping = document.getElementById("view-shopping");
@@ -1648,7 +1680,7 @@
       });
     });
 
-    // ======== 10. Modal & 新增 ========
+    // ========= 9. Modal & 新增 =========
     const fabBtn = document.getElementById("fabBtn");
     const typeModal = document.getElementById("typeModal");
     const typeCancel = document.getElementById("typeCancel");
@@ -1694,7 +1726,7 @@
     const weatherNoteInput = document.getElementById("weatherNote");
     let editingWeatherDayIndex = null;
 
-    // 開啟 / 關閉 modal
+    // 開啟 / 關閉 modal 時記錄與還原捲動位置
     let lastScrollY = 0;
     const openModal = m => {
       lastScrollY = window.scrollY || window.pageYOffset || 0;
@@ -1708,7 +1740,9 @@
     };
 
     if (fabBtn) {
-      fabBtn.addEventListener("click", () => openModal(typeModal));
+      fabBtn.addEventListener("click", () => {
+        openModal(typeModal);
+      });
     }
     if (typeCancel) {
       typeCancel.addEventListener("click", () => closeModal(typeModal));
@@ -1832,7 +1866,7 @@
       });
     }
 
-    // ======== 11. 行程編輯 ========
+    // ========= 10. 行程編輯 =========
     let editingDayIndex = null;
     let editingScheduleIndex = null;
 
@@ -1898,7 +1932,7 @@
       });
     }
 
-    // ======== 12. 天氣編輯 ========
+    // ========= 11. 天氣編輯 =========
     function openWeatherModal(dayIdx) {
       editingWeatherDayIndex = dayIdx;
       const w = tripData.days[dayIdx].weather;
@@ -1922,9 +1956,8 @@
       });
     }
 
-    // ======== 13. 初始化（先拉雲端，再畫畫面） ========
-    async function initApp() {
-      await loadFromCloud();             // 優先用雲端資料覆蓋
+    // ========= 12. 初始化 =========
+    function init() {
       tripData.days.forEach((_, idx) => sortScheduleForDay(idx));
       renderTabs();
       renderDayContent();
@@ -1933,9 +1966,12 @@
       renderExpenses();
       loadHeroBg();
       setView("plan");
+      showCloudStatus("雲端載入中…");
     }
 
-    initApp();
+    init();
+    // 背景再去雲端抓最新版本覆蓋
+    loadFromCloudFirst();
   </script>
 </body>
 </html>
