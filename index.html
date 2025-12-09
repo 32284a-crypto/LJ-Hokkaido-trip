@@ -1,12 +1,8 @@
 <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+  // ======== 1. Firebase 初始化（放在最上面）========
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
   const firebaseConfig = {
     apiKey: "AIzaSyCBHcwkKj7GcC4HVzzbTYe3Qtpi2UNawc8",
     authDomain: "hokkaido-eaeb1.firebaseapp.com",
@@ -18,12 +14,57 @@
     measurementId: "G-QPHE9JZ8HS"
   };
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
+  const db = getFirestore(app);
 
-!DOCTYPE html> 
+  // 你這次旅程要用的一個固定文件 ID（所有裝置都共用這一筆）
+  const TRIP_DOC_ID = "hokkaido-2025-main";
+
+  // ======== 從這裡開始，貼回你原本的 JS ========
+  // ========= 2. localStorage =========
+  const TRIP_KEY = "hk_trip_data_v3";
+  const SHOP_KEY = "hk_shopping_v3";
+  const EXP_KEY  = "hk_expenses_v4";
+  const HERO_BG_KEY = "hk_hero_bg_v2";
+
+  const safeParse = str => {
+    try { return JSON.parse(str); } catch { return null; }
+  };
+
+  function loadTripData() {
+    const data = localStorage.getItem(TRIP_KEY);
+    return data ? safeParse(data) : null;
+  }
+  function saveTripData() {
+    localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
+    saveToCloud();            // ← 第 3 部分會補上這個函式
+  }
+  function loadShopping() {
+    const data = localStorage.getItem(SHOP_KEY);
+    if (data) return safeParse(data) || defaultTripData.defaultShopping;
+    return defaultTripData.defaultShopping;
+  }
+  function saveShopping() {
+    localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
+    saveToCloud();            // ← 新增
+  }
+  function loadExpenses() {
+    const data = localStorage.getItem(EXP_KEY);
+    if (data) return safeParse(data) || defaultTripData.defaultExpenses;
+    return defaultTripData.defaultExpenses;
+  }
+  function saveExpenses() {
+    localStorage.setItem(EXP_KEY, JSON.stringify(expenseList));
+    saveToCloud();            // ← 新增
+  }
+
+  let tripData = loadTripData() || defaultTripData;
+  let shoppingList = loadShopping();
+  let expenseList = loadExpenses();
+
+  // ……（中間全部保持你原本的程式碼不動）……
+
+<!DOCTYPE html> 
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
@@ -1219,7 +1260,7 @@
           method: "Jen 先付 NT$3,659",
           amount: 3659,
           currency: "TWD",
-          payer: "Jen"
+         payer: "Jen"
         },
         {
           id: "e-yuki-class",
@@ -1943,83 +1984,7 @@
       });
     }
 
- // ========= 12. 資料同步（同步碼） =========
-const SYNC_VERSION = 1;
-
-// 只同步：行程 + 購物 + 費用，不同步背景圖
-function buildSyncPayload() {
-  return {
-    v: SYNC_VERSION,
-    tripData,
-    shoppingList,
-    expenseList
-  };
-}
-
-function encodeSync(payload) {
-  const json = JSON.stringify(payload);
-  return btoa(encodeURIComponent(json));
-}
-
-function decodeSync(code) {
-  const json = decodeURIComponent(atob(code.trim()));
-  return JSON.parse(json);
-}
-
-if (syncBtn && syncModal && syncText) {
-  syncBtn.addEventListener("click", () => {
-    syncText.value = "";
-    openModal(syncModal);
-  });
-}
-if (syncClose) {
-  syncClose.addEventListener("click", () => closeModal(syncModal));
-}
-if (syncExport) {
-  syncExport.addEventListener("click", () => {
-    const payload = buildSyncPayload();
-    const code = encodeSync(payload);
-    syncText.value = code;
-    syncText.focus();
-    syncText.select();
-    try { document.execCommand("copy"); } catch {}
-  });
-}
-if (syncImport) {
-  syncImport.addEventListener("click", () => {
-    const code = (syncText.value || "").trim();
-    if (!code) {
-      alert("請先貼上同步碼。");
-      return;
-    }
-    if (!confirm("套用同步碼會覆蓋目前這台裝置上的行程 / 購物 / 費用。要繼續嗎？")) return;
-    try {
-      const data = decodeSync(code);
-      if (!data || data.v !== SYNC_VERSION) {
-        alert("同步碼版本不相容或格式錯誤。");
-        return;
-      }
-
-      // 套用資料（背景就不管了）
-      tripData     = data.tripData     || tripData;
-      shoppingList = data.shoppingList || shoppingList;
-      expenseList  = data.expenseList  || expenseList;
-
-      saveTripData();
-      saveShopping();
-      saveExpenses();
-
-      alert("已套用同步資料，畫面會重新整理。");
-      location.reload();
-    } catch (e) {
-      alert("同步碼解析失敗，請確認是否有貼錯或被截斷。");
-    }
-  });
-}
-
-
-
-    // ========= 13. 初始化 =========
+    // ========= 12. 初始化 =========
     function init() {
       tripData.days.forEach((_, idx) => sortScheduleForDay(idx));
       renderTabs();
