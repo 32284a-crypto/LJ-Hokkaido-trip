@@ -1,77 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-  
-  // ======== 1. Firebase 初始化（放在最上面）========
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCBHcwkKj7GcC4HVzzbTYe3Qtpi2UNawc8",
-    authDomain: "hokkaido-eaeb1.firebaseapp.com",
-    databaseURL: "https://hokkaido-eaeb1-default-rtdb.firebaseio.com",
-    projectId: "hokkaido-eaeb1",
-    storageBucket: "hokkaido-eaeb1.firebasestorage.app",
-    messagingSenderId: "977559624676",
-    appId: "1:977559624676:web:65437df8bfa11f895005f1",
-    measurementId: "G-QPHE9JZ8HS"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // 你這次旅程要用的一個固定文件 ID（所有裝置都共用這一筆）
-  const TRIP_DOC_ID = "hokkaido-2025-main";
-
-  // ======== 從這裡開始，貼回你原本的 JS ========
-  // ========= 2. localStorage =========
-  const TRIP_KEY = "hk_trip_data_v3";
-  const SHOP_KEY = "hk_shopping_v3";
-  const EXP_KEY  = "hk_expenses_v4";
-  const HERO_BG_KEY = "hk_hero_bg_v2";
-
-  const safeParse = str => {
-    try { return JSON.parse(str); } catch { return null; }
-  };
-
-  function loadTripData() {
-    const data = localStorage.getItem(TRIP_KEY);
-    return data ? safeParse(data) : null;
-  }
-  function saveTripData() {
-    localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
-    saveToCloud();            // ← 第 3 部分會補上這個函式
-  }
-  function loadShopping() {
-    const data = localStorage.getItem(SHOP_KEY);
-    if (data) return safeParse(data) || defaultTripData.defaultShopping;
-    return defaultTripData.defaultShopping;
-  }
-  function saveShopping() {
-    localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
-    saveToCloud();            // ← 新增
-  }
-  function loadExpenses() {
-    const data = localStorage.getItem(EXP_KEY);
-    if (data) return safeParse(data) || defaultTripData.defaultExpenses;
-    return defaultTripData.defaultExpenses;
-  }
-  function saveExpenses() {
-    localStorage.setItem(EXP_KEY, JSON.stringify(expenseList));
-    saveToCloud();            // ← 新增
-  }
-
-  let tripData = loadTripData() || defaultTripData;
-  let shoppingList = loadShopping();
-  let expenseList = loadExpenses();
-
-  // ……（中間全部保持你原本的程式碼不動）……
-<script type="module">
 <head>
   <meta charset="UTF-8" />
   <title>Hokkaido 2025｜相親相愛又一年</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta property="og:title" content="Hokkaido 2025｜相親相愛又一年" />
-  <meta property="og:description" content="Luna & Jen 的北海道滑雪旅遊小本🧣❄️" /> 
+  <meta property="og:description" content="Luna & Jen 的北海道滑雪旅遊小本🧣❄️" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -89,28 +23,23 @@
     /* 頂部 banner */
     .hero {
       position: relative;
-  padding: 16px 16px 20px;
-  border-radius: 0 0 24px 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-
-  /* 這行改成你的背景圖路徑 */
-  background-image: url("snowwww.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-
-  /* 淡淡藍色底，避免圖片載入前是一片白 */
-  background-color: #e5f1ff;
-
-  color: #123456;
-  overflow: hidden;
-}
-
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(244, 248, 255, 0.01);  /* 想要更清楚就把 0.45 改小一點 */
-  pointer-events: none;
+      padding: 16px 16px 20px;
+      border-radius: 0 0 24px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      background-image: url("snowwww.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: #e5f1ff;
+      color: #123456;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(244, 248, 255, 0.01);
+      pointer-events: none;
     }
     .hero-overlay {
       position: absolute;
@@ -409,7 +338,7 @@
       width: 100%;
       height: auto;
       max-height: 120px;
-      object-fit: contain; /* 自動縮到方格內 */
+      object-fit: contain;
       border-radius: 12px;
       margin-top: 6px;
       cursor: pointer;
@@ -685,7 +614,7 @@
         </section>
       </section>
 
-      <!-- 購物 view：店家篩選＋卡片 -->
+      <!-- 購物 view -->
       <section id="view-shopping" class="view-section">
         <section class="card">
           <div class="card-header">
@@ -867,7 +796,7 @@
     </div>
   </div>
 
-  <!-- 編輯行程 Modal（含 Google Map 連結 + 圖片） -->
+  <!-- 編輯行程 Modal -->
   <div class="modal-overlay" id="scheduleModal">
     <div class="modal">
       <div class="modal-title">編輯行程</div>
@@ -909,7 +838,7 @@
     </div>
   </div>
 
-  <!-- 資料同步 Modal -->
+  <!-- 資料同步 Modal（保留原本同步碼備份機制） -->
   <div class="modal-overlay" id="syncModal">
     <div class="modal">
       <div class="modal-title">資料同步（跨裝置）</div>
@@ -918,7 +847,7 @@
         <textarea id="syncText" class="sync-textarea" placeholder="在這裡產生或貼上同步碼"></textarea>
       </div>
       <div style="font-size:11px;color:#666;margin-bottom:8px;">
-        使用說明：在 A 裝置按「產生同步碼」→ 複製文字 → 貼到 B 裝置的這個欄位再按「套用同步碼」，即可把行程 / 購物清單 / 費用 / 背景一起帶過去。
+        使用說明：在 A 裝置按「產生同步碼」→ 複製文字 → 貼到 B 裝置的這個欄位再按「套用同步碼」，即可把行程 / 購物清單 / 費用一起帶過去。
       </div>
       <div class="modal-actions" style="justify-content:space-between;">
         <button class="btn btn-secondary" id="syncClose">關閉</button>
@@ -935,8 +864,28 @@
     <img id="imageViewerImg" alt="">
   </div>
 
-  <script>
-    // ========= 1. 預設旅遊資料 =========
+  <!-- 所有 JS + Firebase 都放在這裡 -->
+  <script type="module">
+    // ======== 0. Firebase 初始化 ========
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCBHcwkKj7GcC4HVzzbTYe3Qtpi2UNawc8",
+      authDomain: "hokkaido-eaeb1.firebaseapp.com",
+      databaseURL: "https://hokkaido-eaeb1-default-rtdb.firebaseio.com",
+      projectId: "hokkaido-eaeb1",
+      storageBucket: "hokkaido-eaeb1.firebasestorage.app",
+      messagingSenderId: "977559624676",
+      appId: "1:977559624676:web:65437df8bfa11f895005f1",
+      measurementId: "G-QPHE9JZ8HS"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const TRIP_DOC_ID = "hokkaido-2025-main";
+
+    // ======== 1. 預設旅遊資料 =========
     const defaultTripData = {
       days: [
         {
@@ -1260,7 +1209,7 @@
           method: "Jen 先付 NT$3,659",
           amount: 3659,
           currency: "TWD",
-         payer: "Jen"
+          payer: "Jen"
         },
         {
           id: "e-yuki-class",
@@ -1311,12 +1260,17 @@
       try { return JSON.parse(str); } catch { return null; }
     };
 
+    let tripData   = loadTripData() || defaultTripData;
+    let shoppingList = loadShopping();
+    let expenseList  = loadExpenses();
+
     function loadTripData() {
       const data = localStorage.getItem(TRIP_KEY);
       return data ? safeParse(data) : null;
     }
     function saveTripData() {
       localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
+      saveToCloud();
     }
     function loadShopping() {
       const data = localStorage.getItem(SHOP_KEY);
@@ -1325,6 +1279,7 @@
     }
     function saveShopping() {
       localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
+      saveToCloud();
     }
     function loadExpenses() {
       const data = localStorage.getItem(EXP_KEY);
@@ -1333,11 +1288,52 @@
     }
     function saveExpenses() {
       localStorage.setItem(EXP_KEY, JSON.stringify(expenseList));
+      saveToCloud();
     }
 
-    let tripData = loadTripData() || defaultTripData;
-    let shoppingList = loadShopping();
-    let expenseList = loadExpenses();
+    // ========= 2.5 Firebase 雲端同步 =========
+    async function saveToCloud() {
+      try {
+        const ref = doc(db, "trips", TRIP_DOC_ID);
+        const payload = {
+          updatedAt: new Date().toISOString(),
+          tripData,
+          shoppingList,
+          expenseList
+        };
+        await setDoc(ref, payload);
+        console.log("Saved to cloud");
+      } catch (e) {
+        console.error("saveToCloud error", e);
+      }
+    }
+
+    async function loadFromCloudAndApply() {
+      try {
+        const ref = doc(db, "trips", TRIP_DOC_ID);
+        const snap = await getDoc(ref);
+        if (!snap.exists()) return;
+
+        const data = snap.data();
+        if (data.tripData)     tripData = data.tripData;
+        if (data.shoppingList) shoppingList = data.shoppingList;
+        if (data.expenseList)  expenseList = data.expenseList;
+
+        // 覆寫本機資料
+        localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
+        localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
+        localStorage.setItem(EXP_KEY,  JSON.stringify(expenseList));
+
+        // 重新排序 & 重畫畫面
+        tripData.days.forEach((_, idx) => sortScheduleForDay(idx));
+        renderTabs();
+        renderDayContent();
+        renderShopping();
+        renderExpenses();
+      } catch (e) {
+        console.error("loadFromCloud error", e);
+      }
+    }
 
     // ========= 3. 行程 & Tabs =========
     const dayTabsEl = document.getElementById("dayTabs");
@@ -1385,7 +1381,7 @@
           <div class="card-header">
             <div class="card-title">
               <span class="icon">❄️</span>
-              ${day.weather.temp}℃ / ${day.weather.low}℃ 
+              ${day.weather.temp}℃ / ${day.weather.low}℃
             </div>
             <div style="text-align:right;">
               <div class="card-subtitle">${day.weather.status}</div>
@@ -1505,7 +1501,6 @@
         </div>
       `).join("");
 
-      // 綁定購物編輯
       document.querySelectorAll(".shopping-edit").forEach(btn => {
         btn.addEventListener("click", () => {
           const id = btn.dataset.id;
@@ -1984,7 +1979,79 @@
       });
     }
 
-    // ========= 12. 初始化 =========
+    // ========= 12. 資料同步（同步碼） =========
+    const SYNC_VERSION = 1;
+
+    function buildSyncPayload() {
+      return {
+        v: SYNC_VERSION,
+        tripData,
+        shoppingList,
+        expenseList
+      };
+    }
+
+    function encodeSync(payload) {
+      const json = JSON.stringify(payload);
+      return btoa(encodeURIComponent(json));
+    }
+
+    function decodeSync(code) {
+      const json = decodeURIComponent(atob(code.trim()));
+      return JSON.parse(json);
+    }
+
+    if (syncBtn && syncModal && syncText) {
+      syncBtn.addEventListener("click", () => {
+        syncText.value = "";
+        openModal(syncModal);
+      });
+    }
+    if (syncClose) {
+      syncClose.addEventListener("click", () => closeModal(syncModal));
+    }
+    if (syncExport) {
+      syncExport.addEventListener("click", () => {
+        const payload = buildSyncPayload();
+        const code = encodeSync(payload);
+        syncText.value = code;
+        syncText.focus();
+        syncText.select();
+        try { document.execCommand("copy"); } catch {}
+      });
+    }
+    if (syncImport) {
+      syncImport.addEventListener("click", () => {
+        const code = (syncText.value || "").trim();
+        if (!code) {
+          alert("請先貼上同步碼。");
+          return;
+        }
+        if (!confirm("套用同步碼會覆蓋目前這台裝置上的行程 / 購物 / 費用。要繼續嗎？")) return;
+        try {
+          const data = decodeSync(code);
+          if (!data || data.v !== SYNC_VERSION) {
+            alert("同步碼版本不相容或格式錯誤。");
+            return;
+          }
+
+          tripData     = data.tripData     || tripData;
+          shoppingList = data.shoppingList || shoppingList;
+          expenseList  = data.expenseList  || expenseList;
+
+          saveTripData();
+          saveShopping();
+          saveExpenses();
+
+          alert("已套用同步資料，畫面會重新整理。");
+          location.reload();
+        } catch (e) {
+          alert("同步碼解析失敗，請確認是否有貼錯或被截斷。");
+        }
+      });
+    }
+
+    // ========= 13. 初始化 =========
     function init() {
       tripData.days.forEach((_, idx) => sortScheduleForDay(idx));
       renderTabs();
@@ -1994,6 +2061,8 @@
       renderExpenses();
       loadHeroBg();
       setView("plan");
+      // 從 Firebase 抓一次資料覆蓋（如果有）
+      loadFromCloudAndApply();
     }
     init();
   </script>
