@@ -1,3 +1,29 @@
+// ========= 0. Firebase 設定 (已替換為您的實際配置) =========
+  // 引入 Firebase SDK 模組
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  // 引入 Analytics (可選，但為了完整性保留)
+  // import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCBHcwkKj7GcC4HVzzbTYe3Qtpi2UNawc8",
+    authDomain: "hokkaido-eaeb1.firebaseapp.com",
+    databaseURL: "https://hokkaido-eaeb1-default-rtdb.firebaseio.com",
+    projectId: "hokkaido-eaeb1",
+    storageBucket: "hokkaido-eaeb1.firebasestorage.app",
+    messagingSenderId: "977559624676",
+    appId: "1:977559624676:web:65437df8bfa11f895005f1",
+    measurementId: "G-QPHE9JZ8HS"
+  };
+
+  // 初始化 Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  // const analytics = getAnalytics(app); // 如果不需要，可保持註解
+  
+  // 定義資料庫路徑
+  const DB_PATH = "hokkaido_2025";
+
 <!DOCTYPE html> 
 <html lang="zh-Hant">
 <head>
