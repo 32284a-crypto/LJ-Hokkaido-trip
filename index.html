@@ -55,7 +55,6 @@
       opacity: 0.9;
     }
 
-    /* 右上角 icon（可換背景） */
     .hero-bg-icon {
       position: absolute;
       top: 10px;
@@ -74,7 +73,6 @@
       z-index: 2;
     }
 
-    /* 圓形 icon 導覽 */
     .hero-nav {
       display: flex;
       gap: 10px;
@@ -103,7 +101,6 @@
       gap: 8px;
       margin-top: 12px;
       flex-wrap: wrap;
-      align-items: center;
     }
     .hero-btn {
       border-radius: 999px;
@@ -116,12 +113,11 @@
       align-items: center;
       gap: 4px;
     }
-    .hero-btn span {
-      font-size: 14px;
-    }
+    .hero-btn span { font-size: 14px; }
+
     .cloud-status {
+      margin-top: 6px;
       font-size: 11px;
-      color: #555;
     }
 
     .hero-tabs {
@@ -187,7 +183,6 @@
       background: #e6f0ff;
     }
 
-    /* 天氣卡 */
     .weather-main {
       display: flex;
       align-items: center;
@@ -212,7 +207,6 @@
       text-align: right;
     }
 
-    /* 行程 timeline */
     .timeline-item {
       display: flex;
       gap: 10px;
@@ -225,9 +219,7 @@
       width: 46px;
       flex-shrink: 0;
     }
-    .timeline-body {
-      flex: 1;
-    }
+    .timeline-body { flex: 1; }
     .tag {
       display: inline-block;
       font-size: 11px;
@@ -275,7 +267,6 @@
       margin-top: 6px;
     }
 
-    /* 匯率 */
     .rate-row {
       display: flex;
       align-items: center;
@@ -297,7 +288,6 @@
       text-align: right;
     }
 
-    /* 購物清單 */
     .shopping-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -342,7 +332,6 @@
       cursor: pointer;
     }
 
-    /* 放大圖片 overlay */
     .image-viewer-overlay {
       position: fixed;
       inset: 0;
@@ -352,9 +341,7 @@
       justify-content: center;
       z-index: 60;
     }
-    .image-viewer-overlay.show {
-      display: flex;
-    }
+    .image-viewer-overlay.show { display: flex; }
     .image-viewer-overlay img {
       max-width: 90vw;
       max-height: 90vh;
@@ -363,7 +350,6 @@
       background: #fff;
     }
 
-    /* 費用紀錄 */
     .total-card-main {
       font-size: 18px;
       font-weight: 700;
@@ -417,7 +403,6 @@
       margin-left: 8px;
     }
 
-    /* 支付人 pill 按鈕 */
     .pill-group {
       display: inline-flex;
       gap: 6px;
@@ -437,11 +422,8 @@
       border-color: #0b67ff;
     }
 
-    .view-section {
-      display: none;
-    }
+    .view-section { display: none; }
 
-    /* 浮動新增按鈕 */
     .fab {
       position: fixed;
       right: 20px;
@@ -459,7 +441,6 @@
       z-index: 20;
     }
 
-    /* Modal 通用 */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -469,9 +450,7 @@
       justify-content: center;
       z-index: 30;
     }
-    .modal-overlay.show {
-      display: flex;
-    }
+    .modal-overlay.show { display: flex; }
     .modal {
       width: 90%;
       max-width: 360px;
@@ -503,10 +482,8 @@
       resize: vertical;
     }
     .upload-box {
-      border: 1px dashed #c2ccee;
       border-radius: 12px;
-      padding: 12px;
-      text-align: center;
+      padding: 8px 0;
       font-size: 12px;
       color: #7683a8;
       margin-top: 4px;
@@ -541,7 +518,6 @@
 </head>
 <body>
   <div class="app">
-    <!-- 頂部 Banner -->
     <header class="hero" id="hero">
       <div class="hero-overlay"></div>
       <div class="hero-inner">
@@ -550,7 +526,6 @@
         <div class="hero-title">Hokkaido</div>
         <div class="hero-sub">2025 相親相愛又一年</div>
 
-        <!-- 圓形 icon 導覽 -->
         <div class="hero-nav">
           <button class="hero-nav-btn active" data-view="plan" title="行程">🗺️</button>
           <button class="hero-nav-btn" data-view="fx" title="匯率">💱</button>
@@ -558,32 +533,30 @@
           <button class="hero-nav-btn" data-view="expense" title="費用紀錄">💳</button>
         </div>
 
-        <!-- 工具列：編輯行程 + 雲端同步提示 -->
         <div class="hero-toolbar">
           <button class="hero-btn" id="editTodayBtn">
             <span>✏️</span> 編輯今日行程
           </button>
           <button class="hero-btn" id="syncBtn">
-            <span>☁️</span> 立即同步到雲端
+            <span>☁️</span> 雲端同步
           </button>
-          <span class="cloud-status" id="cloudStatusText"></span>
+        </div>
+
+        <div class="cloud-status" id="cloudStatusBar">
+          雲端狀態：<span id="cloudStatusText">初始化中…</span>
         </div>
 
         <input type="file" id="bgFileInput" accept="image/*" style="display:none" />
 
-        <!-- Day Tabs -->
         <div class="hero-tabs" id="dayTabs"></div>
       </div>
     </header>
 
-    <!-- 主要內容 -->
     <main class="content">
-      <!-- 行程 view -->
       <section id="view-plan">
         <section id="dayContent"></section>
       </section>
 
-      <!-- 匯率 view -->
       <section id="view-fx" class="view-section">
         <section class="card">
           <div class="card-header">
@@ -602,7 +575,6 @@
         </section>
       </section>
 
-      <!-- 購物 view -->
       <section id="view-shopping" class="view-section">
         <section class="card">
           <div class="card-header">
@@ -636,7 +608,6 @@
         </section>
       </section>
 
-      <!-- 費用 view -->
       <section id="view-expense" class="view-section">
         <section class="card">
           <div class="card-header">
@@ -649,7 +620,6 @@
           <div class="total-card-main" id="totalJPY">¥0</div>
           <div class="total-card-sub" id="totalTWD">約 NT$0</div>
           <div class="total-card-sub" id="settleSummary"></div>
-
           <div id="expenseList" style="margin-top:10px;"></div>
         </section>
       </section>
@@ -658,10 +628,8 @@
     </main>
   </div>
 
-  <!-- 浮動新增按鈕 -->
   <div class="fab" id="fabBtn">＋</div>
 
-  <!-- 新增類型選擇 Modal -->
   <div class="modal-overlay" id="typeModal">
     <div class="modal">
       <div class="modal-title">要新增什麼？</div>
@@ -673,7 +641,6 @@
     </div>
   </div>
 
-  <!-- 新增 / 編輯購物清單 Modal -->
   <div class="modal-overlay" id="shoppingModal">
     <div class="modal">
       <div class="modal-title">新增 / 編輯購物清單</div>
@@ -711,10 +678,10 @@
         </select>
       </div>
       <div class="form-group">
-        <label>上傳照片（選填，重新選擇會覆蓋原圖）</label>
-        <div class="upload-box">
-          <input type="file" id="shoppingImageInput" accept="image/*" />
-          <div style="margin-top:4px;">選一張商品圖片（會上傳到雲端儲存空間）</div>
+        <label>圖片網址（選填）</label>
+        <input type="text" id="shoppingImageUrl" placeholder="例：https://.../my-snack.jpg" />
+        <div style="margin-top:4px;font-size:11px;color:#666;">
+          小提醒：請先把圖片上傳到 Google 相簿 / Drive，再貼上「可公開查看」的圖片網址。
         </div>
       </div>
       <div class="modal-actions">
@@ -724,7 +691,6 @@
     </div>
   </div>
 
-  <!-- 新增費用 Modal -->
   <div class="modal-overlay" id="expenseModal">
     <div class="modal">
       <div class="modal-title">新增費用紀錄</div>
@@ -765,7 +731,6 @@
     </div>
   </div>
 
-  <!-- 編輯天氣 Modal -->
   <div class="modal-overlay" id="weatherModal">
     <div class="modal">
       <div class="modal-title">編輯今日天氣文字</div>
@@ -784,55 +749,13 @@
     </div>
   </div>
 
-  <!-- 編輯行程 Modal -->
-  <div class="modal-overlay" id="scheduleModal">
-    <div class="modal">
-      <div class="modal-title">編輯行程</div>
-      <div class="form-group">
-        <label>時間</label>
-        <input type="text" id="scheduleTime" placeholder="例：07:50 或 TBD" />
-      </div>
-      <div class="form-group">
-        <label>標籤（tag）</label>
-        <input type="text" id="scheduleTag" placeholder="例：去程 / 景點 / 滑雪 / TBD" />
-      </div>
-      <div class="form-group">
-        <label>標題（title）</label>
-        <input type="text" id="scheduleTitle" placeholder="例：旭山動物園" />
-      </div>
-      <div class="form-group">
-        <label>副標（sub）</label>
-        <input type="text" id="scheduleSub" placeholder="例：約 1 小時 40 分 · 自由活動" />
-      </div>
-      <div class="form-group">
-        <label>備註（note，可留白）</label>
-        <textarea id="scheduleNote" rows="2" placeholder="例：本行程包含門票"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Google 地圖連結（選填）</label>
-        <input type="text" id="scheduleMap" placeholder="https://maps.app.goo.gl/..." />
-      </div>
-      <div class="form-group">
-        <label>行程圖片（選填）</label>
-        <div class="upload-box">
-          <input type="file" id="scheduleImageInput" accept="image/*" />
-          <div style="margin-top:4px;">選一張這個景點的照片</div>
-        </div>
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-secondary" id="scheduleCancel">取消</button>
-        <button class="btn btn-primary" id="scheduleSave">儲存</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 放大購物圖片 Overlay -->
   <div class="image-viewer-overlay" id="imageViewer">
     <img id="imageViewerImg" alt="">
   </div>
 
-  <!-- ==== 主程式：Firebase + App ==== -->
+  <!-- JS：Firebase + App 邏輯 -->
   <script type="module">
+    // ===== Firebase 初始化 =====
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import {
       getFirestore,
@@ -841,26 +764,41 @@
       setDoc,
       onSnapshot
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-    import {
-      getStorage,
-      ref,
-      uploadBytes,
-      getDownloadURL
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
 
-    // ===== Firebase 初始化 =====
     const firebaseConfig = {
       apiKey: "AIzaSyCBHcwkKj7GcC4HVzzbTYe3Qtpi2UNawc8",
       authDomain: "hokkaido-eaeb1.firebaseapp.com",
+      databaseURL: "https://hokkaido-eaeb1-default-rtdb.firebaseio.com",
       projectId: "hokkaido-eaeb1",
-      storageBucket: "hokkaido-eaeb1.firebasestorage.app" 
+      storageBucket: "hokkaido-eaeb1.firebasestorage.app",
+      messagingSenderId: "977559624676",
+      appId: "1:977559624676:web:65437df8bfa11f895005f1",
+      measurementId: "G-QPHE9JZ8HS"
     };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
-    const TRIP_DOC_REF = doc(db, "trips", "hokkaido-2025-main");
 
-    // ========= 1. 預設旅遊資料 =========
+    const appFirebase = initializeApp(firebaseConfig);
+    const db = getFirestore(appFirebase);
+    const TRIP_DOC_ID = "hokkaido-2025-main";
+    const tripDocRef = doc(db, "trips", TRIP_DOC_ID);
+    const CLOUD_VERSION = 2;
+
+    const cloudStatusTextEl = document.getElementById("cloudStatusText");
+    function setCloudStatus(state, text) {
+      if (!cloudStatusTextEl) return;
+      cloudStatusTextEl.textContent = text;
+      const colorMap = {
+        loading: "#666",
+        saving: "#1a73e8",
+        ok: "#137333",
+        error: "#d93025"
+      };
+      cloudStatusTextEl.style.color = colorMap[state] || "#555";
+    }
+
+    let isSavingCloud = false;
+    let unsubscribeSnapshot = null;
+
+    // ===== 1. 預設旅遊資料（與你原本相同） =====
     const defaultTripData = {
       days: [
         {
@@ -1150,7 +1088,13 @@
         { id: "s-3c-03", owner: "Luna", store: "3COINS", name: "毛巾手套", note: "" },
         { id: "s-3c-04", owner: "Luna", store: "3COINS", name: "橘色雜物袋", note: "" },
         { id: "s-hands-01", owner: "Luna", store: "Hands", name: "Pincha 即飲抹茶塊", note: "" },
-        { id: "s-cvs-01", owner: "Luna", store: "超商", name: "健達出奇蛋 皮克敏", note: "" }
+        { id: "s-cvs-01", owner: "Luna", store: "超商", name: "健達出奇蛋 皮克敏", note: "" },
+        { id: "s-711-01", owner: "Luna", store: "7-11", name: "帶皮薯條", note: "" },
+        { id: "s-711-02", owner: "Luna", store: "7-11", name: "葡萄餅乾", note: "" },
+        { id: "s-lawson-01", owner: "Luna", store: "Lawson", name: "黃豆粉綜合堅果", note: "" },
+        { id: "s-family-01", owner: "Luna", store: "全家", name: "Calbee 森永7激洋芋片（暫名）", note: "" },
+        { id: "s-family-02", owner: "Luna", store: "全家", name: "半生水蜜桃乾", note: "" },
+        { id: "s-family-03", owner: "Luna", store: "全家", name: "鱈魚肉腸", note: "" }
       ],
       defaultExpenses: [
         {
@@ -1219,7 +1163,7 @@
       ]
     };
 
-    // ========= 2. localStorage =========
+    // ===== 2. localStorage 工具 =====
     const TRIP_KEY = "hk_trip_data_v3";
     const SHOP_KEY = "hk_shopping_v3";
     const EXP_KEY  = "hk_expenses_v4";
@@ -1233,138 +1177,122 @@
       const data = localStorage.getItem(TRIP_KEY);
       return data ? safeParse(data) : null;
     }
-    function saveTripData() {
-      localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
-      saveToCloud();
-    }
     function loadShopping() {
       const data = localStorage.getItem(SHOP_KEY);
       if (data) return safeParse(data) || defaultTripData.defaultShopping;
       return defaultTripData.defaultShopping;
-    }
-    function saveShopping() {
-      localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
-      saveToCloud();
     }
     function loadExpenses() {
       const data = localStorage.getItem(EXP_KEY);
       if (data) return safeParse(data) || defaultTripData.defaultExpenses;
       return defaultTripData.defaultExpenses;
     }
-    function saveExpenses() {
-      localStorage.setItem(EXP_KEY, JSON.stringify(expenseList));
-      saveToCloud();
-    }
 
     let tripData = loadTripData() || defaultTripData;
     let shoppingList = loadShopping();
     let expenseList = loadExpenses();
 
-    // ========= 3. 雲端狀態 & Firestore 同步 =========
-    const cloudStatusText = document.getElementById("cloudStatusText");
-    const syncBtn = document.getElementById("syncBtn");
-
-    function setCloudStatus(state, msg) {
-      if (!cloudStatusText) return;
-      const icon =
-        state === "saving" ? "☁️💾" :
-        state === "ok"      ? "☁️✅" :
-        state === "error"   ? "☁️❌" :
-                              "☁️";
-      cloudStatusText.textContent = `${msg} ${icon}`;
-    }
-
     function buildCloudPayload() {
-      const payload = JSON.parse(JSON.stringify({
-        tripData,
-        shoppingList,
-        expenseList
-      }));
-      // 把 base64 圖片拿掉，只留下 imageUrl
-      payload.shoppingList = (payload.shoppingList || []).map(item => {
-        if (item.imageData) delete item.imageData;
-        return item;
+      // 把舊的 imageData 拿掉，只保留文字與 imageUrl
+      const cleanShopping = shoppingList.map(item => {
+        const { imageData, ...rest } = item;
+        return rest;
       });
-      // 未來行程若有圖片，也建議改為 imageUrl
-      return payload;
+      return {
+        v: CLOUD_VERSION,
+        tripData,
+        shoppingList: cleanShopping,
+        expenseList
+      };
     }
 
-    async function saveToCloud() {
+    let cloudSaveTimer = null;
+    function scheduleSaveToCloud() {
+      if (cloudSaveTimer) clearTimeout(cloudSaveTimer);
+      cloudSaveTimer = setTimeout(saveToCloudNow, 1500);
+    }
+
+    async function saveToCloudNow() {
       try {
-        setCloudStatus("saving", "雲端儲存中…");
+        isSavingCloud = true;
+        setCloudStatus("saving", "儲存到雲端中…");
         const payload = buildCloudPayload();
-        await setDoc(TRIP_DOC_REF, payload, { merge: true });
-        setCloudStatus("ok", "已同步到雲端");
+        await setDoc(tripDocRef, payload, { merge: true });
+        isSavingCloud = false;
+        setCloudStatus("ok", "已與雲端同步");
       } catch (err) {
         console.error("saveToCloud error", err);
+        isSavingCloud = false;
         setCloudStatus("error", "雲端儲存失敗，以本機資料為主");
       }
     }
 
-    async function loadFromCloud() {
+    async function initCloudSync() {
+      setCloudStatus("loading", "雲端讀取中…");
       try {
-        const snap = await getDoc(TRIP_DOC_REF);
-        if (!snap.exists()) {
-          setCloudStatus("ok", "雲端尚無資料，以本機為主");
-          return;
-        }
-        const data = snap.data();
-        if (data.tripData)     tripData     = data.tripData;
-        if (data.shoppingList) shoppingList = data.shoppingList;
-        if (data.expenseList)  expenseList  = data.expenseList;
-
-        // 同步回 localStorage
-        localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
-        localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
-        localStorage.setItem(EXP_KEY, JSON.stringify(expenseList));
-
-        renderTabs();
-        renderDayContent();
-        renderShopping();
-        renderExpenses();
-
-        setCloudStatus("ok", "已從雲端載入最新資料");
-      } catch (err) {
-        console.error("loadFromCloud error", err);
-        setCloudStatus("error", "雲端讀取失敗，以本機資料為主");
-      }
-    }
-
-    function startCloudListener() {
-      onSnapshot(
-        TRIP_DOC_REF,
-        (snap) => {
-          if (!snap.exists()) return;
+        const snap = await getDoc(tripDocRef);
+        if (snap.exists()) {
           const data = snap.data();
-          if (data.tripData)     tripData     = data.tripData;
-          if (data.shoppingList) shoppingList = data.shoppingList;
-          if (data.expenseList)  expenseList  = data.expenseList;
+          if (data.v === CLOUD_VERSION) {
+            if (data.tripData) tripData = data.tripData;
+            if (data.shoppingList) shoppingList = data.shoppingList;
+            if (data.expenseList) expenseList = data.expenseList;
+            localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
+            localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
+            localStorage.setItem(EXP_KEY, JSON.stringify(expenseList));
+            renderTabs();
+            renderDayContent();
+            renderShopping();
+            renderExpenses();
+            setCloudStatus("ok", "已從雲端載入最新資料");
+          } else {
+            setCloudStatus("ok", "雲端版本不同，暫以本機資料為主");
+            await saveToCloudNow();
+          }
+        } else {
+          await saveToCloudNow();
+          setCloudStatus("ok", "已建立新的雲端資料");
+        }
 
+        if (unsubscribeSnapshot) unsubscribeSnapshot();
+        unsubscribeSnapshot = onSnapshot(tripDocRef, snap2 => {
+          if (!snap2.exists()) return;
+          if (isSavingCloud) return; // 自己剛寫的就不再套用
+          const data2 = snap2.data();
+          if (data2.v !== CLOUD_VERSION) return;
+          tripData     = data2.tripData     || tripData;
+          shoppingList = data2.shoppingList || shoppingList;
+          expenseList  = data2.expenseList  || expenseList;
           localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
           localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
           localStorage.setItem(EXP_KEY, JSON.stringify(expenseList));
-
           renderTabs();
           renderDayContent();
           renderShopping();
           renderExpenses();
+          setCloudStatus("ok", "已與雲端同步（自動更新）");
+        });
 
-          setCloudStatus("ok", "雲端有更新，已同步完成");
-        },
-        (err) => {
-          console.error("onSnapshot error", err);
-          setCloudStatus("error", "雲端連線異常，以本機資料為主");
-        }
-      );
+      } catch (err) {
+        console.error("initCloudSync error", err);
+        setCloudStatus("error", "雲端讀取失敗，以本機資料為主");
+      }
     }
 
-    if (syncBtn) {
-      syncBtn.addEventListener("click", () => {
-        saveToCloud();
-      });
+    function saveTripData() {
+      localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
+      scheduleSaveToCloud();
+    }
+    function saveShopping() {
+      localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
+      scheduleSaveToCloud();
+    }
+    function saveExpenses() {
+      localStorage.setItem(EXP_KEY, JSON.stringify(expenseList));
+      scheduleSaveToCloud();
     }
 
-    // ========= 4. 行程 & Tabs =========
+    // ===== 3. 行程 & Tabs =====
     const dayTabsEl = document.getElementById("dayTabs");
     const dayContentEl = document.getElementById("dayContent");
     let currentDayIndex = 0;
@@ -1385,7 +1313,6 @@
     }
 
     function renderTabs() {
-      if (!dayTabsEl) return;
       dayTabsEl.innerHTML = "";
       tripData.days.forEach((day, idx) => {
         const tab = document.createElement("div");
@@ -1440,7 +1367,9 @@
             </div>
             <div class="card-subtitle">${day.label}</div>
           </div>
-          ${day.schedule.map((item, idx) => `
+          ${day.schedule.map((item, idx) => {
+            const imgSrc = item.image || "";
+            return `
             <div class="timeline-item">
               <div class="timeline-time">${item.time}</div>
               <div class="timeline-body">
@@ -1452,10 +1381,11 @@
                 <div class="timeline-sub">${item.sub || ""}</div>
                 ${item.note ? `<div class="timeline-note">${item.note}</div>` : ""}
                 ${item.map ? `<a href="${item.map}" target="_blank" class="timeline-map-link">🗺️ Google 地圖</a>` : ""}
-                ${item.image ? `<img class="timeline-img" src="${item.image}" alt="">` : ""}
+                ${imgSrc ? `<img class="timeline-img" src="${imgSrc}" alt="">` : ""}
               </div>
             </div>
-          `).join("")}
+          `;
+          }).join("")}
         </section>
       `;
 
@@ -1478,7 +1408,7 @@
       });
     }
 
-    // ========= 5. 匯率 =========
+    // ===== 4. 匯率 =====
     const jpyInput = document.getElementById("jpyInput");
     const twdInput = document.getElementById("twdInput");
     const rateText = document.getElementById("rateText");
@@ -1503,7 +1433,7 @@
       updateFromJPY();
     }
 
-    // ========= 6. 購物清單 =========
+    // ===== 5. 購物清單（圖片用 imageUrl） =====
     const shoppingGridAllEl = document.getElementById("shoppingGridAll");
     const shoppingStoreFilter = document.getElementById("shoppingStoreFilter");
     let editingShoppingId = null;
@@ -1517,7 +1447,9 @@
         items = items.filter(i => i.store === storeFilter);
       }
 
-      shoppingGridAllEl.innerHTML = items.map(item => `
+      shoppingGridAllEl.innerHTML = items.map(item => {
+        const imgSrc = item.imageUrl || item.imageData || "";
+        return `
         <div class="shopping-card">
           <div class="shopping-name-row">
             <div class="shopping-name">${item.name}</div>
@@ -1527,11 +1459,10 @@
             ${item.store ? `🏪 ${item.store}` : ""}${item.owner ? ` · 👤 ${item.owner}` : ""}
           </div>
           ${item.note ? `<div class="shopping-note">${item.note}</div>` : ""}
-          ${item.imageUrl || item.imageData
-            ? `<img class="shopping-img" src="${item.imageUrl || item.imageData}" alt="">`
-            : ""}
+          ${imgSrc ? `<img class="shopping-img" src="${imgSrc}" alt="">` : ""}
         </div>
-      `).join("");
+      `;
+      }).join("");
 
       document.querySelectorAll(".shopping-edit").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -1543,7 +1474,7 @@
           shoppingNote.value = item.note || "";
           shoppingOwner.value = item.owner || "Luna";
           shoppingStore.value = item.store || "";
-          shoppingImageInput.value = "";
+          shoppingImageUrl.value = item.imageUrl || "";
           openModal(shoppingModal);
         });
       });
@@ -1553,7 +1484,6 @@
       shoppingStoreFilter.addEventListener("change", renderShopping);
     }
 
-    // 放大圖片 viewer
     const imageViewer = document.getElementById("imageViewer");
     const imageViewerImg = document.getElementById("imageViewerImg");
     if (shoppingGridAllEl && imageViewer && imageViewerImg) {
@@ -1568,7 +1498,7 @@
       });
     }
 
-    // ========= 7. 費用紀錄 =========
+    // ===== 6. 費用紀錄 =====
     const expenseListEl = document.getElementById("expenseList");
     const totalJPYEl = document.getElementById("totalJPY");
     const totalTWDEl = document.getElementById("totalTWD");
@@ -1674,7 +1604,7 @@
       calcTotalsAndSettlement();
     }
 
-    // ========= 8. Hero 背景 =========
+    // ===== 7. Hero 背景（只在本機） =====
     const heroEl = document.getElementById("hero");
     const changeBgBtn = document.getElementById("changeBgBtn");
     const bgFileInput = document.getElementById("bgFileInput");
@@ -1700,7 +1630,7 @@
       });
     }
 
-    // ========= 9. View 切換 =========
+    // ===== 8. View 切換 =====
     const viewPlan = document.getElementById("view-plan");
     const viewFx = document.getElementById("view-fx");
     const viewShopping = document.getElementById("view-shopping");
@@ -1728,7 +1658,7 @@
       });
     });
 
-    // ========= 10. Modal & 新增 =========
+    // ===== 9. Modal & 新增 =====
     const fabBtn = document.getElementById("fabBtn");
     const typeModal = document.getElementById("typeModal");
     const typeCancel = document.getElementById("typeCancel");
@@ -1742,7 +1672,7 @@
     const shoppingNote = document.getElementById("shoppingNote");
     const shoppingOwner = document.getElementById("shoppingOwner");
     const shoppingStore = document.getElementById("shoppingStore");
-    const shoppingImageInput = document.getElementById("shoppingImageInput");
+    const shoppingImageUrl = document.getElementById("shoppingImageUrl");
 
     const expenseModal = document.getElementById("expenseModal");
     const expenseCancel = document.getElementById("expenseCancel");
@@ -1774,7 +1704,8 @@
     const weatherNoteInput = document.getElementById("weatherNote");
     let editingWeatherDayIndex = null;
 
-    // 開啟 / 關閉 modal 時記錄與還原捲動位置
+    const syncBtn = document.getElementById("syncBtn");
+
     let lastScrollY = 0;
     const openModal = m => {
       lastScrollY = window.scrollY || window.pageYOffset || 0;
@@ -1803,7 +1734,7 @@
         shoppingNote.value = "";
         shoppingOwner.value = "Luna";
         shoppingStore.value = "";
-        shoppingImageInput.value = "";
+        shoppingImageUrl.value = "";
         openModal(shoppingModal);
       });
     }
@@ -1829,7 +1760,6 @@
     if (scheduleCancel) scheduleCancel.addEventListener("click", () => closeModal(scheduleModal));
     if (weatherCancel) weatherCancel.addEventListener("click", () => closeModal(weatherModal));
 
-    // 付款人 pill
     if (expensePayerGroup) {
       expensePayerGroup.addEventListener("click", e => {
         const btn = e.target.closest(".pill-btn");
@@ -1841,55 +1771,35 @@
       });
     }
 
-    // 新增 / 編輯購物（含 Storage 上傳）
     if (shoppingSave) {
-      shoppingSave.addEventListener("click", async () => {
+      shoppingSave.addEventListener("click", () => {
         const name = shoppingName.value.trim();
         if (!name) { alert("請輸入商品名稱"); return; }
-        const note  = shoppingNote.value.trim();
+        const note = shoppingNote.value.trim();
         const owner = shoppingOwner.value || "Luna";
         const store = shoppingStore.value || "";
-        const file  = shoppingImageInput.files[0];
-
-        let imageUrl;
-        if (file) {
-          try {
-            const id = editingShoppingId || ("s" + Date.now());
-            const storageRef = ref(storage, `shopping/${id}-${file.name}`);
-            const snap = await uploadBytes(storageRef, file);
-            imageUrl = await getDownloadURL(snap.ref);
-          } catch (err) {
-            console.error("upload image error", err);
-            alert("圖片上傳失敗，但文字資料仍可儲存。");
-          }
-        }
+        const imageUrl = shoppingImageUrl.value.trim();
 
         const existingItem = editingShoppingId
           ? shoppingList.find(i => i.id === editingShoppingId)
           : null;
 
-        if (existingItem) {
-          existingItem.name  = name;
-          existingItem.note  = note;
+        if (editingShoppingId && existingItem) {
+          existingItem.name = name;
+          existingItem.note = note;
           existingItem.owner = owner;
           existingItem.store = store;
-          if (imageUrl) {
-            existingItem.imageUrl = imageUrl;
-            delete existingItem.imageData;
-          }
+          existingItem.imageUrl = imageUrl || "";
         } else {
-          const id = editingShoppingId || ("s" + Date.now());
-          const newItem = {
-            id,
+          shoppingList.push({
+            id: "s" + Date.now(),
             owner,
             store,
             name,
-            note
-          };
-          if (imageUrl) newItem.imageUrl = imageUrl;
-          shoppingList.push(newItem);
+            note,
+            imageUrl: imageUrl || ""
+          });
         }
-
         saveShopping();
         renderShopping();
         editingShoppingId = null;
@@ -1897,7 +1807,6 @@
       });
     }
 
-    // 新增費用
     if (expenseSave) {
       expenseSave.addEventListener("click", () => {
         const title = expenseTitle.value.trim();
@@ -1921,7 +1830,7 @@
       });
     }
 
-    // ========= 11. 行程編輯 =========
+    // ===== 10. 行程編輯 =====
     let editingDayIndex = null;
     let editingScheduleIndex = null;
 
@@ -1973,7 +1882,9 @@
           closeModal(scheduleModal);
         };
 
-        const file = scheduleImageInput.files[0];
+        const file = scheduleImageInput && scheduleImageInput.files
+          ? scheduleImageInput.files[0]
+          : null;
         if (file) {
           const reader = new FileReader();
           reader.onload = ev => {
@@ -1987,7 +1898,7 @@
       });
     }
 
-    // ========= 12. 天氣編輯 =========
+    // ===== 11. 天氣編輯 =====
     function openWeatherModal(dayIdx) {
       editingWeatherDayIndex = dayIdx;
       const w = tripData.days[dayIdx].weather;
@@ -2011,8 +1922,15 @@
       });
     }
 
-    // ========= 13. 初始化 =========
-    async function init() {
+    // 雲端同步按鈕：強制立即存一次
+    if (syncBtn) {
+      syncBtn.addEventListener("click", () => {
+        saveToCloudNow();
+      });
+    }
+
+    // ===== 12. 初始化 =====
+    function init() {
       tripData.days.forEach((_, idx) => sortScheduleForDay(idx));
       renderTabs();
       renderDayContent();
@@ -2021,11 +1939,8 @@
       renderExpenses();
       loadHeroBg();
       setView("plan");
-      // 先載本機，再嘗試雲端
-      await loadFromCloud();
-      startCloudListener();
+      initCloudSync();
     }
-
     init();
   </script>
 </body>
