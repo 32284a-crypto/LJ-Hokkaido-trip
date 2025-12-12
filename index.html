@@ -591,6 +591,7 @@
             <select id="shoppingStoreFilter" style="width:100%;border-radius:10px;border:1px solid #d0ddff;padding:4px 8px;font-size:13px;">
               <option value="ALL">全部店家</option>
               <option value="無印良品">無印良品</option>
+              <option value="Uniqlo">Uniqlo</option>
               <option value="大創">大創</option>
               <option value="3COINS">3COINS</option>
               <option value="Hands">Hands</option>
@@ -654,6 +655,7 @@
         <select id="shoppingStore">
           <option value="">未指定</option>
           <option value="無印良品">無印良品</option>
+          <option value="Uniqlo">Uniqlo</option>
           <option value="大創">大創</option>
           <option value="3COINS">3COINS</option>
           <option value="Hands">Hands</option>
@@ -840,7 +842,7 @@
               tag: "抵達",
               title: "新千歲機場 (CTS)",
               sub: "入境、領行李、前往札幌",
-              note: "可在機場先買交通卡 / 上廁所 / 小補給",
+              note: "",
               map: "https://maps.app.goo.gl/",
               image: ""
             },
@@ -849,7 +851,7 @@
               tag: "入住",
               title: "VESSEL HOTEL 中島公園",
               sub: "12/24–12/26 · 14:00 入住 / 11:00 退房",
-              note: "放好行李，可去附近逛逛 / 超市 / 便利商店",
+              note: "",
               map: "",
               image: ""
             },
@@ -889,7 +891,7 @@
               tag: "景點",
               title: "旭山動物園",
               sub: "約 1 小時 40 分 · 自由活動",
-              note: "本行程包含旭山動物園門票",
+              note: "行程包含旭山動物園門票",
               map: "",
               image: ""
             },
@@ -916,7 +918,7 @@
               tag: "景點",
               title: "森林精靈露臺",
               sub: "約 1 小時 20 分 · 自由活動",
-              note: "拍照、散步、喝東西",
+              note: "",
               map: "",
               image: ""
             },
@@ -939,7 +941,7 @@
             low: -8,
             feels: -10,
             status: "市區日 & 換飯店",
-            note: "白天札幌市區 & 住相鐵薄野"
+            note: "札幌&小樽 & 住相鐵薄野"
           },
           schedule: [
             {
@@ -995,7 +997,7 @@
               time: "09:00",
               tag: "滑雪",
               title: "集合 & 租裝備",
-              sub: "手稻滑雪場 · 與雪長姐會合",
+              sub: "手稻滑雪場 · 與教練會合",
               note: "",
               map: "",
               image: ""
@@ -1004,7 +1006,7 @@
               time: "10:00",
               tag: "滑雪",
               title: "滑雪教學 & 自由滑",
-              sub: "中午可在雪場用餐",
+              sub: "中午雪場用餐",
               note: "",
               map: "",
               image: ""
@@ -1057,7 +1059,7 @@
               time: "11:00",
               tag: "退房",
               title: "退房 · 相鐵 FRESA INN 薄野",
-              sub: "最晚 11:00 退房，可先帶行李去札幌站寄物",
+              sub: "最晚 11:00 退房",
               note: "",
               map: "",
               image: ""
@@ -1087,18 +1089,30 @@
       defaultShopping: [
         { id: "s-muji-01", owner: "Luna", store: "無印良品", name: "福吉茶", note: "" },
         { id: "s-daiso-01", owner: "Luna", store: "大創", name: "折疊梳子", note: "" },
-        { id: "s-daiso-02", owner: "Luna", store: "大創", name: "???", note: "" },
+        { id: "s-airport-01", owner: "Luna", store: "機場/伴手禮", name: "Butter Cheese Sand", note: "" },
         { id: "s-3c-01", owner: "Luna", store: "3COINS", name: "旅行收納袋", note: "" },
         { id: "s-3c-02", owner: "Luna", store: "3COINS", name: "多功能微波調理烤盤", note: "" },
         { id: "s-3c-03", owner: "Luna", store: "3COINS", name: "毛毛手套", note: "" },
         { id: "s-3c-04", owner: "Luna", store: "3COINS", name: "狗狗裝", note: "" },
-        { id: "s-hands-01", owner: "Luna", store: "藥妝店", name: "EXLIR", note: "" },
-        { id: "s-cvs-01", owner: "Luna", store: "超商", name: "健達出奇蛋皮克敏", note: "" },
+        { id: "s-cosmestic-01", owner: "Luna", store: "藥妝店", name: "EXLIR", note: "" },
+        { id: "s-Family-04", owner: "Luna", store: "全家", name: "健達出奇蛋皮克敏", note: "" },
         { id: "s-711-01", owner: "Luna", store: "7-11", name: "帶皮薯條", note: "" },
         { id: "s-711-02", owner: "Luna", store: "7-11", name: "蘭姆葡萄餅乾", note: "" },
         { id: "s-lawson-01", owner: "Luna", store: "Lawson", name: "黃豆粉綜合堅果", note: "" },
         { id: "s-family-01", owner: "Luna", store: "全家", name: "Calbee奶油洋芋片", note: "" },
         { id: "s-family-02", owner: "Luna", store: "全家", name: "半生水蜜桃乾", note: "" },
+        { id: "s-cosmestic-02", owner: "Luna", store: "藥妝店", name: "lululun", note: "" },
+        { id: "s-cosmestic-03", owner: "Luna", store: "藥妝店", name: "髮油", note: "" },
+        { id: "s-cosmestic-04", owner: "Luna", store: "藥妝店", name: "canmake睫毛刷", note: "" },
+        { id: "s-cosmestic-05", owner: "Luna", store: "藥妝店", name: "canmake瀏海蜜粉", note: "" },
+        { id: "s-cosmestic-06", owner: "Luna", store: "藥妝店", name: "口罩", note: "松本清only" },
+        { id: "s-cosmestic-07", owner: "Luna", store: "藥妝店", name: "E+B嘴皰疹", note: "" },
+        { id: "s-cosmestic-08", owner: "Luna", store: "藥妝店", name: "護手霜", note: "" },
+        { id: "s-cosmestic-09", owner: "Luna", store: "藥妝店", name: "美白錠", note: "" },
+        { id: "s-cosmestic-10", owner: "Luna", store: "藥妝店", name: "足底", note: "" },
+        { id: "s-cosmestic-11", owner: "Luna", store: "藥妝店", name: "手乾裂", note: "" },
+        { id: "s-cosmestic-12", owner: "Luna", store: "藥妝店", name: "液體腮紅", note: "" },
+        { id: "s-airport-02", owner: "Luna", store: "機場/伴手禮", name: "Royce", note: "開心果產品" },
         { id: "s-family-03", owner: "Luna", store: "全家", name: "鮭魚肉乾", note: "" }
       ],
       defaultExpenses: [
