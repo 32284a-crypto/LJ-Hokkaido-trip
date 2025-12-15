@@ -1474,7 +1474,7 @@
     const shoppingStoreFilter = document.getElementById("shoppingStoreFilter");
     let editingShoppingId = null;
 
-  function renderShopping() {
+ function renderShopping() {
   if (!shoppingGridAllEl) return;
 
   const storeFilter = shoppingStoreFilter ? shoppingStoreFilter.value : "ALL";
@@ -1484,8 +1484,8 @@
   }
 
   shoppingGridAllEl.innerHTML = items.map(item => {
-    // 優先用 image（你現在的寫法），如果沒有就退回 imageUrl
-    const imgSrc = item.image || item.imageUrl || "";
+    // 依序嘗試：舊版 base64 → 你現在的 repo 圖片 → 外部連結
+    const imgSrc = item.imageData || item.image || item.imageUrl || "";
 
     return `
       <div class="shopping-card">
@@ -1502,14 +1502,13 @@
 
         ${
           imgSrc
-            ? `<img class="shopping-img" src="${imgSrc}" alt="" data-full="${imgSrc}">`
+            ? `<img class="shopping-img" src="${imgSrc}" alt="" loading="lazy" data-full="${imgSrc}">`
             : ""
         }
       </div>
     `;
   }).join("");
 
-  // 綁定購物編輯
   document.querySelectorAll(".shopping-edit").forEach(btn => {
     btn.addEventListener("click", () => {
       const id = btn.dataset.id;
@@ -1522,8 +1521,7 @@
       shoppingOwner.value = item.owner || "Luna";
       shoppingStore.value = item.store || "";
 
-      // 如果你頁面上已經沒有 shoppingImageUrl 這個 input，這行會報錯
-      // 所以先做保護
+      // 如果你頁面上沒有 shoppingImageUrl input，就不會報錯
       if (typeof shoppingImageUrl !== "undefined" && shoppingImageUrl) {
         shoppingImageUrl.value = item.imageUrl || item.image || "";
       }
