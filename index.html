@@ -756,9 +756,21 @@
     </div>
   </div>
 
-  <div class="image-viewer-overlay" id="imageViewer">
-    <img id="imageViewerImg" alt="">
-  </div>
+const imageViewer = document.getElementById("imageViewer");
+const imageViewerImg = document.getElementById("imageViewerImg");
+
+if (shoppingGridAllEl && imageViewer && imageViewerImg) {
+  shoppingGridAllEl.addEventListener("click", e => {
+    const img = e.target.closest(".shopping-img");
+    if (!img) return;
+    imageViewerImg.src = img.dataset.full || img.src;
+    imageViewer.classList.add("show");
+  });
+
+  imageViewer.addEventListener("click", () => {
+    imageViewer.classList.remove("show");
+  });
+}
 
   <!-- JS：Firebase + App 邏輯 -->
   <script type="module">
@@ -1457,7 +1469,7 @@
     const shoppingStoreFilter = document.getElementById("shoppingStoreFilter");
     let editingShoppingId = null;
 
-   function renderShopping() {
+  function renderShopping() {
   if (!shoppingGridAllEl) return;
 
   const storeFilter = shoppingStoreFilter ? shoppingStoreFilter.value : "ALL";
@@ -1467,45 +1479,55 @@
   }
 
   shoppingGridAllEl.innerHTML = items.map(item => {
-    const link = item.imageUrl || ""; // 這裡把它當成 Drive 連結
+    // 優先用 image（你現在的寫法），如果沒有就退回 imageUrl
+    const imgSrc = item.image || item.imageUrl || "";
+
     return `
       <div class="shopping-card">
         <div class="shopping-name-row">
-          <div class="shopping-name">${item.name}</div>
+          <div class="shopping-name">${item.name || ""}</div>
           <span class="shopping-edit" data-id="${item.id}">✏️</span>
         </div>
+
         <div class="shopping-note">
           ${item.store ? `🏪 ${item.store}` : ""}${item.owner ? ` · 👤 ${item.owner}` : ""}
         </div>
+
         ${item.note ? `<div class="shopping-note">${item.note}</div>` : ""}
+
         ${
-          link
-            ? `<div class="shopping-note">
-                 <a href="${link}" target="_blank" rel="noopener noreferrer">
-                   🔗 查看圖片
-                 </a>
-               </div>`
+          imgSrc
+            ? `<img class="shopping-img" src="${imgSrc}" alt="" data-full="${imgSrc}">`
             : ""
         }
       </div>
     `;
   }).join("");
 
+  // 綁定購物編輯
   document.querySelectorAll(".shopping-edit").forEach(btn => {
     btn.addEventListener("click", () => {
       const id = btn.dataset.id;
       const item = shoppingList.find(i => i.id === id);
       if (!item) return;
+
       editingShoppingId = id;
       shoppingName.value = item.name || "";
       shoppingNote.value = item.note || "";
       shoppingOwner.value = item.owner || "Luna";
       shoppingStore.value = item.store || "";
-      shoppingImageUrl.value = item.imageUrl || "";
+
+      // 如果你頁面上已經沒有 shoppingImageUrl 這個 input，這行會報錯
+      // 所以先做保護
+      if (typeof shoppingImageUrl !== "undefined" && shoppingImageUrl) {
+        shoppingImageUrl.value = item.imageUrl || item.image || "";
+      }
+
       openModal(shoppingModal);
     });
   });
 }
+
 
     // ===== 6. 費用紀錄 =====
     const expenseListEl = document.getElementById("expenseList");
