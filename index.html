@@ -568,9 +568,9 @@
             <div class="card-subtitle">JPY ↔ TWD</div>
           </div>
           <div class="rate-row">
-            <input id="jpyInput" type="number" value="50000" />
+            <input id="jpyInput" type="number" value="" />
             <span>⇄</span>
-            <input id="twdInput" type="number" value="10750" />
+            <input id="twdInput" type="number" value="" />
           </div>
           <div class="rate-meta" id="rateText"></div>
         </section>
@@ -1478,14 +1478,16 @@
   if (!shoppingGridAllEl) return;
 
   const storeFilter = shoppingStoreFilter ? shoppingStoreFilter.value : "ALL";
-  let items = shoppingList;
-  if (storeFilter !== "ALL") {
-    items = items.filter(i => i.store === storeFilter);
-  }
+  let items = shoppingList || [];
+  if (storeFilter !== "ALL") items = items.filter(i => i.store === storeFilter);
 
   shoppingGridAllEl.innerHTML = items.map(item => {
-    // 依序嘗試：舊版 base64 → 你現在的 repo 圖片 → 外部連結
-    const imgSrc = item.imageData || item.image || item.imageUrl || "";
+    // 你現在的主力：image（repo 相對路徑）
+    // 保留備案：imageUrl（外部連結）
+    const rawSrc = (item.image || item.imageUrl || "").trim();
+
+    // 讓 images/xxx.jpg 裡如果有空格也不會直接掛掉（保險）
+    const imgSrc = rawSrc ? encodeURI(rawSrc) : "";
 
     return `
       <div class="shopping-card">
@@ -1502,7 +1504,7 @@
 
         ${
           imgSrc
-            ? `<img class="shopping-img" src="${imgSrc}" alt="" loading="lazy" data-full="${imgSrc}">`
+            ? `<img class="shopping-img" src="${imgSrc}" alt="" data-full="${imgSrc}">`
             : ""
         }
       </div>
@@ -1521,7 +1523,7 @@
       shoppingOwner.value = item.owner || "Luna";
       shoppingStore.value = item.store || "";
 
-      // 如果你頁面上沒有 shoppingImageUrl input，就不會報錯
+      // 若你頁面沒有 shoppingImageUrl input，這行不會報錯
       if (typeof shoppingImageUrl !== "undefined" && shoppingImageUrl) {
         shoppingImageUrl.value = item.imageUrl || item.image || "";
       }
