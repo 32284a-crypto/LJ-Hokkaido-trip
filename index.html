@@ -756,23 +756,26 @@
     </div>
   </div>
 
-  <script>
-const imageViewer = document.getElementById("imageViewer");
-const imageViewerImg = document.getElementById("imageViewerImg");
+<script>
+  const imageViewer = document.getElementById("imageViewer");
+  const imageViewerImg = document.getElementById("imageViewerImg");
 
-if (shoppingGridAllEl && imageViewer && imageViewerImg) {
-  shoppingGridAllEl.addEventListener("click", e => {
-    const img = e.target.closest(".shopping-img");
-    if (!img) return;
-    imageViewerImg.src = img.dataset.full || img.src;
-    imageViewer.classList.add("show");
-  });
+  if (shoppingGridAllEl && imageViewer && imageViewerImg) {
+    shoppingGridAllEl.addEventListener("click", (e) => {
+      const img = e.target.closest(".shopping-img");
+      if (!img) return;
+      imageViewerImg.src = img.dataset.full || img.src;
+      imageViewer.classList.add("show");
+    });
 
-  imageViewer.addEventListener("click", () => {
-    imageViewer.classList.remove("show");
-  });
-}
-  <script>
+    imageViewer.addEventListener("click", () => {
+      imageViewer.classList.remove("show");
+    });
+  }
+</script>
+
+<!-- JS：Firebase + App 邏輯 -->
+
 
   <!-- JS：Firebase + App 邏輯 -->
   <script type="module">
