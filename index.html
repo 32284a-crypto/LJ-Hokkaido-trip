@@ -20,6 +20,21 @@
       min-height: 100vh;
       background: #f4f8ff;
     }
+    /* ===== 購物清單圖片顯示修正 ===== */
+.shopping-img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin-top: 8px;
+  border-radius: 10px;
+  cursor: zoom-in;
+}
+
+/* 確保卡片不會把圖片吃掉 */
+.shopping-card {
+  overflow: visible;
+}
 
     /* 頂部 banner */
     .hero {
@@ -2005,5 +2020,31 @@
     }
     init();
   </script>
+
+<div id="imageViewer">
+  <img id="imageViewerImg" />
+</div>
+
+  #imageViewer {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+#imageViewer.show {
+  display: flex;
+}
+
+#imageViewer img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 12px;
+}
+
+  
 </body>
 </html>
