@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -535,7 +537,6 @@
 
   <!-- JS：Firebase + App 邏輯 -->
   <script type="module">
-    // ===== Firebase 初始化 =====
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
@@ -554,7 +555,6 @@
     const db = getFirestore(appFirebase);
     const TRIP_DOC_ID = "hokkaido-2025-main";
     const tripDocRef = doc(db, "trips", TRIP_DOC_ID);
-    const CLOUD_VERSION = 2;
 
     const cloudStatusTextEl = document.getElementById("cloudStatusText");
     function setCloudStatus(state, text) {
@@ -567,7 +567,6 @@
     let isSavingCloud = false;
     let unsubscribeSnapshot = null;
 
- // ===== 1. 預設旅遊資料 =====
     const defaultTripData = {
       days: [
         {
@@ -596,7 +595,6 @@
             { time: "18:30", tag: "回程", title: "返回札幌", sub: "回到集合地點附近解散", note: "", map: "", image: "" },
             { time: "19:30", tag: "買買買", title: "返回札幌", sub: "回到集合地點附近解散", note: "晚餐 / 夜晚行程 TBD", map: "", image: "" },
             { time: "21:30", tag: "晚餐", title: "カキ小屋/味園燒肉", sub: "回到集合地點附近解散", note: "晚餐 / 夜晚行程 TBD", map: "", image: "" }
-
           ]
         },
         {
@@ -607,7 +605,6 @@
             { time: "06:45", tag: "早餐", title: "豐盛的早餐", sub: "", note: "", map: "", image: "" },
             { time: "07:50", tag: "走15分鐘換飯店", title: "相鐵 FRESA INN 薄野", sub: "12/26–12/29 · 15:00 入住 / 11:00 退房", note: "", map: "", image: "" },
             { time: "08:35", tag: "0835-0920景點", title: "北海道神宮", sub: "散步 · 吃福餅", note: "", map: "", image: "" },
-  
             { time: "09:30", tag: "咖啡", title: "0900森彥咖啡", sub: "", note: "", map: "", image: "" },
             { time: "10:00", tag: "景點", title: "北海道廳本廳舍", sub: "紅磚建築 · 拍照散步", note: "", map: "", image: "" },
             { time: "10:30", tag: "買買買", title: "Montbell/", sub: "紅磚建築 · 拍照散步", note: "", map: "", image: "" },
@@ -617,14 +614,13 @@
             { time: "13:30", tag: "出發", title: "札幌 → 小樽（JR）", sub: "", note: "", map: "", image: "" },
             { time: "14:00", tag: "景點", title: "小樽運河", sub: "", note: "", map: "", image: "" },
             { time: "14:20", tag: "景點", title: "堺町通散策", sub: "", note: "六花亭巧克力,LeTAO起司蛋糕,かま栄現炸魚糕,浅草橋甜甜圈排太長可略", map: "", image: "" },
-            { time: "14:30", tag: "景點", title: "北一硝子三號館＋北一ホール", sub: "", note: "", map: "", image: "" },   
-            { time: "14:40", tag: "景點", title: "音樂盒堂", sub: "", note: "", map: "", image: "" },   
-            { time: "14:50", tag: "景點", title: "船見坂（日落前）", sub: "", note: "從運河一帶 搭計程車約 700 日圓", map: "", image: "" },  
+            { time: "14:30", tag: "景點", title: "北一硝子三號館＋北一ホール", sub: "", note: "", map: "", image: "" },
+            { time: "14:40", tag: "景點", title: "音樂盒堂", sub: "", note: "", map: "", image: "" },
+            { time: "14:50", tag: "景點", title: "船見坂（日落前）", sub: "", note: "從運河一帶 搭計程車約 700 日圓", map: "", image: "" },
             { time: "14:55", tag: "晚餐", title: "Cafe BAAL牛排飯", sub: "", note: "", map: "", image: "" },
             { time: "15:00", tag: "景點", title: "小樽運河", sub: "", note: "日落點燈", map: "", image: "" },
             { time: "16:00", tag: "回程", title: "小樽 → 札幌", sub: "", note: "", map: "", image: "" },
             { time: "16:00", tag: "買買買", title: "TBD", sub: "", note: "", map: "", image: "" }
-
           ]
         },
         {
@@ -637,9 +633,8 @@
             { time: "10:00", tag: "滑雪", title: "滑雪教學 & 自由滑", sub: "中午雪場用餐", note: "", map: "", image: "" },
             { time: "17:30", tag: "晚餐", title: "Nagoya亭", sub: "好吃壽司", note: "", map: "", image: "" },
             { time: "18:30", tag: "買買買", title: "Alpen", sub: "", note: "", map: "", image: "" },
-            { time: "19:30", tag: "結束", title: "離開手稻", sub: "搭車返回札幌", note: "回到薄野附近吃晚餐 / 泡湯 TBD", map: "", image: "" }, 
+            { time: "19:30", tag: "結束", title: "離開手稻", sub: "搭車返回札幌", note: "回到薄野附近吃晚餐 / 泡湯 TBD", map: "", image: "" },
             { time: "20:00", tag: "點心", title: "GELATERIA La Giostra", sub: "金、土 20:00–00:00", note: "", map: "", image: "" }
-
           ]
         },
         {
@@ -660,9 +655,10 @@
             { time: "13:55", tag: "回程", title: "FD243 CTS → TPE", sub: "Airasia FD243 13:55 起飛，預計 17:55 抵達", note: "", map: "", image: "" }
           ]
         }
-        ],
-        
+      ],
+
       fx: { rate: 0.215 },
+
       defaultShopping: [
         { id: "s-muji-01", owner: "Luna", store: "無印良品", name: "福吉茶", note: "" },
         { id: "s-daiso-01", owner: "Luna", store: "大創", name: "折疊梳子", note: "" },
@@ -671,7 +667,6 @@
         { id: "s-3c-02", owner: "Luna", store: "3COINS", name: "多功能微波調理烤盤", note: "" },
         { id: "s-3c-03", owner: "Luna", store: "3COINS", name: "毛毛手套", note: "" },
         { id: "s-3c-04", owner: "Luna", store: "3COINS", name: "狗狗裝", note: "" },
-
         { id: "s-cosmestic-01", owner: "Luna", store: "藥妝店", name: "EXLIR", note: "" },
         { id: "s-Family-04", owner: "Luna", store: "全家", name: "健達出奇蛋皮克敏", note: "" },
         { id: "s-711-01", owner: "Luna", store: "7-11", name: "帶皮薯條", note: "" },
@@ -691,25 +686,21 @@
         { id: "s-cosmestic-11", owner: "Luna", store: "藥妝店", name: "手乾裂", note: "" },
         { id: "s-cosmestic-12", owner: "Luna", store: "藥妝店", name: "液體腮紅", note: "" },
         { id: "s-airport-02", owner: "Luna", store: "機場/伴手禮", name: "Royce", note: "開心果產品" },
-
         { id:"s-cosmetic-13", owner:"Luna", store:"藥妝店", name:"足底舒緩（乾）", note:"", image:"images/footdry.jpg" },
         { id:"s-cosmetic-14", owner:"Luna", store:"藥妝店", name:"足底舒緩（放鬆）", note:"", image:"images/footrelease.jpg" },
         { id:"s-cosmetic-15", owner:"Luna", store:"藥妝店", name:"亮白保養", note:"", image:"images/brightskin.jpg" },
         { id:"s-cosmetic-16", owner:"Luna", store:"藥妝店", name:"保濕面膜", note:"", image:"images/moistmask1.jpg" },
         { id:"s-cosmetic-17", owner:"Luna", store:"藥妝店", name:"高保濕修護", note:"", image:"images/keepmoist2.jpg" },
-
         { id:"s-snack-01", owner:"Luna", store:"超商", name:"奶油洋芋片", note:"", image:"images/chipsshrimp.jpg" },
-
         { id:"s-uncat-01", owner:"Luna", store:"未選分類", name:"資生堂粉底液", note:"", image:"images/shlseidofoundation.jpg" },
         { id:"s-uncat-02", owner:"Luna", store:"未選分類", name:"Le Labo 護手霜", note:"", image:"images/le labo.jpg" },
         { id:"s-uncat-03", owner:"Luna", store:"未選分類", name:"Chanel 唇釉", note:"", image:"images/channellip.jpg" },
-
         { id:"s-cosmetic-18", owner:"Luna", store:"藥妝店", name:"瀏海救星", note:"", image:"images/dryband.jpg" },
         { id:"s-cosmetic-19", owner:"Luna", store:"藥妝店", name:"護手霜（多款）", note:"", image:"images/allkindshand.jpg" },
         { id:"s-cosmetic-20", owner:"Luna", store:"藥妝店", name:"護手霜 Aesop味!", note:"", image:"images/likeAesop.jpg" },
-
         { id: "s-family-03", owner: "Luna", store: "全家", name: "鮭魚肉乾", note: "" }
       ],
+
       defaultExpenses: [
         { id: "e-hand-rent", title: "手稻雪具租借", date: "2025-11-17", method: "Jen 先付 NT$5,086", amount: 5086, currency: "TWD", payer: "Jen" },
         { id: "e-klook-day", title: "Klook 一日", date: "2025-10-05", method: "Luna 先付 NT$3,423", amount: 3423, currency: "TWD", payer: "Luna" },
@@ -721,7 +712,6 @@
       ]
     };
 
-    // ===== 2. localStorage 工具 =====
     const TRIP_KEY = "hk_trip_data_v3";
     const SHOP_KEY = "hk_shopping_v3";
     const EXP_KEY  = "hk_expenses_v4";
@@ -823,7 +813,6 @@
     function saveShopping() { localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList)); scheduleSaveToCloud(); }
     function saveExpenses() { localStorage.setItem(EXP_KEY, JSON.stringify(expenseList)); scheduleSaveToCloud(); }
 
-    // ===== 3. 行程 & Tabs =====
     const dayTabsEl = document.getElementById("dayTabs");
     const dayContentEl = document.getElementById("dayContent");
     let currentDayIndex = 0;
@@ -919,7 +908,6 @@
       });
     }
 
-    // ===== 4. 匯率 =====
     const jpyInput = document.getElementById("jpyInput");
     const twdInput = document.getElementById("twdInput");
     const rateText = document.getElementById("rateText");
@@ -944,7 +932,6 @@
       updateFromJPY();
     }
 
-    // ===== 5. 購物清單（image / imageUrl 皆可） =====
     const shoppingGridAllEl = document.getElementById("shoppingGridAll");
     const shoppingStoreFilter = document.getElementById("shoppingStoreFilter");
     let editingShoppingId = null;
@@ -991,7 +978,9 @@
       });
     }
 
-    // ===== 6. 費用紀錄 =====
+    /* ✅ 這行是我補的：選單改變就重新 render */
+    if (shoppingStoreFilter) shoppingStoreFilter.addEventListener("change", renderShopping);
+
     const expenseListEl = document.getElementById("expenseList");
     const totalJPYEl = document.getElementById("totalJPY");
     const totalTWDEl = document.getElementById("totalTWD");
@@ -1078,7 +1067,6 @@
       calcTotalsAndSettlement();
     }
 
-    // ===== 7. Hero 背景（只在本機） =====
     const heroEl = document.getElementById("hero");
     const changeBgBtn = document.getElementById("changeBgBtn");
     const bgFileInput = document.getElementById("bgFileInput");
@@ -1102,7 +1090,6 @@
       });
     }
 
-    // ===== 8. View 切換 =====
     const viewPlan = document.getElementById("view-plan");
     const viewFx = document.getElementById("view-fx");
     const viewShopping = document.getElementById("view-shopping");
@@ -1120,7 +1107,6 @@
     }
     heroNavButtons.forEach(btn => btn.addEventListener("click", () => setView(btn.dataset.view)));
 
-    // ===== 9. Modal & 新增 =====
     const fabBtn = document.getElementById("fabBtn");
     const typeModal = document.getElementById("typeModal");
     const typeCancel = document.getElementById("typeCancel");
@@ -1228,7 +1214,6 @@
 
         const existingItem = editingShoppingId ? shoppingList.find(i => i.id === editingShoppingId) : null;
 
-        // ★ 這段是你要的：如果輸入的是 images/xxx.jpg，就存到 image；若是外部網址，就存到 imageUrl
         const isLocalImage = /^images\//i.test(inputUrl);
         const nextImage = isLocalImage ? inputUrl : "";
         const nextImageUrl = isLocalImage ? "" : inputUrl;
@@ -1306,7 +1291,6 @@
 
     if (syncBtn) syncBtn.addEventListener("click", () => saveToCloudNow());
 
-    // ===== 點購物圖片 => 放大；點黑底 => 關閉（已修正：保證綁得到） =====
     const imageViewer = document.getElementById("imageViewer");
     const imageViewerImg = document.getElementById("imageViewerImg");
     if (shoppingGridAllEl && imageViewer && imageViewerImg) {
@@ -1322,7 +1306,6 @@
       });
     }
 
-    // ===== 12. 初始化 =====
     function init() {
       tripData.days.forEach((_, idx) => sortScheduleForDay(idx));
       renderTabs();
