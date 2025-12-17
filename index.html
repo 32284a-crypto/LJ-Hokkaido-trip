@@ -567,7 +567,7 @@
     let isSavingCloud = false;
     let unsubscribeSnapshot = null;
 
-// ===== 1. 預設旅遊資料 =====
+ // ===== 1. 預設旅遊資料 =====
     const defaultTripData = {
       days: [
         {
@@ -638,8 +638,26 @@
             { time: "17:30", tag: "晚餐", title: "Nagoya亭", sub: "好吃壽司", note: "", map: "", image: "" },
             { time: "18:30", tag: "買買買", title: "Alpen", sub: "", note: "", map: "", image: "" },
             { time: "19:30", tag: "結束", title: "離開手稻", sub: "搭車返回札幌", note: "回到薄野附近吃晚餐 / 泡湯 TBD", map: "", image: "" }, 
-            { time: "20:00", tag: "點心", title: "GELATERIA La Giostra", sub: "金、土 20:00–00:00", note: "", map: "", image: "" },
+            { time: "20:00", tag: "點心", title: "GELATERIA La Giostra", sub: "金、土 20:00–00:00", note: "", map: "", image: "" }
 
+          ]
+        },
+        {
+          id: "2025-12-28",
+          label: "Day5 12/28",
+          weather: { temp: -6, low: -12, feels: -15, status: "自由滑雪 / 自由行", note: "看狀況再決定要去哪裡玩雪或市區逛街" },
+          schedule: [
+            { time: "TBD", tag: "TBD", title: "自由滑雪 or 市區行程", sub: "之後再自己決定細節", note: "", map: "", image: "" }
+          ]
+        },
+        {
+          id: "2025-12-29",
+          label: "Day6 12/29",
+          weather: { temp: -3, low: -8, feels: -10, status: "回程日", note: "收拾行李 + 機場採買" },
+          schedule: [
+            { time: "11:00", tag: "退房", title: "退房 · 相鐵 FRESA INN 薄野", sub: "最晚 11:00 退房", note: "", map: "", image: "" },
+            { time: "12:00", tag: "前往機場", title: "札幌 → 新千歲機場", sub: "搭 JR / 巴士前往 CTS", note: "預留時間逛機場 & 買伴手禮", map: "", image: "" },
+            { time: "13:55", tag: "回程", title: "FD243 CTS → TPE", sub: "Airasia FD243 13:55 起飛，預計 17:55 抵達", note: "", map: "", image: "" }
           ]
         },
         {
