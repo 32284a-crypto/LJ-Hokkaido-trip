@@ -771,22 +771,26 @@
     </div>
   </div>
 
-<script>
+
+  <script>
+(function () {
+  const shoppingGridAllEl2 = document.getElementById("shoppingGridAll");
   const imageViewer = document.getElementById("imageViewer");
   const imageViewerImg = document.getElementById("imageViewerImg");
 
-  if (shoppingGridAllEl && imageViewer && imageViewerImg) {
-    shoppingGridAllEl.addEventListener("click", (e) => {
-      const img = e.target.closest(".shopping-img");
-      if (!img) return;
-      imageViewerImg.src = img.dataset.full || img.src;
-      imageViewer.classList.add("show");
-    });
+  if (!shoppingGridAllEl2 || !imageViewer || !imageViewerImg) return;
 
-    imageViewer.addEventListener("click", () => {
-      imageViewer.classList.remove("show");
-    });
-  }
+  shoppingGridAllEl2.addEventListener("click", (e) => {
+    const img = e.target.closest(".shopping-img");
+    if (!img) return;
+    imageViewerImg.src = img.dataset.full || img.src;
+    imageViewer.classList.add("show");
+  });
+
+  imageViewer.addEventListener("click", () => {
+    imageViewer.classList.remove("show");
+  });
+})();
 </script>
 
 <!-- JS：Firebase + App 邏輯 -->
