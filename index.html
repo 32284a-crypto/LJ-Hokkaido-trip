@@ -175,7 +175,7 @@
     .timeline-edit { margin-left: 6px; font-size: 12px; cursor: pointer; opacity: 0.7; }
     .timeline-map-link { display: inline-block; font-size: 11px; margin-top: 2px; color: #0b67ff; text-decoration: none; }
     .timeline-map-link::after { content: " ↗"; font-size: 10px; }
-    .timeline-img { width: 100%; max-height: 160px; object-fit: cover; border-radius: 12px; margin-top: 6px; }
+    .timeline-img { width: 100%; max-height: 160px; object-fit: cover; border-radius: 12px; margin-top: 6px; cursor: zoom-in; }
 
     .rate-row { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; font-size: 13px; }
     .rate-row input { width: 45%; padding: 6px 8px; border-radius: 10px; border: 1px solid #d0ddff; font-size: 13px; }
@@ -593,7 +593,7 @@
   </div>
 
   <!-- JS：Firebase + App 邏輯 -->
- <script type="module">
+  <script type="module">
   // ===== Firebase 初始化 =====
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
   import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
@@ -720,40 +720,41 @@
       { id: "s-daiso-01", owner: "Luna", store: "大創", name: "折疊梳子", note: "" },
       { id: "s-airport-01", owner: "Luna", store: "機場/伴手禮", name: "Butter Cheese Sand", note: "", image: "images/buttercheesesand.jpg" },
       { id: "s-3c-01", owner: "Luna", store: "3COINS", name: "旅行收納袋", note: "" },
-      { id: "s-3c-02", owner: "Luna", store: "3COINS", name: "多功能微波調理烤盤", note: "" }, 
-      { id: "s-3c-03", owner: "Luna", store: "3COINS", name: "毛毛手套", note: "" }, 
-      { id: "s-3c-04", owner: "Luna", store: "3COINS", name: "狗狗裝", note: "" }, 
-      { id: "s-cosmestic-01", owner: "Luna", store: "藥妝店", name: "EXLIR", note: "" }, 
-      { id: "s-Family-04", owner: "Luna", store: "全家", name: "健達出奇蛋皮克敏", note: "" }, 
-      { id: "s-711-01", owner: "Luna", store: "7-11", name: "帶皮薯條", note: "" }, 
-      { id: "s-711-02", owner: "Luna", store: "7-11", name: "蘭姆葡萄餅乾", note: "" }, 
-      { id: "s-lawson-01", owner: "Luna", store: "Lawson", name: "黃豆粉綜合堅果", note: "" }, 
-      { id: "s-family-01", owner: "Luna", store: "全家", name: "Calbee奶油洋芋片", note: "" }, 
-      { id: "s-family-02", owner: "Luna", store: "全家", name: "半生水蜜桃乾", note: "" }, 
-      { id: "s-cosmestic-02", owner: "Luna", store: "藥妝店", name: "lululun", note: "" }, 
-      { id: "s-cosmestic-03", owner: "Luna", store: "藥妝店", name: "髮油", note: "" }, 
-      { id: "s-cosmestic-04", owner: "Luna", store: "藥妝店", name: "canmake睫毛刷", note: "" }, 
-      { id: "s-cosmestic-05", owner: "Luna", store: "藥妝店", name: "canmake瀏海蜜粉", note: "" }, 
-      { id: "s-cosmestic-06", owner: "Luna", store: "藥妝店", name: "口罩", note: "松本清only" }, 
-      { id: "s-cosmestic-07", owner: "Luna", store: "藥妝店", name: "E+B嘴皰疹", note: "" }, 
-      { id: "s-cosmestic-08", owner: "Luna", store: "藥妝店", name: "護手霜", note: "" }, 
-      { id: "s-cosmestic-09", owner: "Luna", store: "藥妝店", name: "美白錠", note: "" }, 
-      { id: "s-cosmestic-10", owner: "Luna", store: "藥妝店", name: "足底", note: "" }, 
-      { id: "s-cosmestic-11", owner: "Luna", store: "藥妝店", name: "手乾裂", note: "" }, 
-      { id: "s-cosmestic-12", owner: "Luna", store: "藥妝店", name: "液體腮紅", note: "" }, 
-      { id: "s-airport-02", owner: "Luna", store: "機場/伴手禮", name: "Royce", note: "開心果產品" }, 
-      { id:"s-cosmetic-13", owner:"Luna", store:"藥妝店", name:"足底舒緩（乾）", note:"", image:"images/footdry.jpg" }, 
-      { id:"s-cosmetic-14", owner:"Luna", store:"藥妝店", name:"足底舒緩（放鬆）", note:"", image:"images/footrelease.jpg" }, 
-      { id:"s-cosmetic-15", owner:"Luna", store:"藥妝店", name:"亮白保養", note:"", image:"images/brightskin.jpg" }, 
-      { id:"s-cosmetic-16", owner:"Luna", store:"藥妝店", name:"保濕面膜", note:"", image:"images/moistmask1.jpg" }, 
-      { id:"s-cosmetic-17", owner:"Luna", store:"藥妝店", name:"高保濕修護", note:"", image:"images/keepmoist2.jpg" }, 
-      { id:"s-snack-01", owner:"Luna", store:"超商", name:"奶油洋芋片", note:"", image:"images/chipsshrimp.jpg" }, 
-      { id:"s-uncat-01", owner:"Luna", store:"未選分類", name:"資生堂粉底液", note:"", image:"images/shlseidofoundation.jpg" }, 
-      { id:"s-uncat-03", owner:"Luna", store:"未選分類", name:"Chanel 唇釉", note:"", image:"images/channellip.jpg" }, 
-      { id:"s-cosmetic-18", owner:"Luna", store:"藥妝店", name:"瀏海救星", note:"", image:"images/dryband.jpg" }, 
-      { id:"s-cosmetic-19", owner:"Luna", store:"藥妝店", name:"護手霜（多款）", note:"", image:"images/allkindshand.jpg" }, 
-      { id:"s-cosmetic-20", owner:"Luna", store:"藥妝店", name:"護手霜 Aesop味!", note:"", image:"images/likeAesop.jpg" }, 
-      { id: "s-family-03", owner: "Luna", store: "全家", name: "鮭魚肉乾", note: "" }
+      { id: "s-3c-02", owner: "Luna", store: "3COINS", name: "多功能微波調理烤盤", note: "" },
+      { id: "s-3c-03", owner: "Luna", store: "3COINS", name: "毛毛手套", note: "" },
+      { id: "s-3c-04", owner: "Luna", store: "3COINS", name: "狗狗裝", note: "" },
+      { id: "s-cosmestic-01", owner: "Luna", store: "藥妝店", name: "EXLIR", note: "" },
+      { id: "s-Family-04", owner: "Luna", store: "全家", name: "健達出奇蛋皮克敏", note: "" },
+      { id: "s-711-01", owner: "Luna", store: "7-11", name: "帶皮薯條", note: "" },
+      { id: "s-711-02", owner: "Luna", store: "7-11", name: "蘭姆葡萄餅乾", note: "" },
+      { id: "s-lawson-01", owner: "Luna", store: "Lawson", name: "黃豆粉綜合堅果", note: "" },
+      { id: "s-family-01", owner: "Luna", store: "全家", name: "Calbee奶油洋芋片", note: "" },
+      { id: "s-family-02", owner: "Luna", store: "全家", name: "半生水蜜桃乾", note: "" },
+      { id: "s-cosmestic-02", owner: "Luna", store: "藥妝店", name: "lululun", note: "" },
+      { id: "s-cosmestic-03", owner: "Luna", store: "藥妝店", name: "髮油", note: "" },
+      { id: "s-cosmestic-04", owner: "Luna", store: "藥妝店", name: "canmake睫毛刷", note: "" },
+      { id: "s-cosmestic-05", owner: "Luna", store: "藥妝店", name: "canmake瀏海蜜粉", note: "" },
+      { id: "s-cosmestic-06", owner: "Luna", store: "藥妝店", name: "口罩", note: "松本清only" },
+      { id: "s-cosmestic-07", owner: "Luna", store: "藥妝店", name: "E+B嘴皰疹", note: "" },
+      { id: "s-cosmestic-08", owner: "Luna", store: "藥妝店", name: "護手霜", note: "" },
+      { id: "s-cosmestic-09", owner: "Luna", store: "藥妝店", name: "美白錠", note: "" },
+      { id: "s-cosmestic-10", owner: "Luna", store: "藥妝店", name: "足底", note: "" },
+      { id: "s-cosmestic-11", owner: "Luna", store: "藥妝店", name: "手乾裂", note: "" },
+      { id: "s-cosmestic-12", owner: "Luna", store: "藥妝店", name: "液體腮紅", note: "" },
+      { id: "s-airport-02", owner: "Luna", store: "機場/伴手禮", name: "Royce", note: "開心果產品" },
+      { id:"s-cosmetic-13", owner:"Luna", store:"藥妝店", name:"足底舒緩（乾）", note:"", image:"images/footdry.jpg" },
+      { id:"s-cosmetic-14", owner:"Luna", store:"藥妝店", name:"足底舒緩（放鬆）", note:"", image:"images/footrelease.jpg" },
+      { id:"s-cosmetic-15", owner:"Luna", store:"藥妝店", name:"亮白保養", note:"", image:"images/brightskin.jpg" },
+      { id:"s-cosmetic-16", owner:"Luna", store:"藥妝店", name:"保濕面膜", note:"", image:"images/moistmask1.jpg" },
+      { id:"s-cosmetic-17", owner:"Luna", store:"藥妝店", name:"高保濕修護", note:"", image:"images/keepmoist2.jpg" },
+      { id:"s-snack-01", owner:"Luna", store:"超商", name:"奶油洋芋片", note:"", image:"images/chipsshrimp.jpg" },
+      { id:"s-uncat-01", owner:"Luna", store:"未選分類", name:"資生堂粉底液", note:"", image:"images/shlseidofoundation.jpg" },
+      { id:"s-uncat-03", owner:"Luna", store:"未選分類", name:"Chanel 唇釉", note:"", image:"images/channellip.jpg" },
+      { id:"s-cosmetic-18", owner:"Luna", store:"藥妝店", name:"瀏海救星", note:"", image:"images/dryband.jpg" },
+      { id:"s-cosmetic-19", owner:"Luna", store:"藥妝店", name:"護手霜（多款）", note:"", image:"images/allkindshand.jpg" },
+      { id:"s-cosmetic-20", owner:"Luna", store:"藥妝店", name:"護手霜 Aesop味!", note:"", image:"images/likeAesop.jpg" },
+
+      { id: "s-family-03", owner: "Luna", store: "全家", name: "鮭魚肉乾", note: "" },
 
       // ⚠️ 建議你把有空白的檔名改掉：le labo.jpg → le-labo.jpg
       { id:"s-uncat-02", owner:"Luna", store:"未選分類", name:"Le Labo 護手霜", note:"", image:"images/le-labo.jpg" }
@@ -955,7 +956,7 @@
                 <div class="timeline-sub">${item.sub || ""}</div>
                 ${item.note ? `<div class="timeline-note">${item.note}</div>` : ""}
                 ${item.map ? `<a href="${item.map}" target="_blank" class="timeline-map-link">🗺️ Google 地圖</a>` : ""}
-                ${safeImg ? `<img class="timeline-img" src="${safeImg}" alt="" onerror="this.style.display='none'">` : ""}
+                ${safeImg ? `<img class="timeline-img" src="${safeImg}" data-full="${safeImg}" alt="" onerror="this.style.display='none'">` : ""}
               </div>
             </div>
           `;
@@ -1359,19 +1360,43 @@
 
   if (syncBtn) syncBtn.addEventListener("click", () => saveToCloudNow());
 
-  // ===== 點購物圖片 => 放大；點黑底 => 關閉 =====
+  // ===== 點圖片 => 放大；點黑底 / ESC => 關閉（購物 + 行程都支援） =====
   const imageViewer = document.getElementById("imageViewer");
   const imageViewerImg = document.getElementById("imageViewerImg");
-  if (shoppingGridAllEl && imageViewer && imageViewerImg) {
+
+  function openImageViewer(src) {
+    if (!imageViewer || !imageViewerImg) return;
+    imageViewerImg.src = src;
+    imageViewer.classList.add("show");
+  }
+  function closeImageViewer() {
+    if (!imageViewer || !imageViewerImg) return;
+    imageViewer.classList.remove("show");
+    imageViewerImg.src = "";
+  }
+
+  if (imageViewer) {
+    imageViewer.addEventListener("click", closeImageViewer);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeImageViewer();
+    });
+  }
+
+  // 購物圖片
+  if (shoppingGridAllEl) {
     shoppingGridAllEl.addEventListener("click", (e) => {
       const img = e.target.closest(".shopping-img");
       if (!img) return;
-      imageViewerImg.src = img.dataset.full || img.src;
-      imageViewer.classList.add("show");
+      openImageViewer(img.dataset.full || img.src);
     });
-    imageViewer.addEventListener("click", () => {
-      imageViewer.classList.remove("show");
-      imageViewerImg.src = "";
+  }
+
+  // 行程圖片
+  if (dayContentEl) {
+    dayContentEl.addEventListener("click", (e) => {
+      const img = e.target.closest(".timeline-img");
+      if (!img) return;
+      openImageViewer(img.dataset.full || img.src);
     });
   }
 
@@ -1388,4 +1413,6 @@
     initCloudSync();
   }
   init();
-</script>
+  </script>
+</body>
+</html>
