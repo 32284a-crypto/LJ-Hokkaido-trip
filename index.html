@@ -1380,6 +1380,162 @@
 
   if (syncBtn) syncBtn.addEventListener("click", () => saveToCloudNow());
 
+    // ===== 修復：編輯今日行程按鈕沒反應（含檢查訊息）=====
+const editTodayBtn = document.getElementById("editTodayBtn");
+const todayModal = document.getElementById("todayModal");
+
+const todayCancel = document.getElementById("todayCancel");
+const todaySave = document.getElementById("todaySave");
+const todayAdd = document.getElementById("todayAdd");
+const todayDelete = document.getElementById("todayDelete");
+
+const todayItemSelect = document.getElementById("todayItemSelect");
+const todayTime = document.getElementById("todayTime");
+const todayTag = document.getElementById("todayTag");
+const todayTitle = document.getElementById("todayTitle");
+const todaySub = document.getElementById("todaySub");
+const todayNote = document.getElementById("todayNote");
+const todayMap = document.getElementById("todayMap");
+const todayImage = document.getElementById("todayImage");
+
+// 快速檢查：缺任何一個都會導致「看起來沒反應」
+(function debugTodayEditWiring() {
+  const missing = [];
+  if (!editTodayBtn) missing.push("editTodayBtn");
+  if (!todayModal) missing.push("todayModal");
+  if (typeof openModal !== "function") missing.push("openModal()");
+  if (typeof closeModal !== "function") missing.push("closeModal()");
+  if (!todayItemSelect) missing.push("todayItemSelect");
+  if (!todaySave) missing.push("todaySave");
+  if (!todayCancel) missing.push("todayCancel");
+
+  if (missing.length) {
+    console.warn("[TodayEdit] missing:", missing.join(", "));
+  } else {
+    console.log("[TodayEdit] wiring OK");
+  }
+})();
+
+function getCurrentDaySafe() {
+  return tripData && tripData.days && tripData.days[currentDayIndex];
+}
+
+function rebuildTodaySelect(day) {
+  todayItemSelect.innerHTML = "";
+  (day.schedule || []).forEach((item, idx) => {
+    const opt = document.createElement("option");
+    opt.value = String(idx);
+    opt.textContent = `${item.time || "--:--"}｜${item.title || "(未命名)"}`;
+    todayItemSelect.appendChild(opt);
+  });
+}
+
+function loadTodayForm(day, idx) {
+  const item = day.schedule[idx];
+  if (!item) return;
+  todayTime.value = item.time || "";
+  todayTag.value = item.tag || "";
+  todayTitle.value = item.title || "";
+  todaySub.value = item.sub || "";
+  todayNote.value = item.note || "";
+  todayMap.value = item.map || "";
+  todayImage.value = item.image || "";
+}
+
+function openTodayModal() {
+  const day = getCurrentDaySafe();
+  if (!day) return;
+
+  if (!Array.isArray(day.schedule)) day.schedule = [];
+  if (day.schedule.length === 0) {
+    day.schedule.push({ time: "09:00", tag: "TBD", title: "新增行程", sub: "", note: "", map: "", image: "" });
+  }
+
+  rebuildTodaySelect(day);
+  todayItemSelect.value = "0";
+  loadTodayForm(day, 0);
+  openModal(todayModal);
+}
+
+if (editTodayBtn) {
+  editTodayBtn.addEventListener("click", openTodayModal);
+}
+
+if (todayCancel) {
+  todayCancel.addEventListener("click", () => closeModal(todayModal));
+}
+
+if (todayItemSelect) {
+  todayItemSelect.addEventListener("change", () => {
+    const day = getCurrentDaySafe();
+    if (!day) return;
+    const idx = parseInt(todayItemSelect.value, 10);
+    if (Number.isNaN(idx)) return;
+    loadTodayForm(day, idx);
+  });
+}
+
+if (todayAdd) {
+  todayAdd.addEventListener("click", () => {
+    const day = getCurrentDaySafe();
+    if (!day) return;
+
+    day.schedule.push({ time: "09:00", tag: "新增", title: "新行程", sub: "", note: "", map: "", image: "" });
+    sortScheduleForDay(currentDayIndex);
+
+    rebuildTodaySelect(day);
+    const lastIdx = day.schedule.length - 1;
+    todayItemSelect.value = String(lastIdx);
+    loadTodayForm(day, lastIdx);
+  });
+}
+
+if (todayDelete) {
+  todayDelete.addEventListener("click", () => {
+    const day = getCurrentDaySafe();
+    if (!day) return;
+    const idx = parseInt(todayItemSelect.value, 10);
+    if (Number.isNaN(idx)) return;
+
+    day.schedule.splice(idx, 1);
+    if (day.schedule.length === 0) {
+      day.schedule.push({ time: "09:00", tag: "TBD", title: "新增行程", sub: "", note: "", map: "", image: "" });
+    }
+
+    sortScheduleForDay(currentDayIndex);
+    rebuildTodaySelect(day);
+    todayItemSelect.value = "0";
+    loadTodayForm(day, 0);
+  });
+}
+
+if (todaySave) {
+  todaySave.addEventListener("click", () => {
+    const day = getCurrentDaySafe();
+    if (!day) return;
+
+    const idx = parseInt(todayItemSelect.value, 10);
+    if (Number.isNaN(idx) || !day.schedule[idx]) return;
+
+    // 不改你的文字規則：只把表單寫回去
+    day.schedule[idx].time = (todayTime.value || "").trim();
+    day.schedule[idx].tag = (todayTag.value || "").trim();
+    day.schedule[idx].title = (todayTitle.value || "").trim();
+    day.schedule[idx].sub = (todaySub.value || "").trim();
+    day.schedule[idx].note = (todayNote.value || "").trim();
+    day.schedule[idx].map = (todayMap.value || "").trim();
+    day.schedule[idx].image = (todayImage.value || "").trim();
+
+    sortScheduleForDay(currentDayIndex);
+
+    saveTripData();
+    renderTabs();
+    renderDayContent();
+
+    closeModal(todayModal);
+  });
+}
+
   // ===== 點圖片 => 放大；點黑底 / ESC => 關閉（購物 + 行程都支援）=====
 const imageViewer = document.getElementById("imageViewer");
 const imageViewerImg = document.getElementById("imageViewerImg");
