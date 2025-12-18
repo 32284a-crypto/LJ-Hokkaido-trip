@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -275,6 +273,7 @@
     .btn { border-radius: 999px; padding: 6px 14px; font-size: 13px; border: none; cursor: pointer; }
     .btn-secondary { background: #f3f5ff; color: #333; }
     .btn-primary { background: #0b67ff; color: #fff; }
+    .btn-danger { background: #ffeded; color: #d93025; }
 
     .footer-space { height: 80px; }
     @media (min-width: 768px) {
@@ -530,6 +529,64 @@
     </div>
   </div>
 
+  <!-- ✅ 新增：今日行程編輯 Modal -->
+  <div class="modal-overlay" id="todayModal">
+    <div class="modal">
+      <div class="modal-title">編輯今日行程（${/* 文字在 JS 會覆蓋 */""}）</div>
+
+      <div class="form-group">
+        <label>選擇要編輯的行程</label>
+        <select id="todayItemSelect"></select>
+      </div>
+
+      <div class="form-group">
+        <label>時間（例：09:30）</label>
+        <input type="text" id="todayTime" placeholder="09:30" />
+      </div>
+
+      <div class="form-group">
+        <label>標籤（tag）</label>
+        <input type="text" id="todayTag" placeholder="例：景點 / 午餐 / 回程" />
+      </div>
+
+      <div class="form-group">
+        <label>標題（title）</label>
+        <input type="text" id="todayTitle" placeholder="例：小樽運河" />
+      </div>
+
+      <div class="form-group">
+        <label>副標（sub）</label>
+        <input type="text" id="todaySub" placeholder="例：散步 · 拍照 · 自由活動" />
+      </div>
+
+      <div class="form-group">
+        <label>備註（note）</label>
+        <textarea id="todayNote" rows="2" placeholder="例：甜甜圈排太長可略"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>地圖連結（map，可空白）</label>
+        <input type="text" id="todayMap" placeholder="https://maps.app.goo.gl/..." />
+      </div>
+
+      <div class="form-group">
+        <label>圖片（image，可空白；支援 images/xxx.jpg 或外部網址）</label>
+        <input type="text" id="todayImage" placeholder="images/xxx.jpg 或 https://..." />
+      </div>
+
+      <div class="modal-actions" style="justify-content:space-between;">
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-secondary" id="todayAdd">＋ 新增一筆</button>
+          <button class="btn btn-danger" id="todayDelete">刪除這一筆</button>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-secondary" id="todayCancel">取消</button>
+          <button class="btn btn-primary" id="todaySave">儲存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Viewer：必須放在 module script 前面，才能確保 DOM 已存在 -->
   <div id="imageViewer">
     <img id="imageViewerImg" alt="">
@@ -567,6 +624,7 @@
     let isSavingCloud = false;
     let unsubscribeSnapshot = null;
 
+    // ===== 1. 預設旅遊資料 =====
     const defaultTripData = {
       days: [
         {
@@ -662,56 +720,15 @@
       defaultShopping: [
         { id: "s-muji-01", owner: "Luna", store: "無印良品", name: "福吉茶", note: "" },
         { id: "s-daiso-01", owner: "Luna", store: "大創", name: "折疊梳子", note: "" },
-        { id: "s-airport-01", owner: "Luna", store: "機場/伴手禮", name: "Butter Cheese Sand", note: "", image: "images/buttercheesesand.jpg" },
-        { id: "s-3c-01", owner: "Luna", store: "3COINS", name: "旅行收納袋", note: "" },
-        { id: "s-3c-02", owner: "Luna", store: "3COINS", name: "多功能微波調理烤盤", note: "" },
-        { id: "s-3c-03", owner: "Luna", store: "3COINS", name: "毛毛手套", note: "" },
-        { id: "s-3c-04", owner: "Luna", store: "3COINS", name: "狗狗裝", note: "" },
-        { id: "s-cosmestic-01", owner: "Luna", store: "藥妝店", name: "EXLIR", note: "" },
-        { id: "s-Family-04", owner: "Luna", store: "全家", name: "健達出奇蛋皮克敏", note: "" },
-        { id: "s-711-01", owner: "Luna", store: "7-11", name: "帶皮薯條", note: "" },
-        { id: "s-711-02", owner: "Luna", store: "7-11", name: "蘭姆葡萄餅乾", note: "" },
-        { id: "s-lawson-01", owner: "Luna", store: "Lawson", name: "黃豆粉綜合堅果", note: "" },
-        { id: "s-family-01", owner: "Luna", store: "全家", name: "Calbee奶油洋芋片", note: "" },
-        { id: "s-family-02", owner: "Luna", store: "全家", name: "半生水蜜桃乾", note: "" },
-        { id: "s-cosmestic-02", owner: "Luna", store: "藥妝店", name: "lululun", note: "" },
-        { id: "s-cosmestic-03", owner: "Luna", store: "藥妝店", name: "髮油", note: "" },
-        { id: "s-cosmestic-04", owner: "Luna", store: "藥妝店", name: "canmake睫毛刷", note: "" },
-        { id: "s-cosmestic-05", owner: "Luna", store: "藥妝店", name: "canmake瀏海蜜粉", note: "" },
-        { id: "s-cosmestic-06", owner: "Luna", store: "藥妝店", name: "口罩", note: "松本清only" },
-        { id: "s-cosmestic-07", owner: "Luna", store: "藥妝店", name: "E+B嘴皰疹", note: "" },
-        { id: "s-cosmestic-08", owner: "Luna", store: "藥妝店", name: "護手霜", note: "" },
-        { id: "s-cosmestic-09", owner: "Luna", store: "藥妝店", name: "美白錠", note: "" },
-        { id: "s-cosmestic-10", owner: "Luna", store: "藥妝店", name: "足底", note: "" },
-        { id: "s-cosmestic-11", owner: "Luna", store: "藥妝店", name: "手乾裂", note: "" },
-        { id: "s-cosmestic-12", owner: "Luna", store: "藥妝店", name: "液體腮紅", note: "" },
-        { id: "s-airport-02", owner: "Luna", store: "機場/伴手禮", name: "Royce", note: "開心果產品" },
-        { id:"s-cosmetic-13", owner:"Luna", store:"藥妝店", name:"足底舒緩（乾）", note:"", image:"images/footdry.jpg" },
-        { id:"s-cosmetic-14", owner:"Luna", store:"藥妝店", name:"足底舒緩（放鬆）", note:"", image:"images/footrelease.jpg" },
-        { id:"s-cosmetic-15", owner:"Luna", store:"藥妝店", name:"亮白保養", note:"", image:"images/brightskin.jpg" },
-        { id:"s-cosmetic-16", owner:"Luna", store:"藥妝店", name:"保濕面膜", note:"", image:"images/moistmask1.jpg" },
-        { id:"s-cosmetic-17", owner:"Luna", store:"藥妝店", name:"高保濕修護", note:"", image:"images/keepmoist2.jpg" },
-        { id:"s-snack-01", owner:"Luna", store:"超商", name:"奶油洋芋片", note:"", image:"images/chipsshrimp.jpg" },
-        { id:"s-uncat-01", owner:"Luna", store:"未選分類", name:"資生堂粉底液", note:"", image:"images/shlseidofoundation.jpg" },
-        { id:"s-uncat-02", owner:"Luna", store:"未選分類", name:"Le Labo 護手霜", note:"", image:"images/le labo.jpg" },
-        { id:"s-uncat-03", owner:"Luna", store:"未選分類", name:"Chanel 唇釉", note:"", image:"images/channellip.jpg" },
-        { id:"s-cosmetic-18", owner:"Luna", store:"藥妝店", name:"瀏海救星", note:"", image:"images/dryband.jpg" },
-        { id:"s-cosmetic-19", owner:"Luna", store:"藥妝店", name:"護手霜（多款）", note:"", image:"images/allkindshand.jpg" },
-        { id:"s-cosmetic-20", owner:"Luna", store:"藥妝店", name:"護手霜 Aesop味!", note:"", image:"images/likeAesop.jpg" },
-        { id: "s-family-03", owner: "Luna", store: "全家", name: "鮭魚肉乾", note: "" }
+        { id: "s-airport-01", owner: "Luna", store: "機場/伴手禮", name: "Butter Cheese Sand", note: "", image: "images/buttercheesesand.jpg" }
       ],
 
       defaultExpenses: [
-        { id: "e-hand-rent", title: "手稻雪具租借", date: "2025-11-17", method: "Jen 先付 NT$5,086", amount: 5086, currency: "TWD", payer: "Jen" },
-        { id: "e-klook-day", title: "Klook 一日", date: "2025-10-05", method: "Luna 先付 NT$3,423", amount: 3423, currency: "TWD", payer: "Luna" },
-        { id: "e-hotel-1226-27", title: "12/26–12/27（1晚）", date: "2025-09-06", method: "Jen 先付 NT$3,659", amount: 3659, currency: "TWD", payer: "Jen" },
-        { id: "e-yuki-class", title: "雪長姐一日課", date: "2025-09-04", method: "Jen 先付 NT$14,000", amount: 14000, currency: "TWD", payer: "Jen" },
-        { id: "e-hotel-1227-29", title: "12/27–12/29（2晚）", date: "2025-09-04", method: "Luna 先付 NT$6,193", amount: 6193, currency: "TWD", payer: "Luna" },
-        { id: "e-hotel-1224-26", title: "12/24–12/26（2晚）", date: "2025-09-04", method: "Luna 先付 NT$7,903", amount: 7903, currency: "TWD", payer: "Luna" },
-        { id: "e-flight", title: "機票", date: "2025-09-01", method: "Luna 先付 NT$28,296", amount: 28296, currency: "TWD", payer: "Luna" }
+        { id: "e-hand-rent", title: "手稻雪具租借", date: "2025-11-17", method: "Jen 先付 NT$5,086", amount: 5086, currency: "TWD", payer: "Jen" }
       ]
     };
 
+    // ===== 2. localStorage 工具 =====
     const TRIP_KEY = "hk_trip_data_v3";
     const SHOP_KEY = "hk_shopping_v3";
     const EXP_KEY  = "hk_expenses_v4";
@@ -813,13 +830,14 @@
     function saveShopping() { localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList)); scheduleSaveToCloud(); }
     function saveExpenses() { localStorage.setItem(EXP_KEY, JSON.stringify(expenseList)); scheduleSaveToCloud(); }
 
+    // ===== 3. 行程 & Tabs =====
     const dayTabsEl = document.getElementById("dayTabs");
     const dayContentEl = document.getElementById("dayContent");
     let currentDayIndex = 0;
 
     function getTimeValue(t) {
       if (!t) return 24 * 60 + 59;
-      const m = /^(\d{1,2}):(\d{2})$/.exec(t.trim());
+      const m = /^(\d{1,2}):(\d{2})$/.exec(String(t).trim());
       if (!m) return 24 * 60 + 59;
       const h = parseInt(m[1], 10), min = parseInt(m[2], 10);
       if (h < 0 || h > 23 || min < 0 || min > 59) return 24 * 60 + 59;
@@ -908,6 +926,7 @@
       });
     }
 
+    // ===== 4. 匯率 =====
     const jpyInput = document.getElementById("jpyInput");
     const twdInput = document.getElementById("twdInput");
     const rateText = document.getElementById("rateText");
@@ -932,6 +951,7 @@
       updateFromJPY();
     }
 
+    // ===== 5. 購物清單 =====
     const shoppingGridAllEl = document.getElementById("shoppingGridAll");
     const shoppingStoreFilter = document.getElementById("shoppingStoreFilter");
     let editingShoppingId = null;
@@ -978,9 +998,10 @@
       });
     }
 
-    /* ✅ 這行是我補的：選單改變就重新 render */
+    // ✅ 修正：依店家篩選，選單 change 要刷新
     if (shoppingStoreFilter) shoppingStoreFilter.addEventListener("change", renderShopping);
 
+    // ===== 6. 費用紀錄（保留原功能）=====
     const expenseListEl = document.getElementById("expenseList");
     const totalJPYEl = document.getElementById("totalJPY");
     const totalTWDEl = document.getElementById("totalTWD");
@@ -1067,6 +1088,7 @@
       calcTotalsAndSettlement();
     }
 
+    // ===== 7. Hero 背景（只在本機） =====
     const heroEl = document.getElementById("hero");
     const changeBgBtn = document.getElementById("changeBgBtn");
     const bgFileInput = document.getElementById("bgFileInput");
@@ -1090,6 +1112,7 @@
       });
     }
 
+    // ===== 8. View 切換 =====
     const viewPlan = document.getElementById("view-plan");
     const viewFx = document.getElementById("view-fx");
     const viewShopping = document.getElementById("view-shopping");
@@ -1107,6 +1130,7 @@
     }
     heroNavButtons.forEach(btn => btn.addEventListener("click", () => setView(btn.dataset.view)));
 
+    // ===== 9. Modal & 新增 =====
     const fabBtn = document.getElementById("fabBtn");
     const typeModal = document.getElementById("typeModal");
     const typeCancel = document.getElementById("typeCancel");
@@ -1291,6 +1315,178 @@
 
     if (syncBtn) syncBtn.addEventListener("click", () => saveToCloudNow());
 
+    // ===== ✅ 10. 今日行程編輯（editTodayBtn）完整功能 =====
+    const editTodayBtn = document.getElementById("editTodayBtn");
+    const todayModal = document.getElementById("todayModal");
+    const todayCancel = document.getElementById("todayCancel");
+    const todaySave = document.getElementById("todaySave");
+    const todayAdd = document.getElementById("todayAdd");
+    const todayDelete = document.getElementById("todayDelete");
+
+    const todayItemSelect = document.getElementById("todayItemSelect");
+    const todayTime = document.getElementById("todayTime");
+    const todayTag = document.getElementById("todayTag");
+    const todayTitle = document.getElementById("todayTitle");
+    const todaySub = document.getElementById("todaySub");
+    const todayNote = document.getElementById("todayNote");
+    const todayMap = document.getElementById("todayMap");
+    const todayImage = document.getElementById("todayImage");
+
+    let editingScheduleIndex = 0;
+
+    function fillTodaySelect() {
+      const day = tripData.days[currentDayIndex];
+      if (!day || !day.schedule) return;
+
+      sortScheduleForDay(currentDayIndex);
+
+      todayItemSelect.innerHTML = day.schedule.map((it, idx) => {
+        const t = (it.time || "TBD");
+        const title = (it.title || "");
+        const tag = (it.tag || "");
+        return `<option value="${idx}">${t}｜${tag}｜${title}</option>`;
+      }).join("");
+
+      if (editingScheduleIndex < 0) editingScheduleIndex = 0;
+      if (editingScheduleIndex >= day.schedule.length) editingScheduleIndex = day.schedule.length - 1;
+      todayItemSelect.value = String(editingScheduleIndex);
+
+      loadScheduleItemToForm(editingScheduleIndex);
+    }
+
+    function loadScheduleItemToForm(idx) {
+      const day = tripData.days[currentDayIndex];
+      const item = day.schedule[idx];
+      if (!item) return;
+
+      editingScheduleIndex = idx;
+      todayItemSelect.value = String(idx);
+
+      todayTime.value = item.time || "";
+      todayTag.value = item.tag || "";
+      todayTitle.value = item.title || "";
+      todaySub.value = item.sub || "";
+      todayNote.value = item.note || "";
+      todayMap.value = item.map || "";
+      todayImage.value = item.image || "";
+    }
+
+    function writeFormToScheduleItem(idx) {
+      const day = tripData.days[currentDayIndex];
+      const item = day.schedule[idx];
+      if (!item) return;
+
+      const tTitle = todayTitle.value.trim();
+      if (!tTitle) { alert("標題（title）不能空白"); return false; }
+
+      item.time = todayTime.value.trim();
+      item.tag = todayTag.value.trim();
+      item.title = tTitle;
+      item.sub = todaySub.value.trim();
+      item.note = todayNote.value.trim();
+      item.map = todayMap.value.trim();
+      item.image = todayImage.value.trim();
+      return true;
+    }
+
+    function openTodayModal() {
+      const day = tripData.days[currentDayIndex];
+      if (!day) return;
+
+      // Modal 標題（直接改 DOM 文字）
+      const titleEl = todayModal.querySelector(".modal-title");
+      if (titleEl) titleEl.textContent = `編輯今日行程（${day.label}）`;
+
+      editingScheduleIndex = 0;
+      fillTodaySelect();
+      openModal(todayModal);
+    }
+
+    if (editTodayBtn) editTodayBtn.addEventListener("click", openTodayModal);
+    if (todayCancel) todayCancel.addEventListener("click", () => closeModal(todayModal));
+
+    if (todayItemSelect) {
+      todayItemSelect.addEventListener("change", () => {
+        const idx = parseInt(todayItemSelect.value, 10);
+        if (Number.isNaN(idx)) return;
+        loadScheduleItemToForm(idx);
+      });
+    }
+
+    if (todaySave) {
+      todaySave.addEventListener("click", () => {
+        const ok = writeFormToScheduleItem(editingScheduleIndex);
+        if (!ok) return;
+
+        sortScheduleForDay(currentDayIndex);
+        saveTripData();
+        renderTabs();
+        renderDayContent();
+        fillTodaySelect(); // 重新排序後重建選單，保持一致
+        alert("已儲存今日行程");
+      });
+    }
+
+    if (todayAdd) {
+      todayAdd.addEventListener("click", () => {
+        const day = tripData.days[currentDayIndex];
+        if (!day || !day.schedule) return;
+
+        // 若目前表單有輸入標題，先儲存到目前那筆（避免誤失）
+        const curTitle = todayTitle.value.trim();
+        if (curTitle) {
+          const ok = writeFormToScheduleItem(editingScheduleIndex);
+          if (!ok) return;
+        }
+
+        day.schedule.push({
+          time: "TBD",
+          tag: "TBD",
+          title: "新行程",
+          sub: "",
+          note: "",
+          map: "",
+          image: ""
+        });
+
+        sortScheduleForDay(currentDayIndex);
+        saveTripData();
+        renderDayContent();
+
+        // 新增後選最後一筆
+        editingScheduleIndex = day.schedule.length - 1;
+        fillTodaySelect();
+        loadScheduleItemToForm(editingScheduleIndex);
+      });
+    }
+
+    if (todayDelete) {
+      todayDelete.addEventListener("click", () => {
+        const day = tripData.days[currentDayIndex];
+        if (!day || !day.schedule || day.schedule.length === 0) return;
+
+        const item = day.schedule[editingScheduleIndex];
+        const label = `${item?.time || ""} ${item?.title || ""}`.trim() || "這一筆";
+        const yes = confirm(`確定要刪除「${label}」嗎？`);
+        if (!yes) return;
+
+        day.schedule.splice(editingScheduleIndex, 1);
+        if (editingScheduleIndex >= day.schedule.length) editingScheduleIndex = day.schedule.length - 1;
+        if (editingScheduleIndex < 0) editingScheduleIndex = 0;
+
+        sortScheduleForDay(currentDayIndex);
+        saveTripData();
+        renderDayContent();
+        fillTodaySelect();
+
+        if (day.schedule.length === 0) {
+          closeModal(todayModal);
+          alert("今日行程已刪到空，已關閉編輯視窗");
+        }
+      });
+    }
+
+    // ===== 點購物圖片 => 放大；點黑底 => 關閉 =====
     const imageViewer = document.getElementById("imageViewer");
     const imageViewerImg = document.getElementById("imageViewerImg");
     if (shoppingGridAllEl && imageViewer && imageViewerImg) {
@@ -1306,6 +1502,7 @@
       });
     }
 
+    // ===== 12. 初始化 =====
     function init() {
       tripData.days.forEach((_, idx) => sortScheduleForDay(idx));
       renderTabs();
@@ -1321,3 +1518,4 @@
   </script>
 </body>
 </html>
+
