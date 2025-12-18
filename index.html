@@ -22,7 +22,6 @@
       background: #f4f8ff;
     }
 
-    /* ===== 購物清單圖片 ===== */
     .shopping-img {
       width: 100%;
       max-width: 100%;
@@ -34,7 +33,6 @@
     }
     .shopping-card { overflow: visible; }
 
-    /* 頂部 banner */
     .hero {
       position: relative;
       padding: 16px 16px 20px;
@@ -104,7 +102,6 @@
       gap: 4px;
     }
     .hero-btn span { font-size: 14px; }
-
     .cloud-status { margin-top: 6px; font-size: 11px; }
 
     .hero-tabs {
@@ -280,7 +277,6 @@
       .fab { right: calc(50% - 215px); }
     }
 
-    /* ===== 點圖放大 Viewer（一定要在 head 的 style） ===== */
     #imageViewer {
       position: fixed;
       inset: 0;
@@ -529,10 +525,9 @@
     </div>
   </div>
 
-  <!-- ✅ 新增：今日行程編輯 Modal -->
   <div class="modal-overlay" id="todayModal">
     <div class="modal">
-      <div class="modal-title">編輯今日行程（${/* 文字在 JS 會覆蓋 */""}）</div>
+      <div class="modal-title">編輯今日行程</div>
 
       <div class="form-group">
         <label>選擇要編輯的行程</label>
@@ -587,14 +582,11 @@
     </div>
   </div>
 
-  <!-- Viewer：必須放在 module script 前面，才能確保 DOM 已存在 -->
   <div id="imageViewer">
     <img id="imageViewerImg" alt="">
   </div>
 
-  <!-- JS：Firebase + App 邏輯 -->
   <script type="module">
-  // ===== Firebase 初始化 =====
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
   import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
@@ -616,7 +608,14 @@
   const tripDocRef = doc(db, "trips", TRIP_DOC_ID);
 
   // ✅ 版本升級：強制讓你本機新行程覆蓋舊雲端
-  const CLOUD_VERSION = 3;
+  // 你現在「行程&圖片沒出現」就是因為舊的 localStorage/雲端資料一直覆蓋你新 code
+  const CLOUD_VERSION = 4;  // ← 往上升一版
+
+  // ✅ 本機 localStorage 也升版，避免舊 key 把你新 defaultTripData 蓋掉
+  const TRIP_KEY = "hk_trip_data_v4";
+  const SHOP_KEY = "hk_shopping_v4";
+  const EXP_KEY  = "hk_expenses_v5";
+  const HERO_BG_KEY = "hk_hero_bg_v2";
 
   const cloudStatusTextEl = document.getElementById("cloudStatusText");
   function setCloudStatus(state, text) {
@@ -629,7 +628,7 @@
   let isSavingCloud = false;
   let unsubscribeSnapshot = null;
 
-  // ===== 1. 預設旅遊資料 =====
+  // ===== 1. 預設旅遊資料（你原本的文字/清單完全保留）=====
   const defaultTripData = {
     days: [
       {
@@ -664,7 +663,6 @@
         label: "Day3 12/26",
         weather: { temp: -3, low: -8, feels: -10, status: "市區日 & 換飯店", note: "白天札幌市區 & 住相鐵薄野" },
         schedule: [
-          // ✅ 建議：時間欄位請用「HH:MM」，不要混入區間字（不然排序會被丟到最後）
           { time: "06:45", tag: "早餐", title: "豐盛的早餐", sub: "", note: "", map: "", image: "" },
           { time: "07:50", tag: "換飯店", title: "前往相鐵 FRESA INN 薄野", sub: "12/26–12/29 · 15:00 入住 / 11:00 退房", note: "步行約 15 分鐘（可先寄放行李）", map: "", image: "" },
           { time: "08:35", tag: "景點", title: "北海道神宮", sub: "散步 · 吃福餅", note: "", map: "", image: "" },
@@ -753,10 +751,7 @@
       { id:"s-cosmetic-18", owner:"Luna", store:"藥妝店", name:"瀏海救星", note:"", image:"images/dryband.jpg" },
       { id:"s-cosmetic-19", owner:"Luna", store:"藥妝店", name:"護手霜（多款）", note:"", image:"images/allkindshand.jpg" },
       { id:"s-cosmetic-20", owner:"Luna", store:"藥妝店", name:"護手霜 Aesop味!", note:"", image:"images/likeAesop.jpg" },
-
       { id: "s-family-03", owner: "Luna", store: "全家", name: "鮭魚肉乾", note: "" },
-
-      // ⚠️ 建議你把有空白的檔名改掉：le labo.jpg → le-labo.jpg
       { id:"s-uncat-02", owner:"Luna", store:"未選分類", name:"Le Labo 護手霜", note:"", image:"images/le-labo.jpg" }
     ],
 
@@ -766,11 +761,6 @@
   };
 
   // ===== 2. localStorage 工具 =====
-  const TRIP_KEY = "hk_trip_data_v3";
-  const SHOP_KEY = "hk_shopping_v3";
-  const EXP_KEY  = "hk_expenses_v4";
-  const HERO_BG_KEY = "hk_hero_bg_v2";
-
   const safeParse = str => { try { return JSON.parse(str); } catch { return null; } };
 
   function loadTripData() { const data = localStorage.getItem(TRIP_KEY); return data ? safeParse(data) : null; }
@@ -817,11 +807,15 @@
     }
   }
 
-  // ✅ 版本不同：直接用本機覆蓋雲端（解決：你改了 defaultTripData 但畫面不變）
+  // ✅ 雲端版本不同：用本機 defaultTripData 覆蓋雲端
   async function initCloudSync() {
     setCloudStatus("loading", "雲端讀取中…");
     try {
       const snap = await getDoc(tripDocRef);
+
+      // 先把畫面渲染出來（即使雲端失敗也要有內容）
+      renderTabs(); renderDayContent(); renderShopping(); renderExpenses();
+
       if (snap.exists()) {
         const data = snap.data();
 
@@ -837,14 +831,32 @@
           renderTabs(); renderDayContent(); renderShopping(); renderExpenses();
           setCloudStatus("ok", "已從雲端載入最新資料");
         } else {
-          // ✅ 關鍵：雲端版本舊 → 以本機(你這份 code)為主，直接覆蓋雲端
           setCloudStatus("ok", "偵測到雲端版本舊，已改用本機資料覆蓋雲端");
+          // 用本機 defaultTripData 直接覆蓋
+          tripData = defaultTripData;
+          shoppingList = defaultTripData.defaultShopping;
+          expenseList = defaultTripData.defaultExpenses;
+
+          localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
+          localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
+          localStorage.setItem(EXP_KEY, JSON.stringify(expenseList));
+
           await saveToCloudNow();
           renderTabs(); renderDayContent(); renderShopping(); renderExpenses();
         }
       } else {
+        // 雲端沒有資料：直接建立
+        tripData = defaultTripData;
+        shoppingList = defaultTripData.defaultShopping;
+        expenseList = defaultTripData.defaultExpenses;
+
+        localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
+        localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
+        localStorage.setItem(EXP_KEY, JSON.stringify(expenseList));
+
         await saveToCloudNow();
         setCloudStatus("ok", "已建立新的雲端資料");
+        renderTabs(); renderDayContent(); renderShopping(); renderExpenses();
       }
 
       if (unsubscribeSnapshot) unsubscribeSnapshot();
@@ -869,7 +881,9 @@
 
     } catch (err) {
       console.error("initCloudSync error", err);
+      // 雲端掛了也要至少顯示本機內容
       setCloudStatus("error", "雲端讀取失敗，以本機資料為主");
+      renderTabs(); renderDayContent(); renderShopping(); renderExpenses();
     }
   }
 
@@ -898,8 +912,9 @@
   }
 
   function renderTabs() {
+    if (!dayTabsEl) return;
     dayTabsEl.innerHTML = "";
-    tripData.days.forEach((day, idx) => {
+    (tripData.days || []).forEach((day, idx) => {
       const tab = document.createElement("div");
       tab.className = "day-tab" + (idx === currentDayIndex ? " active" : "");
       tab.textContent = day.label;
@@ -909,8 +924,9 @@
   }
 
   function renderDayContent() {
-    const day = tripData.days[currentDayIndex];
-    if (!day) return;
+    if (!dayContentEl) return;
+    const day = (tripData.days || [])[currentDayIndex];
+    if (!day) { dayContentEl.innerHTML = ""; return; }
     sortScheduleForDay(currentDayIndex);
 
     let html = `
@@ -944,7 +960,7 @@
           <div class="card-title"><span class="icon">🗓</span>今日行程</div>
           <div class="card-subtitle">${day.label}</div>
         </div>
-        ${day.schedule.map((item) => {
+        ${(day.schedule || []).map((item) => {
           const imgSrc = (item.image || "").trim();
           const safeImg = imgSrc ? encodeURI(imgSrc) : "";
           return `
@@ -999,7 +1015,7 @@
     updateFromJPY();
   }
 
-  // ===== 5. 購物清單（圖片失敗就隱藏，避免問號） =====
+  // ===== 5. 購物清單 =====
   const shoppingGridAllEl = document.getElementById("shoppingGridAll");
   const shoppingStoreFilter = document.getElementById("shoppingStoreFilter");
   let editingShoppingId = null;
@@ -1046,6 +1062,10 @@
     });
   }
 
+  if (shoppingStoreFilter) {
+    shoppingStoreFilter.addEventListener("change", renderShopping);
+  }
+
   // ===== 6. 費用紀錄 =====
   const expenseListEl = document.getElementById("expenseList");
   const totalJPYEl = document.getElementById("totalJPY");
@@ -1066,7 +1086,7 @@
     const people = ["Luna", "Jen"];
     const balances = { Luna: { paid: 0, should: 0 }, Jen: { paid: 0, should: 0 } };
 
-    expenseList.forEach(item => {
+    (expenseList || []).forEach(item => {
       let amountTWD = item.currency === "JPY" ? item.amount * rate : item.amount;
       if (item.currency === "JPY") totalJPY += item.amount;
       else totalJPY += amountTWD / rate;
@@ -1079,8 +1099,8 @@
     });
 
     const totalTWD = Math.round(totalJPY * rate);
-    totalJPYEl.textContent = "¥" + Math.round(totalJPY).toLocaleString();
-    totalTWDEl.textContent = "約 NT$" + totalTWD.toLocaleString();
+    if (totalJPYEl) totalJPYEl.textContent = "¥" + Math.round(totalJPY).toLocaleString();
+    if (totalTWDEl) totalTWDEl.textContent = "約 NT$" + totalTWD.toLocaleString();
 
     const settleEl = document.getElementById("settleSummary");
     if (!settleEl) return;
@@ -1101,7 +1121,7 @@
 
   function renderExpenses() {
     if (!expenseListEl) return;
-    expenseListEl.innerHTML = expenseList.map(item => `
+    expenseListEl.innerHTML = (expenseList || []).map(item => `
       <div class="expense-item">
         <div class="expense-left">
           <div class="expense-icon" style="background:${payerColor(item.payer)};">
@@ -1124,7 +1144,7 @@
     document.querySelectorAll(".expense-delete").forEach(btn => {
       btn.addEventListener("click", () => {
         const id = btn.dataset.id;
-        expenseList = expenseList.filter(e => e.id !== id);
+        expenseList = (expenseList || []).filter(e => e.id !== id);
         saveExpenses();
         renderExpenses();
       });
@@ -1360,7 +1380,7 @@
 
   if (syncBtn) syncBtn.addEventListener("click", () => saveToCloudNow());
 
-  // ===== 點圖片 => 放大；點黑底 / ESC => 關閉（購物 + 行程都支援） =====
+  // ===== 點圖片 => 放大；點黑底 / ESC => 關閉（購物 + 行程都支援）=====
   const imageViewer = document.getElementById("imageViewer");
   const imageViewerImg = document.getElementById("imageViewerImg");
 
@@ -1374,15 +1394,12 @@
     imageViewer.classList.remove("show");
     imageViewerImg.src = "";
   }
-
   if (imageViewer) {
     imageViewer.addEventListener("click", closeImageViewer);
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeImageViewer();
-    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeImageViewer(); });
   }
 
-  // 購物圖片
+  const shoppingGridAllEl = document.getElementById("shoppingGridAll");
   if (shoppingGridAllEl) {
     shoppingGridAllEl.addEventListener("click", (e) => {
       const img = e.target.closest(".shopping-img");
@@ -1390,8 +1407,6 @@
       openImageViewer(img.dataset.full || img.src);
     });
   }
-
-  // 行程圖片
   if (dayContentEl) {
     dayContentEl.addEventListener("click", (e) => {
       const img = e.target.closest(".timeline-img");
@@ -1402,7 +1417,7 @@
 
   // ===== 12. 初始化 =====
   function init() {
-    tripData.days.forEach((_, idx) => sortScheduleForDay(idx));
+    (tripData.days || []).forEach((_, idx) => sortScheduleForDay(idx));
     renderTabs();
     renderDayContent();
     initRate();
