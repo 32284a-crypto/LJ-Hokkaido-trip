@@ -1381,39 +1381,41 @@
   if (syncBtn) syncBtn.addEventListener("click", () => saveToCloudNow());
 
   // ===== 點圖片 => 放大；點黑底 / ESC => 關閉（購物 + 行程都支援）=====
-  const imageViewer = document.getElementById("imageViewer");
-  const imageViewerImg = document.getElementById("imageViewerImg");
+const imageViewer = document.getElementById("imageViewer");
+const imageViewerImg = document.getElementById("imageViewerImg");
 
-  function openImageViewer(src) {
-    if (!imageViewer || !imageViewerImg) return;
-    imageViewerImg.src = src;
-    imageViewer.classList.add("show");
-  }
-  function closeImageViewer() {
-    if (!imageViewer || !imageViewerImg) return;
-    imageViewer.classList.remove("show");
-    imageViewerImg.src = "";
-  }
-  if (imageViewer) {
-    imageViewer.addEventListener("click", closeImageViewer);
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeImageViewer(); });
-  }
+function openImageViewer(src) {
+  if (!imageViewer || !imageViewerImg) return;
+  imageViewerImg.src = src;
+  imageViewer.classList.add("show");
+}
+function closeImageViewer() {
+  if (!imageViewer || !imageViewerImg) return;
+  imageViewer.classList.remove("show");
+  imageViewerImg.src = "";
+}
+if (imageViewer) {
+  imageViewer.addEventListener("click", closeImageViewer);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeImageViewer(); });
+}
 
-  const shoppingGridAllEl = document.getElementById("shoppingGridAll");
-  if (shoppingGridAllEl) {
-    shoppingGridAllEl.addEventListener("click", (e) => {
-      const img = e.target.closest(".shopping-img");
-      if (!img) return;
-      openImageViewer(img.dataset.full || img.src);
-    });
-  }
-  if (dayContentEl) {
-    dayContentEl.addEventListener("click", (e) => {
-      const img = e.target.closest(".timeline-img");
-      if (!img) return;
-      openImageViewer(img.dataset.full || img.src);
-    });
-  }
+// ✅ 這裡不要再 const 宣告一次 shoppingGridAllEl
+// ✅ 直接用前面「購物清單」區塊已宣告的 shoppingGridAllEl
+if (shoppingGridAllEl) {
+  shoppingGridAllEl.addEventListener("click", (e) => {
+    const img = e.target.closest(".shopping-img");
+    if (!img) return;
+    openImageViewer(img.dataset.full || img.src);
+  });
+}
+
+if (dayContentEl) {
+  dayContentEl.addEventListener("click", (e) => {
+    const img = e.target.closest(".timeline-img");
+    if (!img) return;
+    openImageViewer(img.dataset.full || img.src);
+  });
+}
 
   // ===== 12. 初始化 =====
   function init() {
