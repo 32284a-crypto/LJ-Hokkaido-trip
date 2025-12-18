@@ -593,929 +593,799 @@
   </div>
 
   <!-- JS：Firebase + App 邏輯 -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+ <script type="module">
+  // ===== Firebase 初始化 =====
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCBHcwkKj7GcC4HVzzbTYe3Qtpi2UNawc8",
-      authDomain: "hokkaido-eaeb1.firebaseapp.com",
-      databaseURL: "https://hokkaido-eaeb1-default-rtdb.firebaseio.com",
-      projectId: "hokkaido-eaeb1",
-      storageBucket: "hokkaido-eaeb1.firebasestorage.app",
-      messagingSenderId: "977559624676",
-      appId: "1:977559624676:web:65437df8bfa11f895005f1",
-      measurementId: "G-QPHE9JZ8HS"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyCBHcwkKj7GcC4HVzzbTYe3Qtpi2UNawc8",
+    authDomain: "hokkaido-eaeb1.firebaseapp.com",
+    databaseURL: "https://hokkaido-eaeb1-default-rtdb.firebaseio.com",
+    projectId: "hokkaido-eaeb1",
+    storageBucket: "hokkaido-eaeb1.firebasestorage.app",
+    messagingSenderId: "977559624676",
+    appId: "1:977559624676:web:65437df8bfa11f895005f1",
+    measurementId: "G-QPHE9JZ8HS"
+  };
 
-    const appFirebase = initializeApp(firebaseConfig);
-    const db = getFirestore(appFirebase);
-    const TRIP_DOC_ID = "hokkaido-2025-main";
-    const tripDocRef = doc(db, "trips", TRIP_DOC_ID);
+  const appFirebase = initializeApp(firebaseConfig);
+  const db = getFirestore(appFirebase);
 
-    const cloudStatusTextEl = document.getElementById("cloudStatusText");
-    function setCloudStatus(state, text) {
-      if (!cloudStatusTextEl) return;
-      cloudStatusTextEl.textContent = text;
-      const colorMap = { loading: "#666", saving: "#1a73e8", ok: "#137333", error: "#d93025" };
-      cloudStatusTextEl.style.color = colorMap[state] || "#555";
-    }
+  const TRIP_DOC_ID = "hokkaido-2025-main";
+  const tripDocRef = doc(db, "trips", TRIP_DOC_ID);
 
-    let isSavingCloud = false;
-    let unsubscribeSnapshot = null;
+  // ✅ 版本升級：強制讓你本機新行程覆蓋舊雲端
+  const CLOUD_VERSION = 3;
 
-    // ===== 1. 預設旅遊資料 =====
-    const defaultTripData = {
-      days: [
-        {
-          id: "2025-12-24",
-          label: "Day1 12/24",
-          weather: { temp: -1, low: -6, feels: -8, status: "抵達日", note: "酷航 TR892 · 抵達札幌 & 住 VESSEL" },
-          schedule: [
-            { time: "09:30", tag: "去程", title: "桃園機場報到", sub: "TPE · 酷航 TR892", note: "建議起飛前 3 小時到機場", map: "", image: "" },
-            { time: "12:30", tag: "去程", title: "TR892 TPE → CTS", sub: "酷航 TR892 12:30 起飛，預計 17:20 抵達", note: "", map: "", image: "" },
-            { time: "17:20", tag: "抵達", title: "新千歲機場 (CTS)", sub: "入境、領行李、前往札幌", note: "", map: "https://maps.app.goo.gl/", image: "" },
-            { time: "19:00", tag: "入住", title: "VESSEL HOTEL 中島公園", sub: "12/24–12/26 · 14:00 入住 / 11:00 退房", note: "", map: "", image: "" },
-            { time: "19:15", tag: "買買買", title: "札幌東急百貨", sub: "2000 7FUniqlo／GU／Bic Camera／藥妝", note: "", map: "", image: "" },
-            { time: "20:50", tag: "晚餐", title: "大通公園 聖誕市集", sub: "", note: "", map: "", image: "" }
-          ]
-        },
-        {
-          id: "2025-12-25",
-          label: "Day2 12/25",
-          weather: { temp: -5, low: -10, feels: -12, status: "Klook 一日遊", note: "旭山動物園 + 青池 + 白鬚瀑布 + 精靈露臺" },
-          schedule: [
-            { time: "07:50", tag: "去程", title: "集合出發", sub: "札幌 → 旭川方向（依憑證集合點）", note: "", map: "", image: "" },
-            { time: "10:30", tag: "景點", title: "旭山動物園", sub: "約 1 小時 40 分 · 自由活動", note: "行程包含旭山動物園門票", map: "", image: "" },
-            { time: "13:10", tag: "景點", title: "白金青池", sub: "約 15 分鐘 · 自由活動", note: "", map: "", image: "" },
-            { time: "13:30", tag: "景點", title: "白鬚瀑布", sub: "約 25 分鐘 · 自由活動", note: "", map: "", image: "" },
-            { time: "15:00", tag: "景點", title: "森林精靈露臺", sub: "約 1 小時 20 分 · 自由活動", note: "", map: "", image: "" },
-            { time: "18:30", tag: "回程", title: "返回札幌", sub: "回到集合地點附近解散", note: "", map: "", image: "" },
-            { time: "19:30", tag: "買買買", title: "返回札幌", sub: "回到集合地點附近解散", note: "晚餐 / 夜晚行程 TBD", map: "", image: "" },
-            { time: "21:30", tag: "晚餐", title: "カキ小屋/味園燒肉", sub: "回到集合地點附近解散", note: "晚餐 / 夜晚行程 TBD", map: "", image: "" }
-          ]
-        },
-        {
-          id: "2025-12-26",
-          label: "Day3 12/26",
-          weather: { temp: -3, low: -8, feels: -10, status: "市區日 & 換飯店", note: "札幌&小樽 & 住相鐵薄野" },
-          schedule: [
-            { time: "06:45", tag: "早餐", title: "豐盛的早餐", sub: "", note: "", map: "", image: "" },
-            { time: "07:50", tag: "走15分鐘換飯店", title: "相鐵 FRESA INN 薄野", sub: "12/26–12/29 · 15:00 入住 / 11:00 退房", note: "", map: "", image: "" },
-            { time: "08:35", tag: "0835-0920景點", title: "北海道神宮", sub: "散步 · 吃福餅", note: "", map: "", image: "" },
-            { time: "09:30", tag: "咖啡", title: "0900森彥咖啡", sub: "", note: "", map: "", image: "" },
-            { time: "10:00", tag: "景點", title: "北海道廳本廳舍", sub: "紅磚建築 · 拍照散步", note: "", map: "", image: "" },
-            { time: "10:30", tag: "買買買", title: "Montbell/", sub: "紅磚建築 · 拍照散步", note: "", map: "", image: "" },
-            { time: "11:00", tag: "午餐", title: "奧之商店", sub: "", note: "", map: "", image: "" },
-            { time: "11:50", tag: "點心", title: "Kinotoya冰淇淋", sub: "", note: "", map: "", image: "" },
-            { time: "12:00", tag: "買買買", title: "TBD", sub: "", note: "", map: "", image: "" },
-            { time: "13:30", tag: "出發", title: "札幌 → 小樽（JR）", sub: "", note: "", map: "", image: "" },
-            { time: "14:00", tag: "景點", title: "小樽運河", sub: "", note: "", map: "", image: "" },
-            { time: "14:20", tag: "景點", title: "堺町通散策", sub: "", note: "六花亭巧克力,LeTAO起司蛋糕,かま栄現炸魚糕,浅草橋甜甜圈排太長可略", map: "", image: "" },
-            { time: "14:30", tag: "景點", title: "北一硝子三號館＋北一ホール", sub: "", note: "", map: "", image: "" },
-            { time: "14:40", tag: "景點", title: "音樂盒堂", sub: "", note: "", map: "", image: "" },
-            { time: "14:50", tag: "景點", title: "船見坂（日落前）", sub: "", note: "從運河一帶 搭計程車約 700 日圓", map: "", image: "" },
-            { time: "14:55", tag: "晚餐", title: "Cafe BAAL牛排飯", sub: "", note: "", map: "", image: "" },
-            { time: "15:00", tag: "景點", title: "小樽運河", sub: "", note: "日落點燈", map: "", image: "" },
-            { time: "16:00", tag: "回程", title: "小樽 → 札幌", sub: "", note: "", map: "", image: "" },
-            { time: "16:00", tag: "買買買", title: "TBD", sub: "", note: "", map: "", image: "" }
-          ]
-        },
-        {
-          id: "2025-12-27",
-          label: "Day4 12/27",
-          weather: { temp: -6, low: -12, feels: -15, status: "滑雪日", note: "雪長姐 · 手稻滑雪場" },
-          schedule: [
-            { time: "07:00", tag: "出發", title: "札幌 → 手稻滑雪場", sub: "搭 JR / 巴士（依實際安排）", note: "前一天先確認車班時間", map: "", image: "" },
-            { time: "09:00", tag: "滑雪", title: "集合 & 租裝備", sub: "手稻滑雪場 · 與教練會合", note: "", map: "", image: "" },
-            { time: "10:00", tag: "滑雪", title: "滑雪教學 & 自由滑", sub: "中午雪場用餐", note: "", map: "", image: "" },
-            { time: "17:30", tag: "晚餐", title: "Nagoya亭", sub: "好吃壽司", note: "", map: "", image: "" },
-            { time: "18:30", tag: "買買買", title: "Alpen", sub: "", note: "", map: "", image: "" },
-            { time: "19:30", tag: "結束", title: "離開手稻", sub: "搭車返回札幌", note: "回到薄野附近吃晚餐 / 泡湯 TBD", map: "", image: "" },
-            { time: "20:00", tag: "點心", title: "GELATERIA La Giostra", sub: "金、土 20:00–00:00", note: "", map: "", image: "" }
-          ]
-        },
-        {
-          id: "2025-12-28",
-          label: "Day5 12/28",
-          weather: { temp: -6, low: -12, feels: -15, status: "自由滑雪 / 自由行", note: "看狀況再決定要去哪裡玩雪或市區逛街" },
-          schedule: [
-            { time: "TBD", tag: "TBD", title: "自由滑雪 or 市區行程", sub: "之後再自己決定細節", note: "", map: "", image: "" }
-          ]
-        },
-        {
-          id: "2025-12-29",
-          label: "Day6 12/29",
-          weather: { temp: -3, low: -8, feels: -10, status: "回程日", note: "收拾行李 + 機場採買" },
-          schedule: [
-            { time: "11:00", tag: "退房", title: "退房 · 相鐵 FRESA INN 薄野", sub: "最晚 11:00 退房", note: "", map: "", image: "" },
-            { time: "12:00", tag: "前往機場", title: "札幌 → 新千歲機場", sub: "搭 JR / 巴士前往 CTS", note: "預留時間逛機場 & 買伴手禮", map: "", image: "" },
-            { time: "13:55", tag: "回程", title: "FD243 CTS → TPE", sub: "Airasia FD243 13:55 起飛，預計 17:55 抵達", note: "", map: "", image: "" }
-          ]
-        }
-      ],
+  const cloudStatusTextEl = document.getElementById("cloudStatusText");
+  function setCloudStatus(state, text) {
+    if (!cloudStatusTextEl) return;
+    cloudStatusTextEl.textContent = text;
+    const colorMap = { loading: "#666", saving: "#1a73e8", ok: "#137333", error: "#d93025" };
+    cloudStatusTextEl.style.color = colorMap[state] || "#555";
+  }
 
-      fx: { rate: 0.215 },
+  let isSavingCloud = false;
+  let unsubscribeSnapshot = null;
 
-      defaultShopping: [
-        { id: "s-muji-01", owner: "Luna", store: "無印良品", name: "福吉茶", note: "" },
-        { id: "s-daiso-01", owner: "Luna", store: "大創", name: "折疊梳子", note: "" },
-        { id: "s-airport-01", owner: "Luna", store: "機場/伴手禮", name: "Butter Cheese Sand", note: "", image: "images/buttercheesesand.jpg" }
-      ],
-
-      defaultExpenses: [
-        { id: "e-hand-rent", title: "手稻雪具租借", date: "2025-11-17", method: "Jen 先付 NT$5,086", amount: 5086, currency: "TWD", payer: "Jen" }
-      ]
-    };
-
-    // ===== 2. localStorage 工具 =====
-    const TRIP_KEY = "hk_trip_data_v3";
-    const SHOP_KEY = "hk_shopping_v3";
-    const EXP_KEY  = "hk_expenses_v4";
-    const HERO_BG_KEY = "hk_hero_bg_v2";
-
-    const safeParse = str => { try { return JSON.parse(str); } catch { return null; } };
-
-    function loadTripData() { const data = localStorage.getItem(TRIP_KEY); return data ? safeParse(data) : null; }
-    function loadShopping() {
-      const data = localStorage.getItem(SHOP_KEY);
-      if (data) return safeParse(data) || defaultTripData.defaultShopping;
-      return defaultTripData.defaultShopping;
-    }
-    function loadExpenses() {
-      const data = localStorage.getItem(EXP_KEY);
-      if (data) return safeParse(data) || defaultTripData.defaultExpenses;
-      return defaultTripData.defaultExpenses;
-    }
-
-    let tripData = loadTripData() || defaultTripData;
-    let shoppingList = loadShopping();
-    let expenseList = loadExpenses();
-
-    function buildCloudPayload() {
-      const cleanShopping = shoppingList.map(item => {
-        const { imageData, ...rest } = item;
-        return rest;
-      });
-      return { v: 2, tripData, shoppingList: cleanShopping, expenseList };
-    }
-
-    let cloudSaveTimer = null;
-    function scheduleSaveToCloud() {
-      if (cloudSaveTimer) clearTimeout(cloudSaveTimer);
-      cloudSaveTimer = setTimeout(saveToCloudNow, 1500);
-    }
-
-    async function saveToCloudNow() {
-      try {
-        isSavingCloud = true;
-        setCloudStatus("saving", "儲存到雲端中…");
-        await setDoc(tripDocRef, buildCloudPayload(), { merge: true });
-        isSavingCloud = false;
-        setCloudStatus("ok", "已與雲端同步");
-      } catch (err) {
-        console.error("saveToCloud error", err);
-        isSavingCloud = false;
-        setCloudStatus("error", "雲端儲存失敗，以本機資料為主");
+  // ===== 1. 預設旅遊資料 =====
+  const defaultTripData = {
+    days: [
+      {
+        id: "2025-12-24",
+        label: "Day1 12/24",
+        weather: { temp: -1, low: -6, feels: -8, status: "抵達日", note: "酷航 TR892 · 抵達札幌 & 住 VESSEL" },
+        schedule: [
+          { time: "09:30", tag: "去程", title: "桃園機場報到", sub: "TPE · 酷航 TR892", note: "建議起飛前 3 小時到機場", map: "", image: "" },
+          { time: "12:30", tag: "去程", title: "TR892 TPE → CTS", sub: "酷航 TR892 12:30 起飛，預計 17:20 抵達", note: "", map: "", image: "" },
+          { time: "17:20", tag: "抵達", title: "新千歲機場 (CTS)", sub: "入境、領行李、前往札幌", note: "", map: "https://maps.app.goo.gl/", image: "" },
+          { time: "19:00", tag: "入住", title: "VESSEL HOTEL 中島公園", sub: "12/24–12/26 · 14:00 入住 / 11:00 退房", note: "", map: "", image: "" },
+          { time: "19:15", tag: "買買買", title: "札幌東急百貨", sub: "20:00 7F Uniqlo／GU／Bic Camera／藥妝", note: "", map: "", image: "" },
+          { time: "20:50", tag: "晚餐", title: "大通公園 聖誕市集", sub: "", note: "", map: "", image: "" }
+        ]
+      },
+      {
+        id: "2025-12-25",
+        label: "Day2 12/25",
+        weather: { temp: -5, low: -10, feels: -12, status: "Klook 一日遊", note: "旭山動物園 + 青池 + 白鬚瀑布 + 精靈露臺" },
+        schedule: [
+          { time: "07:50", tag: "去程", title: "集合出發", sub: "札幌 → 旭川方向（依憑證集合點）", note: "", map: "", image: "" },
+          { time: "10:30", tag: "景點", title: "旭山動物園", sub: "約 1 小時 40 分 · 自由活動", note: "行程包含旭山動物園門票", map: "", image: "" },
+          { time: "13:10", tag: "景點", title: "白金青池", sub: "約 15 分鐘 · 自由活動", note: "", map: "", image: "" },
+          { time: "13:30", tag: "景點", title: "白鬚瀑布", sub: "約 25 分鐘 · 自由活動", note: "", map: "", image: "" },
+          { time: "15:00", tag: "景點", title: "森林精靈露臺", sub: "約 1 小時 20 分 · 自由活動", note: "", map: "", image: "" },
+          { time: "18:30", tag: "回程", title: "返回札幌", sub: "回到集合地點附近解散", note: "", map: "", image: "" },
+          { time: "21:30", tag: "晚餐", title: "カキ小屋/味園燒肉", sub: "", note: "晚餐 / 夜晚行程 TBD", map: "", image: "" }
+        ]
+      },
+      {
+        id: "2025-12-26",
+        label: "Day3 12/26",
+        weather: { temp: -3, low: -8, feels: -10, status: "市區日 & 換飯店", note: "白天札幌市區 & 住相鐵薄野" },
+        schedule: [
+          // ✅ 建議：時間欄位請用「HH:MM」，不要混入區間字（不然排序會被丟到最後）
+          { time: "06:45", tag: "早餐", title: "豐盛的早餐", sub: "", note: "", map: "", image: "" },
+          { time: "07:50", tag: "換飯店", title: "前往相鐵 FRESA INN 薄野", sub: "12/26–12/29 · 15:00 入住 / 11:00 退房", note: "步行約 15 分鐘（可先寄放行李）", map: "", image: "" },
+          { time: "08:35", tag: "景點", title: "北海道神宮", sub: "散步 · 吃福餅", note: "", map: "", image: "" },
+          { time: "09:30", tag: "咖啡", title: "森彥咖啡", sub: "", note: "", map: "", image: "" },
+          { time: "10:00", tag: "景點", title: "北海道廳本廳舍", sub: "紅磚建築 · 拍照散步", note: "", map: "", image: "" },
+          { time: "10:30", tag: "買買買", title: "Montbell", sub: "", note: "", map: "", image: "" },
+          { time: "11:00", tag: "午餐", title: "奧芝商店", sub: "", note: "", map: "", image: "" },
+          { time: "11:50", tag: "點心", title: "Kinotoya 冰淇淋", sub: "", note: "", map: "", image: "" },
+          { time: "13:30", tag: "出發", title: "札幌 → 小樽（JR）", sub: "", note: "", map: "", image: "" },
+          { time: "14:00", tag: "景點", title: "小樽運河", sub: "", note: "", map: "", image: "" },
+          { time: "14:20", tag: "景點", title: "堺町通散策", sub: "", note: "六花亭巧克力、LeTAO、かま栄、浅草橋甜甜圈（排太長可略）", map: "", image: "" },
+          { time: "14:30", tag: "景點", title: "北一硝子三號館＋北一ホール", sub: "", note: "", map: "", image: "" },
+          { time: "14:40", tag: "景點", title: "音樂盒堂", sub: "", note: "", map: "", image: "" },
+          { time: "14:50", tag: "景點", title: "船見坂（日落前）", sub: "", note: "從運河一帶搭計程車約 ¥700", map: "", image: "" },
+          { time: "15:30", tag: "晚餐", title: "Cafe BAAL 牛排飯", sub: "", note: "", map: "", image: "" },
+          { time: "16:00", tag: "回程", title: "小樽 → 札幌", sub: "", note: "", map: "", image: "" }
+        ]
+      },
+      {
+        id: "2025-12-27",
+        label: "Day4 12/27",
+        weather: { temp: -6, low: -12, feels: -15, status: "滑雪日", note: "雪長姐 · 手稻滑雪場" },
+        schedule: [
+          { time: "07:00", tag: "出發", title: "札幌 → 手稻滑雪場", sub: "搭 JR / 巴士（依實際安排）", note: "前一天先確認車班時間", map: "", image: "" },
+          { time: "09:00", tag: "滑雪", title: "集合 & 租裝備", sub: "手稻滑雪場 · 與教練會合", note: "", map: "", image: "" },
+          { time: "10:00", tag: "滑雪", title: "滑雪教學 & 自由滑", sub: "中午雪場用餐", note: "", map: "", image: "" },
+          { time: "17:30", tag: "晚餐", title: "NAGOYAKA亭", sub: "壽司", note: "", map: "", image: "" },
+          { time: "18:30", tag: "買買買", title: "Alpen", sub: "", note: "", map: "", image: "" },
+          { time: "20:00", tag: "點心", title: "GELATERIA La Giostra", sub: "金、土 20:00–00:00", note: "", map: "", image: "" }
+        ]
+      },
+      {
+        id: "2025-12-28",
+        label: "Day5 12/28",
+        weather: { temp: -6, low: -12, feels: -15, status: "自由滑雪 / 自由行", note: "看狀況再決定要去哪裡玩雪或市區逛街" },
+        schedule: [{ time: "09:00", tag: "TBD", title: "自由滑雪 or 市區行程", sub: "之後再決定細節", note: "", map: "", image: "" }]
+      },
+      {
+        id: "2025-12-29",
+        label: "Day6 12/29",
+        weather: { temp: -3, low: -8, feels: -10, status: "回程日", note: "收拾行李 + 機場採買" },
+        schedule: [
+          { time: "11:00", tag: "退房", title: "退房 · 相鐵 FRESA INN 薄野", sub: "最晚 11:00 退房", note: "", map: "", image: "" },
+          { time: "12:00", tag: "前往機場", title: "札幌 → 新千歲機場", sub: "搭 JR / 巴士前往 CTS", note: "預留時間逛機場 & 買伴手禮", map: "", image: "" },
+          { time: "13:55", tag: "回程", title: "FD243 CTS → TPE", sub: "Airasia FD243 13:55 起飛，預計 17:55 抵達", note: "", map: "", image: "" }
+        ]
       }
+    ],
+    fx: { rate: 0.215 },
+
+    defaultShopping: [
+      { id: "s-muji-01", owner: "Luna", store: "無印良品", name: "福吉茶", note: "" },
+      { id: "s-daiso-01", owner: "Luna", store: "大創", name: "折疊梳子", note: "" },
+      { id: "s-airport-01", owner: "Luna", store: "機場/伴手禮", name: "Butter Cheese Sand", note: "", image: "images/buttercheesesand.jpg" },
+      { id: "s-3c-01", owner: "Luna", store: "3COINS", name: "旅行收納袋", note: "" },
+      { id: "s-3c-02", owner: "Luna", store: "3COINS", name: "多功能微波調理烤盤", note: "" }, 
+      { id: "s-3c-03", owner: "Luna", store: "3COINS", name: "毛毛手套", note: "" }, 
+      { id: "s-3c-04", owner: "Luna", store: "3COINS", name: "狗狗裝", note: "" }, 
+      { id: "s-cosmestic-01", owner: "Luna", store: "藥妝店", name: "EXLIR", note: "" }, 
+      { id: "s-Family-04", owner: "Luna", store: "全家", name: "健達出奇蛋皮克敏", note: "" }, 
+      { id: "s-711-01", owner: "Luna", store: "7-11", name: "帶皮薯條", note: "" }, 
+      { id: "s-711-02", owner: "Luna", store: "7-11", name: "蘭姆葡萄餅乾", note: "" }, 
+      { id: "s-lawson-01", owner: "Luna", store: "Lawson", name: "黃豆粉綜合堅果", note: "" }, 
+      { id: "s-family-01", owner: "Luna", store: "全家", name: "Calbee奶油洋芋片", note: "" }, 
+      { id: "s-family-02", owner: "Luna", store: "全家", name: "半生水蜜桃乾", note: "" }, 
+      { id: "s-cosmestic-02", owner: "Luna", store: "藥妝店", name: "lululun", note: "" }, 
+      { id: "s-cosmestic-03", owner: "Luna", store: "藥妝店", name: "髮油", note: "" }, 
+      { id: "s-cosmestic-04", owner: "Luna", store: "藥妝店", name: "canmake睫毛刷", note: "" }, 
+      { id: "s-cosmestic-05", owner: "Luna", store: "藥妝店", name: "canmake瀏海蜜粉", note: "" }, 
+      { id: "s-cosmestic-06", owner: "Luna", store: "藥妝店", name: "口罩", note: "松本清only" }, 
+      { id: "s-cosmestic-07", owner: "Luna", store: "藥妝店", name: "E+B嘴皰疹", note: "" }, 
+      { id: "s-cosmestic-08", owner: "Luna", store: "藥妝店", name: "護手霜", note: "" }, 
+      { id: "s-cosmestic-09", owner: "Luna", store: "藥妝店", name: "美白錠", note: "" }, 
+      { id: "s-cosmestic-10", owner: "Luna", store: "藥妝店", name: "足底", note: "" }, 
+      { id: "s-cosmestic-11", owner: "Luna", store: "藥妝店", name: "手乾裂", note: "" }, 
+      { id: "s-cosmestic-12", owner: "Luna", store: "藥妝店", name: "液體腮紅", note: "" }, 
+      { id: "s-airport-02", owner: "Luna", store: "機場/伴手禮", name: "Royce", note: "開心果產品" }, 
+      { id:"s-cosmetic-13", owner:"Luna", store:"藥妝店", name:"足底舒緩（乾）", note:"", image:"images/footdry.jpg" }, 
+      { id:"s-cosmetic-14", owner:"Luna", store:"藥妝店", name:"足底舒緩（放鬆）", note:"", image:"images/footrelease.jpg" }, 
+      { id:"s-cosmetic-15", owner:"Luna", store:"藥妝店", name:"亮白保養", note:"", image:"images/brightskin.jpg" }, 
+      { id:"s-cosmetic-16", owner:"Luna", store:"藥妝店", name:"保濕面膜", note:"", image:"images/moistmask1.jpg" }, 
+      { id:"s-cosmetic-17", owner:"Luna", store:"藥妝店", name:"高保濕修護", note:"", image:"images/keepmoist2.jpg" }, 
+      { id:"s-snack-01", owner:"Luna", store:"超商", name:"奶油洋芋片", note:"", image:"images/chipsshrimp.jpg" }, 
+      { id:"s-uncat-01", owner:"Luna", store:"未選分類", name:"資生堂粉底液", note:"", image:"images/shlseidofoundation.jpg" }, 
+      { id:"s-uncat-03", owner:"Luna", store:"未選分類", name:"Chanel 唇釉", note:"", image:"images/channellip.jpg" }, 
+      { id:"s-cosmetic-18", owner:"Luna", store:"藥妝店", name:"瀏海救星", note:"", image:"images/dryband.jpg" }, 
+      { id:"s-cosmetic-19", owner:"Luna", store:"藥妝店", name:"護手霜（多款）", note:"", image:"images/allkindshand.jpg" }, 
+      { id:"s-cosmetic-20", owner:"Luna", store:"藥妝店", name:"護手霜 Aesop味!", note:"", image:"images/likeAesop.jpg" }, 
+      { id: "s-family-03", owner: "Luna", store: "全家", name: "鮭魚肉乾", note: "" }
+
+      // ⚠️ 建議你把有空白的檔名改掉：le labo.jpg → le-labo.jpg
+      { id:"s-uncat-02", owner:"Luna", store:"未選分類", name:"Le Labo 護手霜", note:"", image:"images/le-labo.jpg" }
+    ],
+
+    defaultExpenses: [
+      { id: "e-flight", title: "機票", date: "2025-09-01", method: "Luna 先付 NT$28,296", amount: 28296, currency: "TWD", payer: "Luna" }
+    ]
+  };
+
+  // ===== 2. localStorage 工具 =====
+  const TRIP_KEY = "hk_trip_data_v3";
+  const SHOP_KEY = "hk_shopping_v3";
+  const EXP_KEY  = "hk_expenses_v4";
+  const HERO_BG_KEY = "hk_hero_bg_v2";
+
+  const safeParse = str => { try { return JSON.parse(str); } catch { return null; } };
+
+  function loadTripData() { const data = localStorage.getItem(TRIP_KEY); return data ? safeParse(data) : null; }
+  function loadShopping() {
+    const data = localStorage.getItem(SHOP_KEY);
+    if (data) return safeParse(data) || defaultTripData.defaultShopping;
+    return defaultTripData.defaultShopping;
+  }
+  function loadExpenses() {
+    const data = localStorage.getItem(EXP_KEY);
+    if (data) return safeParse(data) || defaultTripData.defaultExpenses;
+    return defaultTripData.defaultExpenses;
+  }
+
+  let tripData = loadTripData() || defaultTripData;
+  let shoppingList = loadShopping();
+  let expenseList = loadExpenses();
+
+  function buildCloudPayload() {
+    const cleanShopping = (shoppingList || []).map(item => {
+      const { imageData, ...rest } = item;
+      return rest;
+    });
+    return { v: CLOUD_VERSION, tripData, shoppingList: cleanShopping, expenseList };
+  }
+
+  let cloudSaveTimer = null;
+  function scheduleSaveToCloud() {
+    if (cloudSaveTimer) clearTimeout(cloudSaveTimer);
+    cloudSaveTimer = setTimeout(saveToCloudNow, 1500);
+  }
+
+  async function saveToCloudNow() {
+    try {
+      isSavingCloud = true;
+      setCloudStatus("saving", "儲存到雲端中…");
+      await setDoc(tripDocRef, buildCloudPayload(), { merge: true });
+      isSavingCloud = false;
+      setCloudStatus("ok", "已與雲端同步");
+    } catch (err) {
+      console.error("saveToCloud error", err);
+      isSavingCloud = false;
+      setCloudStatus("error", "雲端儲存失敗，以本機資料為主");
     }
+  }
 
-    async function initCloudSync() {
-      setCloudStatus("loading", "雲端讀取中…");
-      try {
-        const snap = await getDoc(tripDocRef);
-        if (snap.exists()) {
-          const data = snap.data();
-          if (data.v === 2) {
-            if (data.tripData) tripData = data.tripData;
-            if (data.shoppingList) shoppingList = data.shoppingList;
-            if (data.expenseList) expenseList = data.expenseList;
-            localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
-            localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
-            localStorage.setItem(EXP_KEY, JSON.stringify(expenseList));
-            renderTabs(); renderDayContent(); renderShopping(); renderExpenses();
-            setCloudStatus("ok", "已從雲端載入最新資料");
-          } else {
-            setCloudStatus("ok", "雲端版本不同，暫以本機資料為主");
-            await saveToCloudNow();
-          }
-        } else {
-          await saveToCloudNow();
-          setCloudStatus("ok", "已建立新的雲端資料");
-        }
+  // ✅ 版本不同：直接用本機覆蓋雲端（解決：你改了 defaultTripData 但畫面不變）
+  async function initCloudSync() {
+    setCloudStatus("loading", "雲端讀取中…");
+    try {
+      const snap = await getDoc(tripDocRef);
+      if (snap.exists()) {
+        const data = snap.data();
 
-        if (unsubscribeSnapshot) unsubscribeSnapshot();
-        unsubscribeSnapshot = onSnapshot(tripDocRef, snap2 => {
-          if (!snap2.exists()) return;
-          if (isSavingCloud) return;
-          const data2 = snap2.data();
-          if (data2.v !== 2) return;
-          tripData     = data2.tripData     || tripData;
-          shoppingList = data2.shoppingList || shoppingList;
-          expenseList  = data2.expenseList  || expenseList;
+        if (data.v === CLOUD_VERSION) {
+          if (data.tripData) tripData = data.tripData;
+          if (data.shoppingList) shoppingList = data.shoppingList;
+          if (data.expenseList) expenseList = data.expenseList;
+
           localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
           localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
           localStorage.setItem(EXP_KEY, JSON.stringify(expenseList));
+
           renderTabs(); renderDayContent(); renderShopping(); renderExpenses();
-          setCloudStatus("ok", "已與雲端同步（自動更新）");
-        });
-
-      } catch (err) {
-        console.error("initCloudSync error", err);
-        setCloudStatus("error", "雲端讀取失敗，以本機資料為主");
+          setCloudStatus("ok", "已從雲端載入最新資料");
+        } else {
+          // ✅ 關鍵：雲端版本舊 → 以本機(你這份 code)為主，直接覆蓋雲端
+          setCloudStatus("ok", "偵測到雲端版本舊，已改用本機資料覆蓋雲端");
+          await saveToCloudNow();
+          renderTabs(); renderDayContent(); renderShopping(); renderExpenses();
+        }
+      } else {
+        await saveToCloudNow();
+        setCloudStatus("ok", "已建立新的雲端資料");
       }
-    }
 
-    function saveTripData() { localStorage.setItem(TRIP_KEY, JSON.stringify(tripData)); scheduleSaveToCloud(); }
-    function saveShopping() { localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList)); scheduleSaveToCloud(); }
-    function saveExpenses() { localStorage.setItem(EXP_KEY, JSON.stringify(expenseList)); scheduleSaveToCloud(); }
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+      unsubscribeSnapshot = onSnapshot(tripDocRef, snap2 => {
+        if (!snap2.exists()) return;
+        if (isSavingCloud) return;
 
-    // ===== 3. 行程 & Tabs =====
-    const dayTabsEl = document.getElementById("dayTabs");
-    const dayContentEl = document.getElementById("dayContent");
-    let currentDayIndex = 0;
+        const data2 = snap2.data();
+        if (data2.v !== CLOUD_VERSION) return;
 
-    function getTimeValue(t) {
-      if (!t) return 24 * 60 + 59;
-      const m = /^(\d{1,2}):(\d{2})$/.exec(String(t).trim());
-      if (!m) return 24 * 60 + 59;
-      const h = parseInt(m[1], 10), min = parseInt(m[2], 10);
-      if (h < 0 || h > 23 || min < 0 || min > 59) return 24 * 60 + 59;
-      return h * 60 + min;
-    }
+        tripData     = data2.tripData     || tripData;
+        shoppingList = data2.shoppingList || shoppingList;
+        expenseList  = data2.expenseList  || expenseList;
 
-    function sortScheduleForDay(dayIdx) {
-      const day = tripData.days[dayIdx];
-      if (!day || !day.schedule) return;
-      day.schedule.sort((a, b) => getTimeValue(a.time) - getTimeValue(b.time));
-    }
+        localStorage.setItem(TRIP_KEY, JSON.stringify(tripData));
+        localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList));
+        localStorage.setItem(EXP_KEY, JSON.stringify(expenseList));
 
-    function renderTabs() {
-      dayTabsEl.innerHTML = "";
-      tripData.days.forEach((day, idx) => {
-        const tab = document.createElement("div");
-        tab.className = "day-tab" + (idx === currentDayIndex ? " active" : "");
-        tab.textContent = day.label;
-        tab.onclick = () => { currentDayIndex = idx; renderTabs(); renderDayContent(); };
-        dayTabsEl.appendChild(tab);
-      });
-    }
-
-    function renderDayContent() {
-      const day = tripData.days[currentDayIndex];
-      if (!day) return;
-      sortScheduleForDay(currentDayIndex);
-
-      let html = `
-        <section class="card">
-          <div class="card-header">
-            <div class="card-title">
-              <span class="icon">❄️</span>
-              ${day.weather.temp}℃ / ${day.weather.low}℃
-            </div>
-            <div style="text-align:right;">
-              <div class="card-subtitle">${day.weather.status}</div>
-              <span class="timeline-edit weather-edit" data-day="${currentDayIndex}">✏️</span>
-            </div>
-          </div>
-          <div class="weather-main">
-            <div class="weather-temp">
-              <span>${day.weather.temp}°</span>
-              <span>體感 ${day.weather.feels}°C</span>
-            </div>
-            <div class="weather-extra">
-              <div>${day.weather.status}</div>
-              <div>${day.weather.note}</div>
-            </div>
-          </div>
-        </section>
-      `;
-
-      html += `
-        <section class="card">
-          <div class="card-header">
-            <div class="card-title"><span class="icon">🗓</span>今日行程</div>
-            <div class="card-subtitle">${day.label}</div>
-          </div>
-          ${day.schedule.map((item) => {
-            const imgSrc = item.image || "";
-            return `
-              <div class="timeline-item">
-                <div class="timeline-time">${item.time}</div>
-                <div class="timeline-body">
-                  <div><span class="tag">${item.tag}</span></div>
-                  <div class="timeline-title">${item.title}</div>
-                  <div class="timeline-sub">${item.sub || ""}</div>
-                  ${item.note ? `<div class="timeline-note">${item.note}</div>` : ""}
-                  ${item.map ? `<a href="${item.map}" target="_blank" class="timeline-map-link">🗺️ Google 地圖</a>` : ""}
-                  ${imgSrc ? `<img class="timeline-img" src="${encodeURI(imgSrc)}" alt="">` : ""}
-                </div>
-              </div>
-            `;
-          }).join("")}
-        </section>
-      `;
-
-      dayContentEl.innerHTML = html;
-
-      document.querySelectorAll(".weather-edit").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const d = parseInt(btn.dataset.day, 10);
-          openWeatherModal(d);
-        });
-      });
-    }
-
-    // ===== 4. 匯率 =====
-    const jpyInput = document.getElementById("jpyInput");
-    const twdInput = document.getElementById("twdInput");
-    const rateText = document.getElementById("rateText");
-
-    function updateFromJPY() {
-      const jpy = parseFloat(jpyInput.value || "0");
-      const twd = Math.round(jpy * tripData.fx.rate);
-      twdInput.value = twd;
-    }
-    function updateFromTWD() {
-      const twd = parseFloat(twdInput.value || "0");
-      const jpy = Math.round(twd / tripData.fx.rate);
-      jpyInput.value = jpy;
-    }
-    if (jpyInput && twdInput) {
-      jpyInput.addEventListener("input", updateFromJPY);
-      twdInput.addEventListener("input", updateFromTWD);
-    }
-    function initRate() {
-      if (!rateText) return;
-      rateText.textContent = `示意匯率：1 JPY ≈ ${tripData.fx.rate} TWD`;
-      updateFromJPY();
-    }
-
-    // ===== 5. 購物清單 =====
-    const shoppingGridAllEl = document.getElementById("shoppingGridAll");
-    const shoppingStoreFilter = document.getElementById("shoppingStoreFilter");
-    let editingShoppingId = null;
-
-    function renderShopping() {
-      if (!shoppingGridAllEl) return;
-
-      const storeFilter = shoppingStoreFilter ? shoppingStoreFilter.value : "ALL";
-      let items = shoppingList || [];
-      if (storeFilter !== "ALL") items = items.filter(i => i.store === storeFilter);
-
-      shoppingGridAllEl.innerHTML = items.map(item => {
-        const rawSrc = (item.image || item.imageUrl || "").trim();
-        const imgSrc = rawSrc ? encodeURI(rawSrc) : "";
-        return `
-          <div class="shopping-card">
-            <div class="shopping-name-row">
-              <div class="shopping-name">${item.name || ""}</div>
-              <span class="shopping-edit" data-id="${item.id}">✏️</span>
-            </div>
-            <div class="shopping-note">
-              ${item.store ? `🏪 ${item.store}` : ""}${item.owner ? ` · 👤 ${item.owner}` : ""}
-            </div>
-            ${item.note ? `<div class="shopping-note">${item.note}</div>` : ""}
-            ${imgSrc ? `<img class="shopping-img" src="${imgSrc}" alt="" data-full="${imgSrc}">` : ""}
-          </div>
-        `;
-      }).join("");
-
-      document.querySelectorAll(".shopping-edit").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const id = btn.dataset.id;
-          const item = shoppingList.find(i => i.id === id);
-          if (!item) return;
-
-          editingShoppingId = id;
-          shoppingName.value = item.name || "";
-          shoppingNote.value = item.note || "";
-          shoppingOwner.value = item.owner || "Luna";
-          shoppingStore.value = item.store || "";
-          shoppingImageUrl.value = item.imageUrl || item.image || "";
-          openModal(shoppingModal);
-        });
-      });
-    }
-
-    // ✅ 修正：依店家篩選，選單 change 要刷新
-    if (shoppingStoreFilter) shoppingStoreFilter.addEventListener("change", renderShopping);
-
-    // ===== 6. 費用紀錄（保留原功能）=====
-    const expenseListEl = document.getElementById("expenseList");
-    const totalJPYEl = document.getElementById("totalJPY");
-    const totalTWDEl = document.getElementById("totalTWD");
-
-    function payerColor(p) {
-      switch (p) {
-        case "Luna": return "#ffb6c1";
-        case "Jen": return "#90caf9";
-        case "公基金": return "#a5d6a7";
-        default: return "#78909c";
-      }
-    }
-
-    function calcTotalsAndSettlement() {
-      let totalJPY = 0;
-      const rate = tripData.fx.rate;
-      const people = ["Luna", "Jen"];
-      const balances = { Luna: { paid: 0, should: 0 }, Jen: { paid: 0, should: 0 } };
-
-      expenseList.forEach(item => {
-        let amountTWD = item.currency === "JPY" ? item.amount * rate : item.amount;
-        if (item.currency === "JPY") totalJPY += item.amount;
-        else totalJPY += amountTWD / rate;
-
-        const share = amountTWD / people.length;
-        people.forEach(p => { balances[p].should += share; });
-
-        if (item.payer === "Luna") balances.Luna.paid += amountTWD;
-        else if (item.payer === "Jen") balances.Jen.paid += amountTWD;
+        renderTabs(); renderDayContent(); renderShopping(); renderExpenses();
+        setCloudStatus("ok", "已與雲端同步（自動更新）");
       });
 
-      const totalTWD = Math.round(totalJPY * rate);
-      totalJPYEl.textContent = "¥" + Math.round(totalJPY).toLocaleString();
-      totalTWDEl.textContent = "約 NT$" + totalTWD.toLocaleString();
-
-      const settleEl = document.getElementById("settleSummary");
-      if (!settleEl) return;
-
-      const lText = `Luna：實付 NT$${Math.round(balances.Luna.paid).toLocaleString()} / 應付 NT$${Math.round(balances.Luna.should).toLocaleString()}`;
-      const jText = `Jen：實付 NT$${Math.round(balances.Jen.paid).toLocaleString()} / 應付 NT$${Math.round(balances.Jen.should).toLocaleString()}`;
-
-      const netLuna = balances.Luna.paid - balances.Luna.should;
-      const diff = Math.round(netLuna);
-
-      let settleLine = "";
-      if (Math.abs(diff) < 10) settleLine = "目前幾乎平手，不用互相轉帳～";
-      else if (diff > 0) settleLine = `Jen 大約需要給 Luna NT$${diff.toLocaleString()}`;
-      else settleLine = `Luna 大約需要給 Jen NT$${Math.abs(diff).toLocaleString()}`;
-
-      settleEl.innerHTML = `${lText}<br>${jText}<br><b>${settleLine}</b>`;
+    } catch (err) {
+      console.error("initCloudSync error", err);
+      setCloudStatus("error", "雲端讀取失敗，以本機資料為主");
     }
+  }
 
-    function renderExpenses() {
-      if (!expenseListEl) return;
-      expenseListEl.innerHTML = expenseList.map(item => `
-        <div class="expense-item">
-          <div class="expense-left">
-            <div class="expense-icon" style="background:${payerColor(item.payer)};">
-              ${item.payer || ""}
-            </div>
-            <div>
-              <div class="expense-text-main">${item.title}</div>
-              <div class="expense-text-sub">
-                ${item.date || ""}${item.method ? " · " + item.method : ""}${item.payer ? " · " + item.payer : ""}
-              </div>
-            </div>
+  function saveTripData() { localStorage.setItem(TRIP_KEY, JSON.stringify(tripData)); scheduleSaveToCloud(); }
+  function saveShopping() { localStorage.setItem(SHOP_KEY, JSON.stringify(shoppingList)); scheduleSaveToCloud(); }
+  function saveExpenses() { localStorage.setItem(EXP_KEY, JSON.stringify(expenseList)); scheduleSaveToCloud(); }
+
+  // ===== 3. 行程 & Tabs =====
+  const dayTabsEl = document.getElementById("dayTabs");
+  const dayContentEl = document.getElementById("dayContent");
+  let currentDayIndex = 0;
+
+  function getTimeValue(t) {
+    if (!t) return 24 * 60 + 59;
+    const m = /^(\d{1,2}):(\d{2})$/.exec(t.trim());
+    if (!m) return 24 * 60 + 59;
+    const h = parseInt(m[1], 10), min = parseInt(m[2], 10);
+    if (h < 0 || h > 23 || min < 0 || min > 59) return 24 * 60 + 59;
+    return h * 60 + min;
+  }
+
+  function sortScheduleForDay(dayIdx) {
+    const day = tripData.days[dayIdx];
+    if (!day || !day.schedule) return;
+    day.schedule.sort((a, b) => getTimeValue(a.time) - getTimeValue(b.time));
+  }
+
+  function renderTabs() {
+    dayTabsEl.innerHTML = "";
+    tripData.days.forEach((day, idx) => {
+      const tab = document.createElement("div");
+      tab.className = "day-tab" + (idx === currentDayIndex ? " active" : "");
+      tab.textContent = day.label;
+      tab.onclick = () => { currentDayIndex = idx; renderTabs(); renderDayContent(); };
+      dayTabsEl.appendChild(tab);
+    });
+  }
+
+  function renderDayContent() {
+    const day = tripData.days[currentDayIndex];
+    if (!day) return;
+    sortScheduleForDay(currentDayIndex);
+
+    let html = `
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="icon">❄️</span>
+            ${day.weather.temp}℃ / ${day.weather.low}℃
           </div>
-          <div class="expense-right">
-            <div>${item.currency === "JPY" ? "¥" : "NT$"}${item.amount.toLocaleString()}</div>
-            <span class="expense-delete" data-id="${item.id}">✕</span>
+          <div style="text-align:right;">
+            <div class="card-subtitle">${day.weather.status}</div>
+            <span class="timeline-edit weather-edit" data-day="${currentDayIndex}">✏️</span>
           </div>
         </div>
-      `).join("");
+        <div class="weather-main">
+          <div class="weather-temp">
+            <span>${day.weather.temp}°</span>
+            <span>體感 ${day.weather.feels}°C</span>
+          </div>
+          <div class="weather-extra">
+            <div>${day.weather.status}</div>
+            <div>${day.weather.note}</div>
+          </div>
+        </div>
+      </section>
+    `;
 
-      document.querySelectorAll(".expense-delete").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const id = btn.dataset.id;
-          expenseList = expenseList.filter(e => e.id !== id);
-          saveExpenses();
-          renderExpenses();
-        });
+    html += `
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title"><span class="icon">🗓</span>今日行程</div>
+          <div class="card-subtitle">${day.label}</div>
+        </div>
+        ${day.schedule.map((item) => {
+          const imgSrc = (item.image || "").trim();
+          const safeImg = imgSrc ? encodeURI(imgSrc) : "";
+          return `
+            <div class="timeline-item">
+              <div class="timeline-time">${item.time}</div>
+              <div class="timeline-body">
+                <div><span class="tag">${item.tag}</span></div>
+                <div class="timeline-title">${item.title}</div>
+                <div class="timeline-sub">${item.sub || ""}</div>
+                ${item.note ? `<div class="timeline-note">${item.note}</div>` : ""}
+                ${item.map ? `<a href="${item.map}" target="_blank" class="timeline-map-link">🗺️ Google 地圖</a>` : ""}
+                ${safeImg ? `<img class="timeline-img" src="${safeImg}" alt="" onerror="this.style.display='none'">` : ""}
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </section>
+    `;
+
+    dayContentEl.innerHTML = html;
+
+    document.querySelectorAll(".weather-edit").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const d = parseInt(btn.dataset.day, 10);
+        openWeatherModal(d);
       });
+    });
+  }
 
-      calcTotalsAndSettlement();
-    }
+  // ===== 4. 匯率 =====
+  const jpyInput = document.getElementById("jpyInput");
+  const twdInput = document.getElementById("twdInput");
+  const rateText = document.getElementById("rateText");
 
-    // ===== 7. Hero 背景（只在本機） =====
-    const heroEl = document.getElementById("hero");
-    const changeBgBtn = document.getElementById("changeBgBtn");
-    const bgFileInput = document.getElementById("bgFileInput");
+  function updateFromJPY() {
+    const jpy = parseFloat(jpyInput.value || "0");
+    const twd = Math.round(jpy * tripData.fx.rate);
+    twdInput.value = twd;
+  }
+  function updateFromTWD() {
+    const twd = parseFloat(twdInput.value || "0");
+    const jpy = Math.round(twd / tripData.fx.rate);
+    jpyInput.value = jpy;
+  }
+  if (jpyInput && twdInput) {
+    jpyInput.addEventListener("input", updateFromJPY);
+    twdInput.addEventListener("input", updateFromTWD);
+  }
+  function initRate() {
+    if (!rateText) return;
+    rateText.textContent = `示意匯率：1 JPY ≈ ${tripData.fx.rate} TWD`;
+    updateFromJPY();
+  }
 
-    function loadHeroBg() {
-      const bg = localStorage.getItem(HERO_BG_KEY);
-      if (bg && heroEl) heroEl.style.backgroundImage = `url(${bg})`;
-    }
-    if (changeBgBtn && bgFileInput) {
-      changeBgBtn.addEventListener("click", () => bgFileInput.click());
-      bgFileInput.addEventListener("change", e => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = ev => {
-          const dataUrl = ev.target.result;
-          heroEl.style.backgroundImage = `url(${dataUrl})`;
-          localStorage.setItem(HERO_BG_KEY, dataUrl);
-        };
-        reader.readAsDataURL(file);
-      });
-    }
+  // ===== 5. 購物清單（圖片失敗就隱藏，避免問號） =====
+  const shoppingGridAllEl = document.getElementById("shoppingGridAll");
+  const shoppingStoreFilter = document.getElementById("shoppingStoreFilter");
+  let editingShoppingId = null;
 
-    // ===== 8. View 切換 =====
-    const viewPlan = document.getElementById("view-plan");
-    const viewFx = document.getElementById("view-fx");
-    const viewShopping = document.getElementById("view-shopping");
-    const viewExpense = document.getElementById("view-expense");
-    const heroNavButtons = document.querySelectorAll(".hero-nav-btn");
+  function renderShopping() {
+    if (!shoppingGridAllEl) return;
 
-    const viewMap = { plan: viewPlan, fx: viewFx, shopping: viewShopping, expense: viewExpense };
+    const storeFilter = shoppingStoreFilter ? shoppingStoreFilter.value : "ALL";
+    let items = shoppingList || [];
+    if (storeFilter !== "ALL") items = items.filter(i => i.store === storeFilter);
 
-    function setView(view) {
-      Object.entries(viewMap).forEach(([key, el]) => {
-        if (!el) return;
-        el.style.display = key === view ? "block" : "none";
-      });
-      heroNavButtons.forEach(btn => btn.classList.toggle("active", btn.dataset.view === view));
-    }
-    heroNavButtons.forEach(btn => btn.addEventListener("click", () => setView(btn.dataset.view)));
+    shoppingGridAllEl.innerHTML = items.map(item => {
+      const rawSrc = (item.image || item.imageUrl || "").trim();
+      const imgSrc = rawSrc ? encodeURI(rawSrc) : "";
+      return `
+        <div class="shopping-card">
+          <div class="shopping-name-row">
+            <div class="shopping-name">${item.name || ""}</div>
+            <span class="shopping-edit" data-id="${item.id}">✏️</span>
+          </div>
+          <div class="shopping-note">
+            ${item.store ? `🏪 ${item.store}` : ""}${item.owner ? ` · 👤 ${item.owner}` : ""}
+          </div>
+          ${item.note ? `<div class="shopping-note">${item.note}</div>` : ""}
+          ${imgSrc ? `<img class="shopping-img" src="${imgSrc}" alt="" data-full="${imgSrc}" onerror="this.style.display='none'">` : ""}
+        </div>
+      `;
+    }).join("");
 
-    // ===== 9. Modal & 新增 =====
-    const fabBtn = document.getElementById("fabBtn");
-    const typeModal = document.getElementById("typeModal");
-    const typeCancel = document.getElementById("typeCancel");
-    const addShoppingBtn = document.getElementById("addShoppingBtn");
-    const addExpenseBtn = document.getElementById("addExpenseBtn");
+    document.querySelectorAll(".shopping-edit").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.id;
+        const item = shoppingList.find(i => i.id === id);
+        if (!item) return;
 
-    const shoppingModal = document.getElementById("shoppingModal");
-    const shoppingCancel = document.getElementById("shoppingCancel");
-    const shoppingSave = document.getElementById("shoppingSave");
-    const shoppingName = document.getElementById("shoppingName");
-    const shoppingNote = document.getElementById("shoppingNote");
-    const shoppingOwner = document.getElementById("shoppingOwner");
-    const shoppingStore = document.getElementById("shoppingStore");
-    const shoppingImageUrl = document.getElementById("shoppingImageUrl");
-
-    const expenseModal = document.getElementById("expenseModal");
-    const expenseCancel = document.getElementById("expenseCancel");
-    const expenseSave = document.getElementById("expenseSave");
-    const expenseTitle = document.getElementById("expenseTitle");
-    const expenseDate = document.getElementById("expenseDate");
-    const expenseMethod = document.getElementById("expenseMethod");
-    const expenseAmount = document.getElementById("expenseAmount");
-    const expenseCurrency = document.getElementById("expenseCurrency");
-    const expensePayerGroup = document.getElementById("expensePayerGroup");
-    let currentExpensePayer = "Luna";
-
-    const weatherModal = document.getElementById("weatherModal");
-    const weatherCancel = document.getElementById("weatherCancel");
-    const weatherSave = document.getElementById("weatherSave");
-    const weatherStatusInput = document.getElementById("weatherStatus");
-    const weatherNoteInput = document.getElementById("weatherNote");
-    let editingWeatherDayIndex = null;
-
-    const syncBtn = document.getElementById("syncBtn");
-
-    let lastScrollY = 0;
-    const openModal = m => {
-      if (!m) return;
-      lastScrollY = window.scrollY || window.pageYOffset || 0;
-      m.classList.add("show");
-      document.body.style.overflow = "hidden";
-    };
-    const closeModal = m => {
-      if (!m) return;
-      m.classList.remove("show");
-      document.body.style.overflow = "";
-      window.scrollTo({ top: lastScrollY, behavior: "auto" });
-    };
-
-    if (fabBtn) fabBtn.addEventListener("click", () => openModal(typeModal));
-    if (typeCancel) typeCancel.addEventListener("click", () => closeModal(typeModal));
-
-    if (addShoppingBtn) {
-      addShoppingBtn.addEventListener("click", () => {
-        closeModal(typeModal);
-        editingShoppingId = null;
-        shoppingName.value = "";
-        shoppingNote.value = "";
-        shoppingOwner.value = "Luna";
-        shoppingStore.value = "";
-        shoppingImageUrl.value = "";
+        editingShoppingId = id;
+        shoppingName.value = item.name || "";
+        shoppingNote.value = item.note || "";
+        shoppingOwner.value = item.owner || "Luna";
+        shoppingStore.value = item.store || "";
+        shoppingImageUrl.value = item.imageUrl || item.image || "";
         openModal(shoppingModal);
       });
+    });
+  }
+
+  // ===== 6. 費用紀錄 =====
+  const expenseListEl = document.getElementById("expenseList");
+  const totalJPYEl = document.getElementById("totalJPY");
+  const totalTWDEl = document.getElementById("totalTWD");
+
+  function payerColor(p) {
+    switch (p) {
+      case "Luna": return "#ffb6c1";
+      case "Jen": return "#90caf9";
+      case "公基金": return "#a5d6a7";
+      default: return "#78909c";
     }
+  }
 
-    if (addExpenseBtn) {
-      addExpenseBtn.addEventListener("click", () => {
-        closeModal(typeModal);
-        expenseTitle.value = "";
-        expenseMethod.value = "";
-        expenseAmount.value = "";
-        expenseCurrency.value = "JPY";
-        currentExpensePayer = "Luna";
-        const today = new Date().toISOString().slice(0,10);
-        expenseDate.value = today;
-        Array.from(expensePayerGroup.querySelectorAll(".pill-btn")).forEach(btn => {
-          btn.classList.toggle("active", btn.dataset.payer === "Luna");
-        });
-        openModal(expenseModal);
-      });
-    }
+  function calcTotalsAndSettlement() {
+    let totalJPY = 0;
+    const rate = tripData.fx.rate;
+    const people = ["Luna", "Jen"];
+    const balances = { Luna: { paid: 0, should: 0 }, Jen: { paid: 0, should: 0 } };
 
-    if (shoppingCancel) shoppingCancel.addEventListener("click", () => closeModal(shoppingModal));
-    if (expenseCancel) expenseCancel.addEventListener("click", () => closeModal(expenseModal));
-    if (weatherCancel) weatherCancel.addEventListener("click", () => closeModal(weatherModal));
+    expenseList.forEach(item => {
+      let amountTWD = item.currency === "JPY" ? item.amount * rate : item.amount;
+      if (item.currency === "JPY") totalJPY += item.amount;
+      else totalJPY += amountTWD / rate;
 
-    if (expensePayerGroup) {
-      expensePayerGroup.addEventListener("click", e => {
-        const btn = e.target.closest(".pill-btn");
-        if (!btn) return;
-        currentExpensePayer = btn.dataset.payer;
-        Array.from(expensePayerGroup.querySelectorAll(".pill-btn")).forEach(b => b.classList.toggle("active", b === btn));
-      });
-    }
+      const share = amountTWD / people.length;
+      people.forEach(p => { balances[p].should += share; });
 
-    if (shoppingSave) {
-      shoppingSave.addEventListener("click", () => {
-        const name = shoppingName.value.trim();
-        if (!name) { alert("請輸入商品名稱"); return; }
+      if (item.payer === "Luna") balances.Luna.paid += amountTWD;
+      else if (item.payer === "Jen") balances.Jen.paid += amountTWD;
+    });
 
-        const note = shoppingNote.value.trim();
-        const owner = shoppingOwner.value || "Luna";
-        const store = shoppingStore.value || "";
-        const inputUrl = shoppingImageUrl.value.trim();
+    const totalTWD = Math.round(totalJPY * rate);
+    totalJPYEl.textContent = "¥" + Math.round(totalJPY).toLocaleString();
+    totalTWDEl.textContent = "約 NT$" + totalTWD.toLocaleString();
 
-        const existingItem = editingShoppingId ? shoppingList.find(i => i.id === editingShoppingId) : null;
+    const settleEl = document.getElementById("settleSummary");
+    if (!settleEl) return;
 
-        const isLocalImage = /^images\//i.test(inputUrl);
-        const nextImage = isLocalImage ? inputUrl : "";
-        const nextImageUrl = isLocalImage ? "" : inputUrl;
+    const lText = `Luna：實付 NT$${Math.round(balances.Luna.paid).toLocaleString()} / 應付 NT$${Math.round(balances.Luna.should).toLocaleString()}`;
+    const jText = `Jen：實付 NT$${Math.round(balances.Jen.paid).toLocaleString()} / 應付 NT$${Math.round(balances.Jen.should).toLocaleString()}`;
 
-        if (editingShoppingId && existingItem) {
-          existingItem.name = name;
-          existingItem.note = note;
-          existingItem.owner = owner;
-          existingItem.store = store;
-          if (inputUrl) {
-            existingItem.image = nextImage;
-            existingItem.imageUrl = nextImageUrl;
-          }
-        } else {
-          shoppingList.push({
-            id: "s" + Date.now(),
-            owner,
-            store,
-            name,
-            note,
-            image: nextImage,
-            imageUrl: nextImageUrl
-          });
-        }
+    const netLuna = balances.Luna.paid - balances.Luna.should;
+    const diff = Math.round(netLuna);
 
-        saveShopping();
-        renderShopping();
-        editingShoppingId = null;
-        closeModal(shoppingModal);
-      });
-    }
+    let settleLine = "";
+    if (Math.abs(diff) < 10) settleLine = "目前幾乎平手，不用互相轉帳～";
+    else if (diff > 0) settleLine = `Jen 大約需要給 Luna NT$${diff.toLocaleString()}`;
+    else settleLine = `Luna 大約需要給 Jen NT$${Math.abs(diff).toLocaleString()}`;
 
-    if (expenseSave) {
-      expenseSave.addEventListener("click", () => {
-        const title = expenseTitle.value.trim();
-        if (!title) { alert("請輸入項目名稱"); return; }
-        const amount = parseFloat(expenseAmount.value || "0");
-        if (!amount || amount <= 0) { alert("請輸入金額"); return; }
+    settleEl.innerHTML = `${lText}<br>${jText}<br><b>${settleLine}</b>`;
+  }
 
-        expenseList.push({
-          id: "e" + Date.now(),
-          title,
-          date: expenseDate.value,
-          method: expenseMethod.value.trim(),
-          amount,
-          currency: expenseCurrency.value,
-          payer: currentExpensePayer
-        });
+  function renderExpenses() {
+    if (!expenseListEl) return;
+    expenseListEl.innerHTML = expenseList.map(item => `
+      <div class="expense-item">
+        <div class="expense-left">
+          <div class="expense-icon" style="background:${payerColor(item.payer)};">
+            ${item.payer || ""}
+          </div>
+          <div>
+            <div class="expense-text-main">${item.title}</div>
+            <div class="expense-text-sub">
+              ${item.date || ""}${item.method ? " · " + item.method : ""}${item.payer ? " · " + item.payer : ""}
+            </div>
+          </div>
+        </div>
+        <div class="expense-right">
+          <div>${item.currency === "JPY" ? "¥" : "NT$"}${item.amount.toLocaleString()}</div>
+          <span class="expense-delete" data-id="${item.id}">✕</span>
+        </div>
+      </div>
+    `).join("");
 
+    document.querySelectorAll(".expense-delete").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.id;
+        expenseList = expenseList.filter(e => e.id !== id);
         saveExpenses();
         renderExpenses();
-        closeModal(expenseModal);
       });
-    }
+    });
 
-    function openWeatherModal(dayIdx) {
-      editingWeatherDayIndex = dayIdx;
-      const w = tripData.days[dayIdx].weather;
-      weatherStatusInput.value = w.status || "";
-      weatherNoteInput.value = w.note || "";
-      openModal(weatherModal);
-    }
+    calcTotalsAndSettlement();
+  }
 
-    if (weatherSave) {
-      weatherSave.addEventListener("click", () => {
-        if (editingWeatherDayIndex === null) { closeModal(weatherModal); return; }
-        const w = tripData.days[editingWeatherDayIndex].weather;
-        w.status = weatherStatusInput.value.trim() || w.status;
-        w.note = weatherNoteInput.value.trim() || w.note;
-        saveTripData();
-        renderDayContent();
-        closeModal(weatherModal);
+  // ===== 7. Hero 背景（只在本機） =====
+  const heroEl = document.getElementById("hero");
+  const changeBgBtn = document.getElementById("changeBgBtn");
+  const bgFileInput = document.getElementById("bgFileInput");
+
+  function loadHeroBg() {
+    const bg = localStorage.getItem(HERO_BG_KEY);
+    if (bg && heroEl) heroEl.style.backgroundImage = `url(${bg})`;
+  }
+  if (changeBgBtn && bgFileInput) {
+    changeBgBtn.addEventListener("click", () => bgFileInput.click());
+    bgFileInput.addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const dataUrl = ev.target.result;
+        heroEl.style.backgroundImage = `url(${dataUrl})`;
+        localStorage.setItem(HERO_BG_KEY, dataUrl);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // ===== 8. View 切換 =====
+  const viewPlan = document.getElementById("view-plan");
+  const viewFx = document.getElementById("view-fx");
+  const viewShopping = document.getElementById("view-shopping");
+  const viewExpense = document.getElementById("view-expense");
+  const heroNavButtons = document.querySelectorAll(".hero-nav-btn");
+
+  const viewMap = { plan: viewPlan, fx: viewFx, shopping: viewShopping, expense: viewExpense };
+
+  function setView(view) {
+    Object.entries(viewMap).forEach(([key, el]) => {
+      if (!el) return;
+      el.style.display = key === view ? "block" : "none";
+    });
+    heroNavButtons.forEach(btn => btn.classList.toggle("active", btn.dataset.view === view));
+  }
+  heroNavButtons.forEach(btn => btn.addEventListener("click", () => setView(btn.dataset.view)));
+
+  // ===== 9. Modal & 新增 =====
+  const fabBtn = document.getElementById("fabBtn");
+  const typeModal = document.getElementById("typeModal");
+  const typeCancel = document.getElementById("typeCancel");
+  const addShoppingBtn = document.getElementById("addShoppingBtn");
+  const addExpenseBtn = document.getElementById("addExpenseBtn");
+
+  const shoppingModal = document.getElementById("shoppingModal");
+  const shoppingCancel = document.getElementById("shoppingCancel");
+  const shoppingSave = document.getElementById("shoppingSave");
+  const shoppingName = document.getElementById("shoppingName");
+  const shoppingNote = document.getElementById("shoppingNote");
+  const shoppingOwner = document.getElementById("shoppingOwner");
+  const shoppingStore = document.getElementById("shoppingStore");
+  const shoppingImageUrl = document.getElementById("shoppingImageUrl");
+
+  const expenseModal = document.getElementById("expenseModal");
+  const expenseCancel = document.getElementById("expenseCancel");
+  const expenseSave = document.getElementById("expenseSave");
+  const expenseTitle = document.getElementById("expenseTitle");
+  const expenseDate = document.getElementById("expenseDate");
+  const expenseMethod = document.getElementById("expenseMethod");
+  const expenseAmount = document.getElementById("expenseAmount");
+  const expenseCurrency = document.getElementById("expenseCurrency");
+  const expensePayerGroup = document.getElementById("expensePayerGroup");
+  let currentExpensePayer = "Luna";
+
+  const weatherModal = document.getElementById("weatherModal");
+  const weatherCancel = document.getElementById("weatherCancel");
+  const weatherSave = document.getElementById("weatherSave");
+  const weatherStatusInput = document.getElementById("weatherStatus");
+  const weatherNoteInput = document.getElementById("weatherNote");
+  let editingWeatherDayIndex = null;
+
+  const syncBtn = document.getElementById("syncBtn");
+
+  let lastScrollY = 0;
+  const openModal = m => {
+    if (!m) return;
+    lastScrollY = window.scrollY || window.pageYOffset || 0;
+    m.classList.add("show");
+    document.body.style.overflow = "hidden";
+  };
+  const closeModal = m => {
+    if (!m) return;
+    m.classList.remove("show");
+    document.body.style.overflow = "";
+    window.scrollTo({ top: lastScrollY, behavior: "auto" });
+  };
+
+  if (fabBtn) fabBtn.addEventListener("click", () => openModal(typeModal));
+  if (typeCancel) typeCancel.addEventListener("click", () => closeModal(typeModal));
+
+  if (addShoppingBtn) {
+    addShoppingBtn.addEventListener("click", () => {
+      closeModal(typeModal);
+      editingShoppingId = null;
+      shoppingName.value = "";
+      shoppingNote.value = "";
+      shoppingOwner.value = "Luna";
+      shoppingStore.value = "";
+      shoppingImageUrl.value = "";
+      openModal(shoppingModal);
+    });
+  }
+
+  if (addExpenseBtn) {
+    addExpenseBtn.addEventListener("click", () => {
+      closeModal(typeModal);
+      expenseTitle.value = "";
+      expenseMethod.value = "";
+      expenseAmount.value = "";
+      expenseCurrency.value = "JPY";
+      currentExpensePayer = "Luna";
+      const today = new Date().toISOString().slice(0,10);
+      expenseDate.value = today;
+      Array.from(expensePayerGroup.querySelectorAll(".pill-btn")).forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.payer === "Luna");
       });
-    }
+      openModal(expenseModal);
+    });
+  }
 
-    if (syncBtn) syncBtn.addEventListener("click", () => saveToCloudNow());
+  if (shoppingCancel) shoppingCancel.addEventListener("click", () => closeModal(shoppingModal));
+  if (expenseCancel) expenseCancel.addEventListener("click", () => closeModal(expenseModal));
+  if (weatherCancel) weatherCancel.addEventListener("click", () => closeModal(weatherModal));
 
-    // ===== ✅ 10. 今日行程編輯（editTodayBtn）完整功能 =====
-    const editTodayBtn = document.getElementById("editTodayBtn");
-    const todayModal = document.getElementById("todayModal");
-    const todayCancel = document.getElementById("todayCancel");
-    const todaySave = document.getElementById("todaySave");
-    const todayAdd = document.getElementById("todayAdd");
-    const todayDelete = document.getElementById("todayDelete");
+  if (expensePayerGroup) {
+    expensePayerGroup.addEventListener("click", e => {
+      const btn = e.target.closest(".pill-btn");
+      if (!btn) return;
+      currentExpensePayer = btn.dataset.payer;
+      Array.from(expensePayerGroup.querySelectorAll(".pill-btn")).forEach(b => b.classList.toggle("active", b === btn));
+    });
+  }
 
-    const todayItemSelect = document.getElementById("todayItemSelect");
-    const todayTime = document.getElementById("todayTime");
-    const todayTag = document.getElementById("todayTag");
-    const todayTitle = document.getElementById("todayTitle");
-    const todaySub = document.getElementById("todaySub");
-    const todayNote = document.getElementById("todayNote");
-    const todayMap = document.getElementById("todayMap");
-    const todayImage = document.getElementById("todayImage");
+  if (shoppingSave) {
+    shoppingSave.addEventListener("click", () => {
+      const name = shoppingName.value.trim();
+      if (!name) { alert("請輸入商品名稱"); return; }
 
-    let editingScheduleIndex = 0;
+      const note = shoppingNote.value.trim();
+      const owner = shoppingOwner.value || "Luna";
+      const store = shoppingStore.value || "";
+      const inputUrl = shoppingImageUrl.value.trim();
 
-    function fillTodaySelect() {
-      const day = tripData.days[currentDayIndex];
-      if (!day || !day.schedule) return;
+      const existingItem = editingShoppingId ? shoppingList.find(i => i.id === editingShoppingId) : null;
 
-      sortScheduleForDay(currentDayIndex);
+      const isLocalImage = /^images\//i.test(inputUrl);
+      const nextImage = isLocalImage ? inputUrl : "";
+      const nextImageUrl = isLocalImage ? "" : inputUrl;
 
-      todayItemSelect.innerHTML = day.schedule.map((it, idx) => {
-        const t = (it.time || "TBD");
-        const title = (it.title || "");
-        const tag = (it.tag || "");
-        return `<option value="${idx}">${t}｜${tag}｜${title}</option>`;
-      }).join("");
-
-      if (editingScheduleIndex < 0) editingScheduleIndex = 0;
-      if (editingScheduleIndex >= day.schedule.length) editingScheduleIndex = day.schedule.length - 1;
-      todayItemSelect.value = String(editingScheduleIndex);
-
-      loadScheduleItemToForm(editingScheduleIndex);
-    }
-
-    function loadScheduleItemToForm(idx) {
-      const day = tripData.days[currentDayIndex];
-      const item = day.schedule[idx];
-      if (!item) return;
-
-      editingScheduleIndex = idx;
-      todayItemSelect.value = String(idx);
-
-      todayTime.value = item.time || "";
-      todayTag.value = item.tag || "";
-      todayTitle.value = item.title || "";
-      todaySub.value = item.sub || "";
-      todayNote.value = item.note || "";
-      todayMap.value = item.map || "";
-      todayImage.value = item.image || "";
-    }
-
-    function writeFormToScheduleItem(idx) {
-      const day = tripData.days[currentDayIndex];
-      const item = day.schedule[idx];
-      if (!item) return;
-
-      const tTitle = todayTitle.value.trim();
-      if (!tTitle) { alert("標題（title）不能空白"); return false; }
-
-      item.time = todayTime.value.trim();
-      item.tag = todayTag.value.trim();
-      item.title = tTitle;
-      item.sub = todaySub.value.trim();
-      item.note = todayNote.value.trim();
-      item.map = todayMap.value.trim();
-      item.image = todayImage.value.trim();
-      return true;
-    }
-
-    function openTodayModal() {
-      const day = tripData.days[currentDayIndex];
-      if (!day) return;
-
-      // Modal 標題（直接改 DOM 文字）
-      const titleEl = todayModal.querySelector(".modal-title");
-      if (titleEl) titleEl.textContent = `編輯今日行程（${day.label}）`;
-
-      editingScheduleIndex = 0;
-      fillTodaySelect();
-      openModal(todayModal);
-    }
-
-    if (editTodayBtn) editTodayBtn.addEventListener("click", openTodayModal);
-    if (todayCancel) todayCancel.addEventListener("click", () => closeModal(todayModal));
-
-    if (todayItemSelect) {
-      todayItemSelect.addEventListener("change", () => {
-        const idx = parseInt(todayItemSelect.value, 10);
-        if (Number.isNaN(idx)) return;
-        loadScheduleItemToForm(idx);
-      });
-    }
-
-    if (todaySave) {
-      todaySave.addEventListener("click", () => {
-        const ok = writeFormToScheduleItem(editingScheduleIndex);
-        if (!ok) return;
-
-        sortScheduleForDay(currentDayIndex);
-        saveTripData();
-        renderTabs();
-        renderDayContent();
-        fillTodaySelect(); // 重新排序後重建選單，保持一致
-        alert("已儲存今日行程");
-      });
-    }
-
-    if (todayAdd) {
-      todayAdd.addEventListener("click", () => {
-        const day = tripData.days[currentDayIndex];
-        if (!day || !day.schedule) return;
-
-        // 若目前表單有輸入標題，先儲存到目前那筆（避免誤失）
-        const curTitle = todayTitle.value.trim();
-        if (curTitle) {
-          const ok = writeFormToScheduleItem(editingScheduleIndex);
-          if (!ok) return;
+      if (editingShoppingId && existingItem) {
+        existingItem.name = name;
+        existingItem.note = note;
+        existingItem.owner = owner;
+        existingItem.store = store;
+        if (inputUrl) {
+          existingItem.image = nextImage;
+          existingItem.imageUrl = nextImageUrl;
         }
-
-        day.schedule.push({
-          time: "TBD",
-          tag: "TBD",
-          title: "新行程",
-          sub: "",
-          note: "",
-          map: "",
-          image: ""
+      } else {
+        shoppingList.push({
+          id: "s" + Date.now(),
+          owner,
+          store,
+          name,
+          note,
+          image: nextImage,
+          imageUrl: nextImageUrl
         });
+      }
 
-        sortScheduleForDay(currentDayIndex);
-        saveTripData();
-        renderDayContent();
-
-        // 新增後選最後一筆
-        editingScheduleIndex = day.schedule.length - 1;
-        fillTodaySelect();
-        loadScheduleItemToForm(editingScheduleIndex);
-      });
-    }
-
-    if (todayDelete) {
-      todayDelete.addEventListener("click", () => {
-        const day = tripData.days[currentDayIndex];
-        if (!day || !day.schedule || day.schedule.length === 0) return;
-
-        const item = day.schedule[editingScheduleIndex];
-        const label = `${item?.time || ""} ${item?.title || ""}`.trim() || "這一筆";
-        const yes = confirm(`確定要刪除「${label}」嗎？`);
-        if (!yes) return;
-
-        day.schedule.splice(editingScheduleIndex, 1);
-        if (editingScheduleIndex >= day.schedule.length) editingScheduleIndex = day.schedule.length - 1;
-        if (editingScheduleIndex < 0) editingScheduleIndex = 0;
-
-        sortScheduleForDay(currentDayIndex);
-        saveTripData();
-        renderDayContent();
-        fillTodaySelect();
-
-        if (day.schedule.length === 0) {
-          closeModal(todayModal);
-          alert("今日行程已刪到空，已關閉編輯視窗");
-        }
-      });
-    }
-
-    // ===== 點購物圖片 => 放大；點黑底 => 關閉 =====
-    const imageViewer = document.getElementById("imageViewer");
-    const imageViewerImg = document.getElementById("imageViewerImg");
-    if (shoppingGridAllEl && imageViewer && imageViewerImg) {
-      shoppingGridAllEl.addEventListener("click", (e) => {
-        const img = e.target.closest(".shopping-img");
-        if (!img) return;
-        imageViewerImg.src = img.dataset.full || img.src;
-        imageViewer.classList.add("show");
-      });
-      imageViewer.addEventListener("click", () => {
-        imageViewer.classList.remove("show");
-        imageViewerImg.src = "";
-      });
-    }
-
-    // ===== 12. 初始化 =====
-    function init() {
-      tripData.days.forEach((_, idx) => sortScheduleForDay(idx));
-      renderTabs();
-      renderDayContent();
-      initRate();
+      saveShopping();
       renderShopping();
-      renderExpenses();
-      loadHeroBg();
-      setView("plan");
-      initCloudSync();
-    }
-    init();
-  </script>
-</body>
-</html>
+      editingShoppingId = null;
+      closeModal(shoppingModal);
+    });
+  }
 
+  if (expenseSave) {
+    expenseSave.addEventListener("click", () => {
+      const title = expenseTitle.value.trim();
+      if (!title) { alert("請輸入項目名稱"); return; }
+      const amount = parseFloat(expenseAmount.value || "0");
+      if (!amount || amount <= 0) { alert("請輸入金額"); return; }
+
+      expenseList.push({
+        id: "e" + Date.now(),
+        title,
+        date: expenseDate.value,
+        method: expenseMethod.value.trim(),
+        amount,
+        currency: expenseCurrency.value,
+        payer: currentExpensePayer
+      });
+
+      saveExpenses();
+      renderExpenses();
+      closeModal(expenseModal);
+    });
+  }
+
+  function openWeatherModal(dayIdx) {
+    editingWeatherDayIndex = dayIdx;
+    const w = tripData.days[dayIdx].weather;
+    weatherStatusInput.value = w.status || "";
+    weatherNoteInput.value = w.note || "";
+    openModal(weatherModal);
+  }
+
+  if (weatherSave) {
+    weatherSave.addEventListener("click", () => {
+      if (editingWeatherDayIndex === null) { closeModal(weatherModal); return; }
+      const w = tripData.days[editingWeatherDayIndex].weather;
+      w.status = weatherStatusInput.value.trim() || w.status;
+      w.note = weatherNoteInput.value.trim() || w.note;
+      saveTripData();
+      renderDayContent();
+      closeModal(weatherModal);
+    });
+  }
+
+  if (syncBtn) syncBtn.addEventListener("click", () => saveToCloudNow());
+
+  // ===== 點購物圖片 => 放大；點黑底 => 關閉 =====
+  const imageViewer = document.getElementById("imageViewer");
+  const imageViewerImg = document.getElementById("imageViewerImg");
+  if (shoppingGridAllEl && imageViewer && imageViewerImg) {
+    shoppingGridAllEl.addEventListener("click", (e) => {
+      const img = e.target.closest(".shopping-img");
+      if (!img) return;
+      imageViewerImg.src = img.dataset.full || img.src;
+      imageViewer.classList.add("show");
+    });
+    imageViewer.addEventListener("click", () => {
+      imageViewer.classList.remove("show");
+      imageViewerImg.src = "";
+    });
+  }
+
+  // ===== 12. 初始化 =====
+  function init() {
+    tripData.days.forEach((_, idx) => sortScheduleForDay(idx));
+    renderTabs();
+    renderDayContent();
+    initRate();
+    renderShopping();
+    renderExpenses();
+    loadHeroBg();
+    setView("plan");
+    initCloudSync();
+  }
+  init();
+</script>
