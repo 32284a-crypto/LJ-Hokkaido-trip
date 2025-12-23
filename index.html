@@ -9,6 +9,22 @@
   <meta property="og:description" content="Luna & Jen 的北海道滑雪旅遊小本🧣❄️" />
 
   <style>
+/* === 修正購物圖片不顯示 === */
+.shopping-img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin-top: 8px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+/* 確保卡片內圖片有空間 */
+.shopping-card {
+  overflow: visible; /* 或保留 hidden 但一定要有圖片高度 */
+}
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", sans-serif;
